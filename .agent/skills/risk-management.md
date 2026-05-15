@@ -31,19 +31,25 @@ export function calculateLotSize(
   const riskUsd = accountBalance * riskPct;
   const priceRisk = Math.abs(entryPrice - stopLossPrice);
 
-  if (priceRisk === 0) throw new Error('Stop loss cannot equal entry price');
+  if (priceRisk === 0) return 0;
 
   // 1 lot = 100 oz → $1 price move = $100 per lot
   const rawLot = riskUsd / (priceRisk * CONTRACT_SIZE);
 
-  // Round down to lot step, then clamp to [min, max]
+  // Round DOWN to lot step
   const stepped = Math.floor(rawLot / lotStep) * lotStep;
-  return Math.max(minLot, Math.min(maxLot, +stepped.toFixed(2)));
+
+  // If correct size is below broker minimum, return 0 — do NOT clamp up.
+  // Rounding up to minLot would silently violate the risk cap.
+  if (stepped < minLot) return 0;
+
+  return Math.min(stepped, maxLot);
 }
 
 // Example:
 // balance=$10,000, risk=1%, entry=2350, stop=2335 → price_risk=15
-// lot = (10000*0.01) / (15*100) = 100/1500 = 0.067 → 0.06 lots
+// lot = (10000*0.01) / (15*100) = 100/1500 = 0.067 → 0.06 lots (valid)
+// lot = 0.004 on a very tight stop → returns 0 (skip trade, don't force 0.01)
 ```
 
 ### Risk Per Trade Limits
@@ -98,24 +104,26 @@ export function validateStopLoss(
 ## Circuit Breakers (`src/riskManagement.ts` continued)
 
 ```typescript
+// Full implementation lives in src/riskManagement.ts — this is the reference snippet.
+
 export interface RiskState {
-  peakEquity: number;
-  dayStartBalance: number;
+  peakEquity:        number;
+  dayStartBalance:   number;
+  weekStartBalance:  number;   // required for weekly loss limit
   consecutiveLosses: number;
-  lotReductionFactor: number;
 }
 
 export interface CircuitBreakerResult {
-  canTrade: boolean;
-  reason?: string;
+  canTrade:  boolean;
+  reason?:   string;
   lotFactor: number;
 }
 
 export interface CircuitBreakerThresholds {
-  maxDailyLossPct: number;    // default 2%
+  maxDailyLossPct:  number;   // default 2%
   maxWeeklyLossPct: number;   // default 5%
-  maxDrawdownPct: number;     // default 10% — pause
-  killDrawdownPct: number;    // default 15% — hard stop
+  maxDrawdownPct:   number;   // default 10% — pause
+  killDrawdownPct:  number;   // default 15% — hard stop
 }
 
 export const DEFAULT_THRESHOLDS: CircuitBreakerThresholds = {
@@ -127,23 +135,26 @@ export const DEFAULT_THRESHOLDS: CircuitBreakerThresholds = {
 
 export function checkCircuitBreakers(
   currentEquity: number,
-  state: RiskState,
-  thresholds: CircuitBreakerThresholds = DEFAULT_THRESHOLDS,
+  state:         RiskState,
+  thresholds:    CircuitBreakerThresholds = DEFAULT_THRESHOLDS,
 ): CircuitBreakerResult {
-  // Update peak equity
   state.peakEquity = Math.max(state.peakEquity, currentEquity);
 
-  const ddPct = (state.peakEquity - currentEquity) / state.peakEquity * 100;
-  const dailyLossPct = (state.dayStartBalance - currentEquity) / state.dayStartBalance * 100;
+  const ddPct         = (state.peakEquity      - currentEquity) / state.peakEquity      * 100;
+  const dailyLossPct  = (state.dayStartBalance  - currentEquity) / state.dayStartBalance  * 100;
+  const weeklyLossPct = (state.weekStartBalance - currentEquity) / state.weekStartBalance * 100;
 
   if (ddPct >= thresholds.killDrawdownPct) {
-    return { canTrade: false, reason: `Kill-switch: drawdown ${ddPct.toFixed(1)}% >= ${thresholds.killDrawdownPct}%`, lotFactor: 0 };
+    return { canTrade: false, reason: `Kill-switch: drawdown ${ddPct.toFixed(1)}%`, lotFactor: 0 };
   }
   if (ddPct >= thresholds.maxDrawdownPct) {
-    return { canTrade: false, reason: `Pause: drawdown ${ddPct.toFixed(1)}% >= ${thresholds.maxDrawdownPct}%`, lotFactor: 0 };
+    return { canTrade: false, reason: `Pause: drawdown ${ddPct.toFixed(1)}%`, lotFactor: 0 };
   }
   if (dailyLossPct >= thresholds.maxDailyLossPct) {
     return { canTrade: false, reason: `Daily loss limit: ${dailyLossPct.toFixed(1)}%`, lotFactor: 0 };
+  }
+  if (weeklyLossPct >= thresholds.maxWeeklyLossPct) {
+    return { canTrade: false, reason: `Weekly loss limit: ${weeklyLossPct.toFixed(1)}%`, lotFactor: 0 };
   }
 
   // Progressive lot reduction under drawdown

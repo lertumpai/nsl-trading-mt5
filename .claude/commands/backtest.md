@@ -19,10 +19,23 @@ Steps:
 5. If `src/` utility files referenced in the strategy don't exist yet, generate the missing ones first (using the code from the skill files), then re-run.
 6. After the run completes, parse the output and saved JSON from `backtests/`.
 7. Print a full performance report using the format from `.agent/skills/performance-metrics.md`.
-8. Evaluate against acceptance thresholds:
-   - Sharpe ≥ 1.0 (OOS)
-   - Max DD ≤ 15%
+8. Evaluate in two stages per `CLAUDE.md` thresholds:
+
+   **Stage A — In-Sample:**
+   - Sharpe ≥ 1.5
+   - Max Drawdown ≤ 15%
    - Profit Factor ≥ 1.4
-   - ≥ 50 trades (OOS)
-9. Give a clear verdict: PASS → proceed to walk-forward | FAIL → explain which metric failed and suggest what to investigate.
-10. Save a summary to `research/experiments/BT_{STR-NNN}_{date}.md`.
+   - Trades ≥ 200
+   - Positive in every 2-year sub-period
+
+   **Stage B — Walk-Forward / OOS:**
+   - OOS Sharpe ≥ 1.0
+   - WF Efficiency (OOS Sharpe ÷ IS Sharpe) ≥ 0.60
+   - Monte Carlo 95th-percentile DD ≤ 25%
+   - OOS trades ≥ 50
+
+9. Give a clear verdict:
+   - Stage A PASS + Stage B PASS → proceed to Phase 7 (Risk Analysis)
+   - Stage A FAIL → explain which metric failed; suggest returning to Phase 3
+   - Stage A PASS + Stage B FAIL → overfitting suspected; return to Phase 3, do NOT re-optimize
+10. Save a summary to `research/experiments/BT-{STR-NNN}_{date}.md`.

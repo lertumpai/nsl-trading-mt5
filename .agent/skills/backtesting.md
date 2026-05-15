@@ -212,8 +212,9 @@ export function walkForwardAnalysis(
   const isTrades    = strategyFn(bars.slice(0, initialTrainEnd));
   const isMetrics   = computeAllMetrics(isTrades);
 
-  const wfEfficiency = isMetrics.profitFactor > 0
-    ? combinedOos.profitFactor / isMetrics.profitFactor
+  // WF Efficiency = OOS Sharpe ÷ IS Sharpe (NOT profit factor)
+  const wfEfficiency = isMetrics.sharpeRatio > 0
+    ? combinedOos.sharpeRatio / isMetrics.sharpeRatio
     : 0;
 
   return { combinedOos, isMetrics, wfEfficiency, windowResults, allOosTrades };

@@ -281,7 +281,7 @@ export function validateRR(
 
 import type { BarWithFeatures, Signal, StrategyParams } from '../src/types.js';
 import { volatilityFilter, sessionFilter, weekendFilter } from '../src/filters.js';
-import { emaBias } from '../src/bias.js';
+import { emaBias, findLastClosedHTFIndex } from '../src/bias.js';
 import { openingRangeBreakout } from '../src/signals.js';
 import { atrStop, fixedRTarget, validateRR } from '../src/management.js';
 
@@ -310,8 +310,9 @@ export function generateSignals(
     if (!sessionFilter(bar, ['london', 'overlap'])) continue;
     if (!weekendFilter(bar.datetime)) continue;
 
-    // Layer 2: HTF bias (use closest H4 bar)
-    const htfIdx = barsHtf.findIndex(b => b.datetime >= bar.datetime);
+    // Layer 2: HTF bias — use last CLOSED H4 bar (strictly before current LTF bar)
+    // findLastClosedHTFIndex prevents reading a future or currently-open HTF bar
+    const htfIdx = findLastClosedHTFIndex(barsHtf, bar.datetime);
     if (htfIdx < 10) continue;
     const bias = emaBias(barsHtf, htfIdx, params.emaFast as number, params.emaSlow as number);
 

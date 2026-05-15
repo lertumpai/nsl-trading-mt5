@@ -54,13 +54,22 @@ nsl-trading-mt5/
 10. **Every EA must implement** the mandatory risk controls defined in `.agent/skills/risk-management.md`.
 
 ### Performance Rules
-11. **Minimum acceptance bar** before any strategy moves to forward test:
-    - Sharpe Ratio ≥ 1.5 (annualized, out-of-sample)
+11. **Two-stage acceptance bar** — both stages must pass before a strategy moves to forward test:
+
+    **Stage A — In-Sample** (first 70% of data):
+    - Sharpe Ratio ≥ 1.5 (annualized)
     - Max Drawdown ≤ 15%
     - Profit Factor ≥ 1.4
-    - Win Rate × RR ≥ 0.3 (expectancy positive)
-    - Minimum 200 trades in backtest
-12. **No curve-fitting.** If in-sample Sharpe > out-of-sample Sharpe × 1.5, the strategy is rejected.
+    - Minimum 200 trades
+    - Positive expectancy in every 2-year sub-period
+
+    **Stage B — Walk-Forward / Out-of-Sample** (combined OOS windows):
+    - Sharpe Ratio ≥ 1.0 (annualized)
+    - WF Efficiency ≥ 0.60 (OOS Sharpe ÷ IS Sharpe)
+    - Monte Carlo 95th-percentile drawdown ≤ 25%
+    - Minimum 50 OOS trades
+
+12. **No curve-fitting.** WF Efficiency < 0.60 means the strategy is rejected outright — do not re-optimize to fix it.
 
 ---
 

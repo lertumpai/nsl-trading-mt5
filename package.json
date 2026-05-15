@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "test": "node --import tsx/esm --test tests/dataLoader.test.ts tests/metrics.test.ts tests/riskManagement.test.ts",
+    "lint": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\" \"strategies/**/*.ts\"",
     "check": "tsc --noEmit"
   },
   "dependencies": {
@@ -11,7 +14,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@types/simple-statistics": "^7.8.4",
+    "prettier": "^3.4.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }

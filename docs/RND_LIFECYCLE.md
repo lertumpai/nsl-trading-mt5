@@ -13,19 +13,19 @@ Phase 1: Data Collection & EDA
     ↓
 Phase 2: Hypothesis Formation
     ↓
-Phase 3: Strategy Design & Prototyping
+Phase 3: Strategy Design & Prototyping   (TypeScript)
     ↓
 Phase 4: In-Sample Backtesting
     ↓
-Phase 5: Walk-Forward Validation
+Phase 5: Parameter Optimization (guarded, IS data only)
     ↓
-Phase 6: Parameter Optimization (guarded)
+Phase 6: Walk-Forward Validation
     ↓
 Phase 7: Risk & Portfolio Fit Analysis
     ↓
 Phase 8: Forward Test (Demo/Paper)
     ↓
-Phase 9: Production Deployment
+Phase 9: Production Deployment           (MQL5)
     ↓
 Phase 10: Live Monitoring & Periodic Review
 ```
@@ -38,14 +38,15 @@ Phase 10: Live Monitoring & Periodic Review
 
 **Tasks:**
 - [ ] Confirm MT5 terminal is installed and connected to broker
-- [ ] Confirm Python environment with required libraries (`pandas`, `numpy`, `vectorbt` or `backtrader`, `matplotlib`, `scipy`, `MetaTrader5`)
+- [ ] Confirm TypeScript runtime: `bun --version` or `node --version` (≥ 20)
+- [ ] Run `bun install` — confirm dependencies install cleanly
 - [ ] Confirm data export pipeline from MT5 to `data/raw/`
-- [ ] Set broker details: spread, commission, swap rates for XAUUSD
+- [ ] Create `docs/BROKER_CONFIG.md` with spread, commission, swap, leverage
 - [ ] Define trading capital and max risk parameters
 
-**Output:** `docs/BROKER_CONFIG.md` with spread, commission, swap, leverage details.
+**Output:** `docs/BROKER_CONFIG.md` with broker cost details.
 
-**Exit Criteria:** Data can be loaded and a sample OHLCV chart rendered.
+**Exit Criteria:** `bun run check` passes (0 TypeScript errors) and at least one data file can be loaded.
 
 ---
 
@@ -164,15 +165,15 @@ Phase 10: Live Monitoring & Periodic Review
 - Partial close rules
 - Break-even move rules
 
-### 3.4 Prototype in Python
-- Build vectorized backtest function (no look-ahead)
-- Apply to in-sample period only (70% of data)
-- Plot equity curve, trades on chart
-- Count trade frequency — must be ≥ 5/month to be testable
+### 3.4 Prototype in TypeScript
+- Use `/strategy HYP-NNN name` to scaffold the strategy file
+- Implement `generateSignals()` with the 4-layer structure (see `.agent/skills/strategy-design.md`)
+- Signals are valid only after bar close; entry is on next bar open — no look-ahead
+- Count trade frequency in the in-sample period — must be ≥ 5/month to be testable
 
-**Output:** `strategies/STR_XXX_name.py` — Python strategy logic.
+**Output:** `strategies/STR-NNN_name.ts` + `strategies/STR-NNN_name.run.ts`
 
-**Exit Criteria:** Strategy generates ≥ 200 trades on in-sample data and equity curve is visually non-random.
+**Exit Criteria:** Strategy compiles (`bun run check`), generates ≥ 10 signals on in-sample data, equity curve is visually non-random.
 
 ---
 
@@ -205,53 +206,57 @@ Phase 10: Live Monitoring & Periodic Review
 
 ---
 
-## Phase 5 — Walk-Forward Validation
-
-**Goal:** Prove the strategy generalizes beyond the in-sample period.
-
-**Walk-Forward Method:**
-- Use expanding window: train on growing in-sample, test on fixed next 6-month block
-- Minimum 4 out-of-sample windows
-- Combine all out-of-sample segments into one equity curve
-
-**Tasks:**
-- Run walk-forward analysis across full dataset
-- Calculate out-of-sample Sharpe, Drawdown, Profit Factor
-- Check: out-of-sample Sharpe ≥ 60% of in-sample Sharpe (otherwise overfitting)
-- Run Monte Carlo simulation (1000 random trade-order shuffles) — 95th percentile drawdown must be ≤ 25%
-
-**Output:** `backtests/BT_XXX_walkforward_YYYYMMDD.json`
-
-**Exit Criteria:**
-- Out-of-sample Sharpe ≥ 1.0
-- WF Efficiency ≥ 0.6 (OOS Sharpe / IS Sharpe)
-- Monte Carlo 95th percentile drawdown ≤ 25%
-
-**If fails:** Return to Phase 2 or Phase 3. Do NOT try to fix by re-optimizing.
-
----
-
-## Phase 6 — Parameter Optimization (Guarded)
+## Phase 5 — Parameter Optimization (Guarded)
 
 **Goal:** Find robust parameter ranges — NOT the single best-fit parameters.
+Optimization runs on in-sample data only, then the selected parameters are validated in Phase 6.
 
 **Anti-Overfitting Rules (mandatory):**
 - Never optimize more than 3 free parameters at once
 - Accept a parameter only if it's robust in a ±20% neighborhood (sensitivity test)
-- Use grid search on in-sample only — never touch OOS data during optimization
+- Use grid search on in-sample only (first 70%) — never look at OOS during optimization
 - Prefer flat parameter landscapes over sharp peaks
-- Document every optimization run — reject "best" if peak is isolated
+- Document every optimization run
 
 **Tasks:**
 - Define parameter ranges with step sizes
-- Run grid search on in-sample period
-- Plot 2D heatmaps for each parameter pair
-- Select parameter from a flat/broad profitable zone, not the global peak
-- Re-run walk-forward with selected parameters
+- Run grid search on in-sample period using `src/optimization.ts`
+- Plot 2D heatmaps (save JSON to `research/experiments/`) for each parameter pair
+- Run sensitivity test — require `allRobust: true` before accepting params
+- Update `DEFAULT_PARAMS` in the strategy file with the chosen values
 
-**Output:** `research/experiments/OPT_XXX_YYYYMMDD.md` with heatmaps and chosen values.
+**Output:** `research/experiments/OPT-NNN_name_YYYYMMDD.md` with search space, top results, sensitivity test, and chosen values.
 
-**Exit Criteria:** Chosen parameters pass the walk-forward test of Phase 5.
+**Exit Criteria:** Chosen parameters pass the sensitivity test. Strategy re-compiles with updated params.
+
+---
+
+## Phase 6 — Walk-Forward Validation
+
+**Goal:** Prove the optimized strategy generalizes to unseen data.
+
+**Walk-Forward Method:**
+- Expanding window: train on growing in-sample, test on fixed next window (~6 months)
+- Minimum 5 OOS windows
+- Combine all OOS windows into one equity curve
+
+**WF Efficiency = OOS Sharpe ÷ IS Sharpe** (must be ≥ 0.60)
+
+**Tasks:**
+- Run walk-forward using `src/walkForward.ts`
+- Calculate combined OOS metrics across all windows
+- Compute WF Efficiency = OOS Sharpe / IS Sharpe
+- Run Monte Carlo simulation (1,000 shuffles) on combined OOS trades
+
+**Output:** `backtests/BT-NNN_walkforward_YYYYMMDD.json`
+
+**Exit Criteria:**
+- OOS Sharpe ≥ 1.0
+- WF Efficiency ≥ 0.60
+- Monte Carlo 95th-percentile drawdown ≤ 25%
+- OOS trade count ≥ 50
+
+**If fails:** Return to Phase 2 or Phase 3. Do NOT re-optimize to fix a failing walk-forward.
 
 ---
 
