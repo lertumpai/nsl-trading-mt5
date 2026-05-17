@@ -6,7 +6,7 @@
 //|  - Opens both BUY and SELL simultaneously on start                |
 //|  - EMA 200 bias: price > EMA → BUY 3x lot, SELL 1x lot           |
 //|                  price < EMA → SELL 3x lot, BUY 1x lot           |
-//|  - Adds new grid orders every PipStep pips in each direction      |
+//|  - Adds new BUY+SELL together every PipStep pips (either dir)    |
 //|  - Closes all when total profit >= ProfitTarget                   |
 //|  - Stops trading when loss >= LossPercent% of balance             |
 //+------------------------------------------------------------------+
@@ -35,7 +35,6 @@ input int    InpSlippage      = 20;     // Slippage in points
 CTrade   trade;
 int      emaHandle   = INVALID_HANDLE;
 double   pipSize     = 0;
-bool     tradingStopped = false;  // set true when loss limit hit, requires manual reset
 
 //+------------------------------------------------------------------+
 int OnInit()
@@ -70,8 +69,6 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
-   if(tradingStopped) return;
-
    // Get current EMA value
    double ema[1];
    if(CopyBuffer(emaHandle, 0, 0, 1, ema) != 1) return;
@@ -103,8 +100,7 @@ void OnTick()
    if(totalProfit <= -maxLoss)
    {
       CloseAll(StringFormat("Loss limit hit: $%.2f (limit: $%.2f)", totalProfit, -maxLoss));
-      tradingStopped = true;
-      Alert("GridEMA200: Loss limit reached. EA stopped. Reset tradingStopped manually.");
+      Print("GridEMA200: Loss limit hit. Closed all. Will reopen on next tick.");
       return;
    }
 
@@ -119,22 +115,23 @@ void OpenInitialGrid(double ask, double bid, double ema)
 {
    double buyLot, sellLot;
 
-   if(ask > ema)
+   // Use bid (chart price) for EMA comparison — ask inflates the comparison
+   if(bid > ema)
    {
-      // Price above EMA → trend up → heavy buy, light sell
+      // Price above EMA → uptrend bias → buy 3x, sell 1x
       buyLot  = NormalizeLot(InpStartLot * 3.0);
       sellLot = NormalizeLot(InpStartLot * 1.0);
    }
    else
    {
-      // Price below EMA → trend down → heavy sell, light buy
+      // Price below EMA → downtrend bias → sell 3x, buy 1x
       buyLot  = NormalizeLot(InpStartLot * 1.0);
       sellLot = NormalizeLot(InpStartLot * 3.0);
    }
 
    if(trade.Buy(buyLot, _Symbol, ask, 0, 0, "Grid-Buy"))
       Print("Initial BUY: lot=", buyLot, " @ ", ask,
-            " | EMA=", ema, " | bias=", (ask > ema ? "LONG" : "SHORT"));
+            " | EMA=", ema, " | bias=", (bid > ema ? "LONG" : "SHORT"));
    else
       Print("Initial BUY failed: ", trade.ResultComment());
 
@@ -145,16 +142,17 @@ void OpenInitialGrid(double ask, double bid, double ema)
 }
 
 //+------------------------------------------------------------------+
-//| Add new grid levels if price has moved PipStep pips              |
+//| Open new grid level (BUY + SELL) when price moves PipStep away  |
 //+------------------------------------------------------------------+
 void ExpandGrid(double ask, double bid)
 {
-   double maxBuyPrice  = 0;
-   double maxBuyLot    = 0;
-   double minSellPrice = DBL_MAX;
-   double minSellLot   = 0;
+   double lastBuyLot   = 0;
+   double lastSellLot  = 0;
+   double lastBuyPrice = 0;
+   datetime lastBuyTime  = 0;
+   datetime lastSellTime = 0;
 
-   // Scan positions to find the frontier levels
+   // Find the most recently opened buy and sell lots + last buy open price
    for(int i = 0; i < PositionsTotal(); i++)
    {
       ulong ticket = PositionGetTicket(i);
@@ -162,48 +160,44 @@ void ExpandGrid(double ask, double bid)
       if((int)PositionGetInteger(POSITION_MAGIC) != InpMagicNumber) continue;
       if(PositionGetString(POSITION_SYMBOL) != _Symbol) continue;
 
-      double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
-      double lot       = PositionGetDouble(POSITION_VOLUME);
-      long   posType   = PositionGetInteger(POSITION_TYPE);
+      datetime openTime = (datetime)PositionGetInteger(POSITION_TIME);
+      double   lot      = PositionGetDouble(POSITION_VOLUME);
+      double   price    = PositionGetDouble(POSITION_PRICE_OPEN);
+      long     posType  = PositionGetInteger(POSITION_TYPE);
 
-      if(posType == POSITION_TYPE_BUY)
+      if(posType == POSITION_TYPE_BUY && openTime >= lastBuyTime)
       {
-         if(openPrice > maxBuyPrice)
-         {
-            maxBuyPrice = openPrice;
-            maxBuyLot   = lot;
-         }
+         lastBuyTime  = openTime;
+         lastBuyLot   = lot;
+         lastBuyPrice = price;
       }
-      else if(posType == POSITION_TYPE_SELL)
+      else if(posType == POSITION_TYPE_SELL && openTime >= lastSellTime)
       {
-         if(openPrice < minSellPrice)
-         {
-            minSellPrice = openPrice;
-            minSellLot   = lot;
-         }
+         lastSellTime = openTime;
+         lastSellLot  = lot;
       }
    }
 
+   if(lastBuyPrice == 0) return;
+
+   double mid      = (ask + bid) / 2.0;
    double stepSize = InpPipStep * pipSize;
 
-   // Expand BUY grid upward
-   if(maxBuyPrice > 0 && ask >= maxBuyPrice + stepSize)
+   // Open new BUY + SELL together when price moves stepSize from last level
+   if(MathAbs(mid - lastBuyPrice) >= stepSize)
    {
-      double newLot = NormalizeLot(maxBuyLot * InpLotMultiplier);
-      if(trade.Buy(newLot, _Symbol, ask, 0, 0, "Grid-Buy"))
-         Print("Grid BUY added: lot=", newLot, " @ ", ask,
-               " | prev level=", maxBuyPrice);
+      double newBuyLot  = NormalizeLot(lastBuyLot  * InpLotMultiplier);
+      double newSellLot = NormalizeLot(lastSellLot * InpLotMultiplier);
+
+      if(trade.Buy(newBuyLot, _Symbol, ask, 0, 0, "Grid-Buy"))
+         Print("Grid BUY added: lot=", newBuyLot, " @ ", ask,
+               " | prev=", lastBuyPrice);
       else
          Print("Grid BUY failed: ", trade.ResultComment());
-   }
 
-   // Expand SELL grid downward
-   if(minSellPrice < DBL_MAX && bid <= minSellPrice - stepSize)
-   {
-      double newLot = NormalizeLot(minSellLot * InpLotMultiplier);
-      if(trade.Sell(newLot, _Symbol, bid, 0, 0, "Grid-Sell"))
-         Print("Grid SELL added: lot=", newLot, " @ ", bid,
-               " | prev level=", minSellPrice);
+      if(trade.Sell(newSellLot, _Symbol, bid, 0, 0, "Grid-Sell"))
+         Print("Grid SELL added: lot=", newSellLot, " @ ", bid,
+               " | prev=", lastBuyPrice);
       else
          Print("Grid SELL failed: ", trade.ResultComment());
    }
