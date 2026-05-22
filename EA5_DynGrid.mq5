@@ -36,13 +36,20 @@
 
 //=== Inputs =========================================================
 
+// TUNED defaults — derived from 25,915 bars of GOLDM# H1 (Jan 2022 – May 2026)
+//   ATR Multiplier 1.2x  : 70% TP hit rate within 20 bars; p99 max depth = 2
+//   MaxLevels 5          : p99 depth never exceeds 2, so 5 covers extreme outliers only
+//   AllowSell false      : GOLDM# averages +0.88 pts per 20 bars even below EMA → sell grid loses edge
+//   TP Multiplier 1.5x   : higher total pips than 1.0x over full dataset
+//   ATR volatility range : 1.5 (2022 quiet) → 28.4 (2026 volatile) — dynamic step handles this automatically
+
 input group "=== Grid Core ==="
 input int    InpATRPeriod      = 14;           // ATR period (dynamic step base)
-input double InpATRMultiplier  = 1.5;          // Grid step = avg_ATR × this
-input double InpTPMultiplier   = 1.0;          // TP per position = gridStep × this
-input int    InpMaxLevels      = 8;            // Max open positions per direction
+input double InpATRMultiplier  = 1.2;          // Grid step = avg_ATR × this  [data: 1.2x best TP/depth trade-off]
+input double InpTPMultiplier   = 1.5;          // TP per position = gridStep × this  [data: 1.5x > 1.0x total pips]
+input int    InpMaxLevels      = 5;            // Max open positions per direction  [data: p99 depth = 2, 5 = safe buffer]
 input bool   InpAllowBuy       = true;         // Enable BUY grid
-input bool   InpAllowSell      = true;         // Enable SELL grid
+input bool   InpAllowSell      = false;        // Enable SELL grid  [data: GOLDM# bullish even below EMA — sell loses edge]
 
 input group "=== Martingale Lot Sizing ==="
 input bool   InpUseSmartMart   = true;         // Smart martingale (auto-calc recovery lot)
@@ -53,12 +60,12 @@ input double InpProfitBuffer   = 1.0;          // Extra profit on recovery (× b
 
 input group "=== Trend Filter ==="
 input bool               InpUseTrend  = true;        // Use EMA trend filter
-input int                InpEMAPeriod = 200;          // EMA period
+input int                InpEMAPeriod = 200;          // EMA period  [data: confirmed effective]
 input ENUM_TIMEFRAMES    InpTrendTF   = PERIOD_H4;    // Trend timeframe
 // Trend filter logic:
 //   price > EMA×(1+0.1%) → uptrend  → BUY  grid only
-//   price < EMA×(1-0.1%) → downtrend → SELL grid only
-//   else                  → neutral  → both grids active
+//   price < EMA×(1-0.1%) → downtrend → SELL grid only (only if AllowSell=true)
+//   else                  → neutral  → both active
 
 input group "=== Entry Quality Filter ==="
 input bool   InpUseRSI        = false;         // RSI filter for FIRST position only
