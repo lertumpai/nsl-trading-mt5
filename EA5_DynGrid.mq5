@@ -24,12 +24,23 @@
 //  ────────────────
 //  • InpGroupTPMoney  : close ALL if total floating profit  ≥ $X
 //  • InpGroupSLMoney  : close ALL if total floating loss    ≥ $X (hard stop)
-//  • InpMaxDrawdownPct: stop adding levels if equity drawdown ≥ X%
+//  • InpMaxDDPct      : stop adding levels if equity drawdown ≥ X%
+//
+//  CSV REPORT
+//  ──────────
+//  File: <Common>\EA5_DynGrid_<Symbol>_<Magic>.csv
+//  One row is written for each OPEN and each CLOSE event.
+//  Columns: Event, DateTime, Ticket, PositionID, Symbol, Direction, Lot,
+//           OpenTime, OpenPrice, TP, CloseTime, ClosePrice,
+//           Profit, Swap, Commission, NetPnL, Pips,
+//           GridLevel, ATRStep, CloseReason
+//  Trade comment format embedded by EA: "EA5_B_L2_S8.64"
+//   └ B/S = direction,  L2 = grid level,  S8.64 = ATR step at open
 //
 //+------------------------------------------------------------------+
 #property copyright "NSL Trading"
 #property version   "5.00"
-#property description "ATR-adaptive grid with smart martingale recovery"
+#property description "ATR-adaptive grid with smart martingale recovery + CSV reporting"
 
 #include <Trade\Trade.mqh>
 #include <Trade\PositionInfo.mqh>
@@ -89,6 +100,7 @@ CPositionInfo g_pos;
 int           g_atrHandle = INVALID_HANDLE;
 int           g_emaHandle = INVALID_HANDLE;
 int           g_rsiHandle = INVALID_HANDLE;
+string        g_csvFile   = "";               // set in OnInit
 
 //+------------------------------------------------------------------+
 int OnInit()
@@ -107,10 +119,18 @@ int OnInit()
       return INIT_FAILED;
    }
 
+   // Build CSV filename: EA5_DynGrid_GOLDM_54321.csv (stored in Common Files folder)
+   string sym = _Symbol;
+   StringReplace(sym, "#", "");   // strip broker suffix chars
+   StringReplace(sym, ".", "");
+   g_csvFile = StringFormat("EA5_DynGrid_%s_%d.csv", sym, InpMagicNumber);
+   InitCSV();
+
    Print("EA5 DynGrid ready | ", _Symbol,
          " | ATR(", InpATRPeriod, ")×", InpATRMultiplier,
          " | MaxLevels=", InpMaxLevels,
-         " | Magic=", InpMagicNumber);
+         " | Magic=", InpMagicNumber,
+         " | CSV=", g_csvFile);
    return INIT_SUCCEEDED;
 }
 
@@ -121,6 +141,199 @@ void OnDeinit(const int reason)
    IndicatorRelease(g_emaHandle);
    IndicatorRelease(g_rsiHandle);
    Comment("");
+}
+
+//====================================================================
+//  CSV REPORTING
+//====================================================================
+
+// Create file with header row if it does not already exist
+void InitCSV()
+{
+   if(FileIsExist(g_csvFile, FILE_COMMON)) return;
+
+   int h = FileOpen(g_csvFile, FILE_WRITE | FILE_ANSI | FILE_COMMON);
+   if(h == INVALID_HANDLE)
+   {
+      Print("EA5 CSV: cannot create file ", g_csvFile, " error=", GetLastError());
+      return;
+   }
+   FileWriteString(h,
+      "Event,DateTime,Ticket,PositionID,Symbol,Direction,Lot,"
+      "OpenTime,OpenPrice,TP,"
+      "CloseTime,ClosePrice,"
+      "Profit,Swap,Commission,NetPnL,Pips,"
+      "GridLevel,ATRStep,CloseReason\n");
+   FileClose(h);
+   Print("EA5 CSV: created ", g_csvFile);
+}
+
+// Append a single CSV line (thread-safe via sequential open/close)
+void WriteCSVRow(const string &line)
+{
+   int h = FileOpen(g_csvFile, FILE_READ | FILE_WRITE | FILE_ANSI | FILE_COMMON);
+   if(h == INVALID_HANDLE)
+   {
+      Print("EA5 CSV: cannot open for append, error=", GetLastError());
+      return;
+   }
+   FileSeek(h, 0, SEEK_END);
+   FileWriteString(h, line + "\n");
+   FileClose(h);
+}
+
+// Parse "_Ln" and "_Ss.ss" tokens from a trade comment string
+// Comment format example: "EA5_B_L2_S8.64"
+void ParseComment(const string &comment, int &level, double &step)
+{
+   level = 0;
+   step  = 0.0;
+
+   int lIdx = StringFind(comment, "_L");
+   int sIdx = StringFind(comment, "_S");
+
+   // _L must come before _S
+   if(lIdx >= 0 && sIdx > lIdx)
+   {
+      level = (int)StringToInteger(StringSubstr(comment, lIdx + 2, sIdx - lIdx - 2));
+      step  = StringToDouble(StringSubstr(comment, sIdx + 2));
+   }
+}
+
+//+------------------------------------------------------------------+
+//  OnTradeTransaction — fires for every server-side deal event.
+//  We intercept DEAL_ADD for our magic number and write to CSV.
+//+------------------------------------------------------------------+
+void OnTradeTransaction(const MqlTradeTransaction &trans,
+                        const MqlTradeRequest     &request,
+                        const MqlTradeResult      &result)
+{
+   if(trans.type != TRADE_TRANSACTION_DEAL_ADD) return;
+
+   // Load deal into history context
+   if(!HistoryDealSelect(trans.deal)) return;
+
+   // Filter: only our EA on this symbol
+   if((long)HistoryDealGetInteger(trans.deal, DEAL_MAGIC) != InpMagicNumber) return;
+   if(HistoryDealGetString(trans.deal, DEAL_SYMBOL) != _Symbol) return;
+
+   ENUM_DEAL_ENTRY dealEntry = (ENUM_DEAL_ENTRY)HistoryDealGetInteger(trans.deal, DEAL_ENTRY);
+   if(dealEntry != DEAL_ENTRY_IN &&
+      dealEntry != DEAL_ENTRY_OUT &&
+      dealEntry != DEAL_ENTRY_OUT_BY) return;
+
+   // --- Common deal fields ---
+   ulong          ticket     = (ulong)HistoryDealGetInteger(trans.deal, DEAL_TICKET);
+   ulong          posId      = (ulong)HistoryDealGetInteger(trans.deal, DEAL_POSITION_ID);
+   ENUM_DEAL_TYPE dealType   = (ENUM_DEAL_TYPE)HistoryDealGetInteger(trans.deal, DEAL_TYPE);
+   double         lot        = HistoryDealGetDouble(trans.deal, DEAL_VOLUME);
+   double         price      = HistoryDealGetDouble(trans.deal, DEAL_PRICE);
+   double         profit     = HistoryDealGetDouble(trans.deal, DEAL_PROFIT);
+   double         swap       = HistoryDealGetDouble(trans.deal, DEAL_SWAP);
+   double         commission = HistoryDealGetDouble(trans.deal, DEAL_COMMISSION);
+   datetime       dt         = (datetime)HistoryDealGetInteger(trans.deal, DEAL_TIME);
+   string         comment    = HistoryDealGetString(trans.deal, DEAL_COMMENT);
+
+   int    gridLevel = 0;
+   double atrStep   = 0.0;
+   ParseComment(comment, gridLevel, atrStep);
+
+   //------------------------------------------------------------------
+   //  OPEN event  (DEAL_ENTRY_IN)
+   //------------------------------------------------------------------
+   if(dealEntry == DEAL_ENTRY_IN)
+   {
+      // Direction of the position that was just opened
+      string dirStr = (dealType == DEAL_TYPE_BUY) ? "BUY" : "SELL";
+
+      // Read TP from the live position (it exists now)
+      double tpPrice = 0.0;
+      if(PositionSelectByTicket(posId))
+         tpPrice = PositionGetDouble(POSITION_TP);
+
+      string row = StringFormat(
+         "OPEN,%s,%llu,%llu,%s,%s,%.2f,"   // event…lot
+         "%s,%.5f,%.5f,"                    // openTime, openPrice, TP
+         ",,"                               // closeTime, closePrice (empty)
+         ",,,,"                             // profit, swap, commission, netPnL (empty)
+         ","                                // pips (empty)
+         "%d,%.4f,",                        // gridLevel, atrStep, closeReason (empty)
+         TimeToString(dt, TIME_DATE | TIME_SECONDS),
+         ticket, posId,
+         _Symbol, dirStr, lot,
+         TimeToString(dt, TIME_DATE | TIME_SECONDS), price, tpPrice,
+         gridLevel, atrStep
+      );
+      WriteCSVRow(row);
+      return;
+   }
+
+   //------------------------------------------------------------------
+   //  CLOSE event  (DEAL_ENTRY_OUT / DEAL_ENTRY_OUT_BY)
+   //------------------------------------------------------------------
+
+   // Direction of the original (now-closed) position:
+   //   closing a BUY position → deal type is SELL → original dir is BUY
+   string dirStr = (dealType == DEAL_TYPE_SELL) ? "BUY" : "SELL";
+
+   // Find the matching OPEN deal to get entry price, open time, level, step
+   datetime openTime  = dt;
+   double   openPrice = price;
+   double   openLot   = lot;
+   int      openLevel = gridLevel;
+   double   openStep  = atrStep;
+   double   openTP    = 0.0;
+
+   HistorySelect(0, TimeCurrent());
+   int totalDeals = HistoryDealsTotal();
+   for(int i = 0; i < totalDeals; i++)
+   {
+      ulong d = HistoryDealGetTicket(i);
+      if((ulong)HistoryDealGetInteger(d, DEAL_POSITION_ID) != posId) continue;
+      if((ENUM_DEAL_ENTRY)HistoryDealGetInteger(d, DEAL_ENTRY) != DEAL_ENTRY_IN) continue;
+
+      openTime  = (datetime)HistoryDealGetInteger(d, DEAL_TIME);
+      openPrice = HistoryDealGetDouble(d, DEAL_PRICE);
+      openLot   = HistoryDealGetDouble(d, DEAL_VOLUME);
+
+      // Level and step always come from the OPEN deal comment
+      string oc = HistoryDealGetString(d, DEAL_COMMENT);
+      ParseComment(oc, openLevel, openStep);
+      break;
+   }
+
+   // Pips: positive = profitable
+   double pips = (dirStr == "BUY") ? (price - openPrice) : (openPrice - price);
+
+   // Net P&L
+   double netPnL = profit + swap + commission;
+
+   // Close reason — infer from the closing deal comment
+   string closeReason = "manual";
+   {
+      string lc = comment;
+      StringToLower(lc);
+      if(StringFind(lc, "[tp]")  >= 0 || StringFind(lc, "tp") >= 0)  closeReason = "TP";
+      else if(StringFind(lc, "[sl]") >= 0 || StringFind(lc, "sl") >= 0) closeReason = "SL";
+      else if(StringFind(lc, "group") >= 0)                           closeReason = "GroupClose";
+      else if(StringFind(lc, "so") >= 0 || StringFind(lc, "margin") >= 0) closeReason = "StopOut";
+   }
+
+   string row = StringFormat(
+      "CLOSE,%s,%llu,%llu,%s,%s,%.2f,"     // event…lot
+      "%s,%.5f,%.5f,"                       // openTime, openPrice, TP (blank — already in OPEN row)
+      "%s,%.5f,"                            // closeTime, closePrice
+      "%.2f,%.2f,%.2f,%.2f,%.4f,"           // profit, swap, commission, netPnL, pips
+      "%d,%.4f,%s",                         // gridLevel, atrStep, closeReason
+      TimeToString(dt, TIME_DATE | TIME_SECONDS),
+      ticket, posId,
+      _Symbol, dirStr, openLot,
+      TimeToString(openTime, TIME_DATE | TIME_SECONDS), openPrice, openTP,
+      TimeToString(dt, TIME_DATE | TIME_SECONDS), price,
+      profit, swap, commission, netPnL, pips,
+      openLevel, openStep, closeReason
+   );
+   WriteCSVRow(row);
 }
 
 //====================================================================
@@ -293,7 +506,8 @@ void UpdateDashboard(double step, int trend, double rsi)
       "BUY  lvl : %d / %d\n"
       "SELL lvl : %d / %d\n"
       "Total PnL: $%.2f\n"
-      "Group TP : $%.2f   SL: $%.2f",
+      "Group TP : $%.2f   SL: $%.2f\n"
+      "CSV      : %s",
       _Symbol,
       step, InpATRMultiplier,
       tr, InpEMAPeriod, EnumToString(InpTrendTF),
@@ -301,8 +515,20 @@ void UpdateDashboard(double step, int trend, double rsi)
       CountPositions(POSITION_TYPE_BUY),  InpMaxLevels,
       CountPositions(POSITION_TYPE_SELL), InpMaxLevels,
       GetTotalPnL(),
-      InpGroupTPMoney, InpGroupSLMoney
+      InpGroupTPMoney, InpGroupSLMoney,
+      g_csvFile
    ));
+}
+
+//====================================================================
+//  BUILD TRADE COMMENT
+//  Encodes direction, grid level, and ATR step so OnTradeTransaction
+//  can read them back without needing extra global state.
+//  Format: "EA5_B_L2_S8.64"
+//====================================================================
+string BuildComment(string dir, int level, double step)
+{
+   return StringFormat("%s_%s_L%d_S%.2f", InpComment, dir, level, step);
 }
 
 //====================================================================
@@ -360,12 +586,11 @@ void OnTick()
 
       if(doOpen)
       {
-         double tp  = NormalizeDouble(ask + gridStep * InpTPMultiplier, _Digits);
-         double lot = InpUseSmartMart
-                      ? CalcSmartLot(POSITION_TYPE_BUY, gridStep)
-                      : CalcFixedLot(buys + 1);
+         double tp      = NormalizeDouble(ask + gridStep * InpTPMultiplier, _Digits);
+         double lot     = InpUseSmartMart ? CalcSmartLot(POSITION_TYPE_BUY, gridStep) : CalcFixedLot(buys + 1);
+         string cmt     = BuildComment("B", buys + 1, gridStep);  // "EA5_B_L2_S8.64"
 
-         if(g_trade.Buy(lot, _Symbol, ask, 0, tp, InpComment + "_B"))
+         if(g_trade.Buy(lot, _Symbol, ask, 0, tp, cmt))
             PrintFormat("EA5 BUY  L%d | ask=%.2f tp=%.2f lot=%.2f step=%.2f",
                         buys + 1, ask, tp, lot, gridStep);
       }
@@ -394,12 +619,11 @@ void OnTick()
 
       if(doOpen)
       {
-         double tp  = NormalizeDouble(bid - gridStep * InpTPMultiplier, _Digits);
-         double lot = InpUseSmartMart
-                      ? CalcSmartLot(POSITION_TYPE_SELL, gridStep)
-                      : CalcFixedLot(sells + 1);
+         double tp      = NormalizeDouble(bid - gridStep * InpTPMultiplier, _Digits);
+         double lot     = InpUseSmartMart ? CalcSmartLot(POSITION_TYPE_SELL, gridStep) : CalcFixedLot(sells + 1);
+         string cmt     = BuildComment("S", sells + 1, gridStep);  // "EA5_S_L1_S12.30"
 
-         if(g_trade.Sell(lot, _Symbol, bid, 0, tp, InpComment + "_S"))
+         if(g_trade.Sell(lot, _Symbol, bid, 0, tp, cmt))
             PrintFormat("EA5 SELL L%d | bid=%.2f tp=%.2f lot=%.2f step=%.2f",
                         sells + 1, bid, tp, lot, gridStep);
       }
