@@ -11,14 +11,13 @@
 //  • SELL grid  : opens as price rises; each new level is gridStep above the highest open sell
 //  • TP per pos : entry ± gridStep × InpTPMultiplier   (set at open, not moved)
 //
-//  SMART MARTINGALE
-//  ────────────────
-//  When InpUseSmartMart=true, each new lot is sized to recover ALL existing
-//  floating losses of that direction in ONE gridStep move, plus a profit buffer.
-//    required_lot = (|floating_loss| + buffer) / (gridStep × pointValue)
-//  This self-adjusts to the actual market: large ATR → larger step → smaller lot
-//  needed; deep drawdown → larger lot to recover faster.
-//  Cap: InpMaxLot prevents runaway sizing.
+//  TIER LOT SIZING  (safe step-up, not per-level martingale)
+//  ──────────────────────────────────────────────────────────
+//  Lot doubles every InpTierSize CLOSED trades (counted from history).
+//  Example  BaseLot=0.01  TierSize=10  TierMultiplier=2.0 :
+//    trades  1-10 → 0.01   trades 11-20 → 0.02   trades 21-30 → 0.04 …
+//  Lot only steps up after completing a full tier — NOT because price moves
+//  against you.  Cap: InpMaxLot hard-limits the lot regardless of tier.
 //
 //  CIRCUIT BREAKERS
 //  ────────────────
@@ -62,12 +61,17 @@ input int    InpMaxLevels      = 5;            // Max open positions per directi
 input bool   InpAllowBuy       = true;         // Enable BUY grid
 input bool   InpAllowSell      = false;        // Enable SELL grid  [data: GOLDM# bullish even below EMA — sell loses edge]
 
-input group "=== Martingale Lot Sizing ==="
-input bool   InpUseSmartMart   = true;         // Smart martingale (auto-calc recovery lot)
-input double InpBaseLot        = 0.01;         // Base lot (level 1 and fallback)
-input double InpLotMultiplier  = 1.5;          // Fixed-multiplier per level (smart=false only)
+input group "=== Tier Lot Sizing ==="
+// Lot steps up by TierMultiplier every TierSize CLOSED trades (counted from history).
+// Example  BaseLot=0.01  TierSize=10  TierMultiplier=2.0 :
+//   trades  1-10  → 0.01   trades 11-20 → 0.02
+//   trades 21-30  → 0.04   trades 31-40 → 0.08  …
+// This is far safer than per-level martingale: lot only increases after
+// completing a full tier, not because price moved against you.
+input double InpBaseLot        = 0.01;         // Starting lot size (tier 0)
+input int    InpTierSize       = 10;           // Closed trades per tier before lot doubles
+input double InpTierMultiplier = 2.0;          // Lot multiplier per tier (x2 = double)
 input double InpMaxLot         = 5.0;          // Hard cap on lot per position
-input double InpProfitBuffer   = 1.0;          // Extra profit on recovery (× base lot value)
 
 input group "=== Trend Filter ==="
 input bool               InpUseTrend  = true;        // Use EMA trend filter
@@ -126,11 +130,13 @@ int OnInit()
    g_csvFile = StringFormat("EA5_DynGrid_%s_%d.csv", sym, InpMagicNumber);
    InitCSV();
 
+   // Print the full CSV path to Experts log so you can always find it
+   string dataPath = TerminalInfoString(TERMINAL_DATA_PATH);
    Print("EA5 DynGrid ready | ", _Symbol,
          " | ATR(", InpATRPeriod, ")×", InpATRMultiplier,
          " | MaxLevels=", InpMaxLevels,
-         " | Magic=", InpMagicNumber,
-         " | CSV=", g_csvFile);
+         " | Magic=", InpMagicNumber);
+   Print("EA5 CSV full path: ", dataPath, "\\MQL5\\Files\\", g_csvFile);
    return INIT_SUCCEEDED;
 }
 
@@ -147,31 +153,62 @@ void OnDeinit(const int reason)
 //  CSV REPORTING
 //====================================================================
 
-// Create file with header row if it does not already exist
+#define CSV_HEADER "Event,DateTime,Ticket,PositionID,Symbol,Direction,Lot,"\
+                   "OpenTime,OpenPrice,TP,"\
+                   "CloseTime,ClosePrice,"\
+                   "Profit,Swap,Commission,NetPnL,Pips,"\
+                   "GridLevel,ATRStep,CloseReason"
+
+// Ensure the CSV file exists with a valid header.
+// Called from OnInit — also callable from WriteCSVRow as a safety net.
 void InitCSV()
 {
-   if(FileIsExist(g_csvFile, FILE_COMMON)) return;
+   string dataPath = TerminalInfoString(TERMINAL_DATA_PATH);
+   string fullPath = dataPath + "\\MQL5\\Files\\" + g_csvFile;
 
-   int h = FileOpen(g_csvFile, FILE_WRITE | FILE_ANSI | FILE_COMMON);
-   if(h == INVALID_HANDLE)
+   // --- Try open for read (safest existence check) ---
+   int h = FileOpen(g_csvFile, FILE_READ | FILE_ANSI);
+   if(h != INVALID_HANDLE)
    {
-      Print("EA5 CSV: cannot create file ", g_csvFile, " error=", GetLastError());
+      // File exists — just confirm and exit
+      FileClose(h);
+      Print("EA5 CSV ready (exists): ", fullPath);
       return;
    }
-   FileWriteString(h,
-      "Event,DateTime,Ticket,PositionID,Symbol,Direction,Lot,"
-      "OpenTime,OpenPrice,TP,"
-      "CloseTime,ClosePrice,"
-      "Profit,Swap,Commission,NetPnL,Pips,"
-      "GridLevel,ATRStep,CloseReason\n");
+
+   // --- File does not exist — create it ---
+   h = FileOpen(g_csvFile, FILE_WRITE | FILE_ANSI);
+   if(h == INVALID_HANDLE)
+   {
+      int err = GetLastError();
+      Print("EA5 CSV ERROR: cannot create file"
+            " | path=", fullPath,
+            " | error=", err,
+            " | hint: check MQL5\\Files\\ folder permissions");
+      Alert("EA5: CSV file could not be created. See Experts log. Error=" + IntegerToString(err));
+      return;
+   }
+
+   FileWriteString(h, CSV_HEADER + "\n");
    FileClose(h);
-   Print("EA5 CSV: created ", g_csvFile);
+   Print("EA5 CSV created: ", fullPath);
 }
 
-// Append a single CSV line (thread-safe via sequential open/close)
+// Append one CSV line. Re-creates the file if it was deleted while EA is running.
 void WriteCSVRow(const string &line)
 {
-   int h = FileOpen(g_csvFile, FILE_READ | FILE_WRITE | FILE_ANSI | FILE_COMMON);
+   // Safety net: if file was manually deleted, recreate it
+   int chk = FileOpen(g_csvFile, FILE_READ | FILE_ANSI);
+   if(chk == INVALID_HANDLE)
+   {
+      Print("EA5 CSV: file missing — recreating");
+      InitCSV();
+   }
+   else
+      FileClose(chk);
+
+   // Append
+   int h = FileOpen(g_csvFile, FILE_READ | FILE_WRITE | FILE_ANSI);
    if(h == INVALID_HANDLE)
    {
       Print("EA5 CSV: cannot open for append, error=", GetLastError());
@@ -415,19 +452,9 @@ double GetTotalPnL()
    return t;
 }
 
-// Total floating P&L for a specific direction
-double GetTypePnL(ENUM_POSITION_TYPE type)
-{
-   double t = 0;
-   for(int i = PositionsTotal() - 1; i >= 0; i--)
-      if(g_pos.SelectByIndex(i) && g_pos.Symbol() == _Symbol &&
-         g_pos.Magic() == InpMagicNumber && g_pos.PositionType() == type)
-         t += g_pos.Profit() + g_pos.Swap();
-   return t;
-}
 
 //====================================================================
-//  LOT SIZING
+//  LOT SIZING  —  Tier step-up system
 //====================================================================
 
 double NormalizeLot(double raw)
@@ -438,34 +465,65 @@ double NormalizeLot(double raw)
    return MathMax(mn, MathMin(mx, MathFloor(raw / step) * step));
 }
 
-//  Smart martingale:
-//  Calculates the minimum lot that recovers all floating losses of a given direction
-//  when price moves exactly ONE gridStep in the favourable direction, plus a profit buffer.
-//
-//  Formula:
-//    value_per_lot = (gridStep / tickSize) × tickValue
-//    required_lot  = (|floating_loss| + buffer_value) / value_per_lot
-//
-double CalcSmartLot(ENUM_POSITION_TYPE type, double gridStep)
+// Count CLOSED trades (DEAL_ENTRY_OUT) for this EA on this symbol.
+// Used only to determine which tier a NEW cycle should start at.
+int GetClosedTradeCount()
 {
-   double loss = GetTypePnL(type);    // negative when losing
-   if(loss >= 0.0) return InpBaseLot; // already profitable or flat → no boost needed
-
-   double tickVal  = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE);
-   double tickSize = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE);
-   if(tickSize <= 0.0 || tickVal <= 0.0) return InpBaseLot;
-
-   double valuePerLot   = (gridStep / tickSize) * tickVal;
-   double bufferValue   = InpBaseLot * valuePerLot * InpProfitBuffer;
-   double requiredLot   = (MathAbs(loss) + bufferValue) / valuePerLot;
-
-   return NormalizeLot(requiredLot);
+   HistorySelect(0, TimeCurrent());
+   int count = 0;
+   int total = HistoryDealsTotal();
+   for(int i = 0; i < total; i++)
+   {
+      ulong d = HistoryDealGetTicket(i);
+      if((long)HistoryDealGetInteger(d, DEAL_MAGIC)  != InpMagicNumber) continue;
+      if(HistoryDealGetString(d, DEAL_SYMBOL)        != _Symbol)        continue;
+      if((ENUM_DEAL_ENTRY)HistoryDealGetInteger(d, DEAL_ENTRY) != DEAL_ENTRY_OUT) continue;
+      count++;
+   }
+   return count;
 }
 
-// Fixed geometric multiplier (fallback / alternative to smart)
-double CalcFixedLot(int level)
+// Current tier index (0-based).
+//   tier = floor(closedTrades / InpTierSize)
+int GetCurrentTier()
 {
-   return NormalizeLot(InpBaseLot * MathPow(InpLotMultiplier, level - 1));
+   if(InpTierSize <= 0) return 0;
+   return GetClosedTradeCount() / InpTierSize;
+}
+
+// Lot for the FIRST position of a brand-new cycle.
+//   lot = BaseLot × TierMultiplier ^ tier
+double CalcTierLot()
+{
+   int    tier = GetCurrentTier();
+   double lot  = InpBaseLot * MathPow(InpTierMultiplier, tier);
+   return NormalizeLot(lot);
+}
+
+// ★ MAIN LOT FUNCTION ★
+//
+// Rule: ALL positions in the same grid cycle must use the same lot.
+//       Lot is decided ONCE when the first position of a cycle is opened,
+//       then locked in for the whole cycle by reading it back from the
+//       existing open positions.
+//
+// Flow:
+//   positions exist  →  read Volume() from any open position (they all share the same lot)
+//   no positions     →  new cycle starting → CalcTierLot() from history count
+//
+double GetCycleLot(ENUM_POSITION_TYPE type)
+{
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+   {
+      if(g_pos.SelectByIndex(i) &&
+         g_pos.Symbol()       == _Symbol        &&
+         g_pos.Magic()        == InpMagicNumber  &&
+         g_pos.PositionType() == type)
+      {
+         return g_pos.Volume();   // cycle already in progress → lock to existing lot
+      }
+   }
+   return CalcTierLot();          // no open positions → new cycle → tier decides lot
 }
 
 //====================================================================
@@ -496,7 +554,14 @@ void CloseAll(string reason)
 
 void UpdateDashboard(double step, int trend, double rsi)
 {
-   string tr = (trend == 1) ? "UP ↑" : (trend == -1) ? "DOWN ↓" : "NEUTRAL ↔";
+   string tr      = (trend == 1) ? "UP ↑" : (trend == -1) ? "DOWN ↓" : "NEUTRAL ↔";
+   int    tier    = GetCurrentTier();
+   int    closed  = GetClosedTradeCount();
+   // Show the lot that would be used if a new cycle started now
+   double curLot  = GetCycleLot(POSITION_TYPE_BUY);   // reflects live open positions if any
+   int    nextIn  = InpTierSize - (closed % InpTierSize);   // closed trades until next tier
+   double nextLot = NormalizeLot(InpBaseLot * MathPow(InpTierMultiplier, tier + 1));
+
    Comment(StringFormat(
       "──── EA5 Dynamic Grid ────\n"
       "Symbol   : %s\n"
@@ -507,6 +572,9 @@ void UpdateDashboard(double step, int trend, double rsi)
       "SELL lvl : %d / %d\n"
       "Total PnL: $%.2f\n"
       "Group TP : $%.2f   SL: $%.2f\n"
+      "── Lot Tier ──\n"
+      "Tier     : %d  (closed=%d)\n"
+      "Cur Lot  : %.2f  → %.2f in %d trades\n"
       "CSV      : %s",
       _Symbol,
       step, InpATRMultiplier,
@@ -516,6 +584,8 @@ void UpdateDashboard(double step, int trend, double rsi)
       CountPositions(POSITION_TYPE_SELL), InpMaxLevels,
       GetTotalPnL(),
       InpGroupTPMoney, InpGroupSLMoney,
+      tier, closed,
+      curLot, nextLot, nextIn,
       g_csvFile
    ));
 }
@@ -587,12 +657,12 @@ void OnTick()
       if(doOpen)
       {
          double tp      = NormalizeDouble(ask + gridStep * InpTPMultiplier, _Digits);
-         double lot     = InpUseSmartMart ? CalcSmartLot(POSITION_TYPE_BUY, gridStep) : CalcFixedLot(buys + 1);
+         double lot     = GetCycleLot(POSITION_TYPE_BUY);
          string cmt     = BuildComment("B", buys + 1, gridStep);  // "EA5_B_L2_S8.64"
 
          if(g_trade.Buy(lot, _Symbol, ask, 0, tp, cmt))
-            PrintFormat("EA5 BUY  L%d | ask=%.2f tp=%.2f lot=%.2f step=%.2f",
-                        buys + 1, ask, tp, lot, gridStep);
+            PrintFormat("EA5 BUY  L%d | ask=%.2f tp=%.2f lot=%.2f step=%.2f tier=%d",
+                        buys + 1, ask, tp, lot, gridStep, GetCurrentTier());
       }
    }
 
@@ -620,12 +690,12 @@ void OnTick()
       if(doOpen)
       {
          double tp      = NormalizeDouble(bid - gridStep * InpTPMultiplier, _Digits);
-         double lot     = InpUseSmartMart ? CalcSmartLot(POSITION_TYPE_SELL, gridStep) : CalcFixedLot(sells + 1);
+         double lot     = GetCycleLot(POSITION_TYPE_SELL);
          string cmt     = BuildComment("S", sells + 1, gridStep);  // "EA5_S_L1_S12.30"
 
          if(g_trade.Sell(lot, _Symbol, bid, 0, tp, cmt))
-            PrintFormat("EA5 SELL L%d | bid=%.2f tp=%.2f lot=%.2f step=%.2f",
-                        sells + 1, bid, tp, lot, gridStep);
+            PrintFormat("EA5 SELL L%d | bid=%.2f tp=%.2f lot=%.2f step=%.2f tier=%d",
+                        sells + 1, bid, tp, lot, gridStep, GetCurrentTier());
       }
    }
 }
