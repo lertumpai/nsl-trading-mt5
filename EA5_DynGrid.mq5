@@ -104,6 +104,26 @@ int           g_emaHandle = INVALID_HANDLE;
 int           g_rsiHandle = INVALID_HANDLE;
 string        g_csvFile   = "";               // set in OnInit
 
+// Keep filename safe across brokers/symbol formats (e.g. BTC/USD, XAUUSD.r)
+string SanitizeFileToken(string s)
+{
+   StringReplace(s, "#", "");
+   StringReplace(s, ".", "");
+   StringReplace(s, " ", "");
+   StringReplace(s, "/", "_");
+   StringReplace(s, "\\", "_");
+   StringReplace(s, ":", "_");
+   StringReplace(s, "*", "_");
+   StringReplace(s, "?", "_");
+   StringReplace(s, "\"", "_");
+   StringReplace(s, "<", "_");
+   StringReplace(s, ">", "_");
+   StringReplace(s, "|", "_");
+   if(StringLen(s) == 0)
+      s = "SYMBOL";
+   return s;
+}
+
 //+------------------------------------------------------------------+
 int OnInit()
 {
@@ -121,10 +141,8 @@ int OnInit()
       return INIT_FAILED;
    }
 
-   // Build CSV filename: EA5_DynGrid_GOLDM_54321.csv (stored in Common Files folder)
-   string sym = _Symbol;
-   StringReplace(sym, "#", "");   // strip broker suffix chars
-   StringReplace(sym, ".", "");
+   // Build CSV filename: EA5_DynGrid_GOLDM_54321.csv
+   string sym = SanitizeFileToken(_Symbol);
    g_csvFile = StringFormat("EA5_DynGrid_%s_%d.csv", sym, InpMagicNumber);
    InitCSV();
 
@@ -135,6 +153,8 @@ int OnInit()
          " | MaxLevels=", InpMaxLevels,
          " | Magic=", InpMagicNumber);
    Print("EA5 CSV full path: ", dataPath, "\\MQL5\\Files\\", g_csvFile);
+   if((bool)MQLInfoInteger(MQL_TESTER))
+      Print("EA5 note: running in Strategy Tester, file is under the tester agent data folder shown above.");
    return INIT_SUCCEEDED;
 }
 
@@ -196,11 +216,14 @@ void InitCSV()
 // Re-creates the file if it was deleted while EA is running.
 void WriteCSVRow(const string &line)
 {
+   string dataPath = TerminalInfoString(TERMINAL_DATA_PATH);
+   string fullPath = dataPath + "\\MQL5\\Files\\" + g_csvFile;
+
    // Safety net: if file was manually deleted, recreate it
    int chk = FileOpen(g_csvFile, FILE_READ | FILE_ANSI);
    if(chk == INVALID_HANDLE)
    {
-      Print("EA5 CSV: file missing — recreating");
+      Print("EA5 CSV: file missing — recreating | path=", fullPath);
       InitCSV();
    }
    else
@@ -210,7 +233,7 @@ void WriteCSVRow(const string &line)
    int h = FileOpen(g_csvFile, FILE_READ | FILE_WRITE | FILE_ANSI);
    if(h == INVALID_HANDLE)
    {
-      Print("EA5 CSV: cannot open for append, error=", GetLastError());
+      Print("EA5 CSV: cannot open for append | path=", fullPath, " | error=", GetLastError());
       return;
    }
    FileSeek(h, 0, SEEK_END);
