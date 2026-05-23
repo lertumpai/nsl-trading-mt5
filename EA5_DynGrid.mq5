@@ -11,13 +11,13 @@
 //  • SELL grid  : opens as price rises; each new level is gridStep above the highest open sell
 //  • TP per pos : entry ± gridStep × InpTPMultiplier   (set at open, not moved)
 //
-//  TIER LOT SIZING  (safe step-up, not per-level martingale)
+//  MARTINGALE LOT SIZING
 //  ──────────────────────────────────────────────────────────
-//  Lot doubles every InpTierSize CLOSED trades (counted from history).
-//  Example  BaseLot=0.01  TierSize=10  TierMultiplier=2.0 :
-//    trades  1-10 → 0.01   trades 11-20 → 0.02   trades 21-30 → 0.04 …
-//  Lot only steps up after completing a full tier — NOT because price moves
-//  against you.  Cap: InpMaxLot hard-limits the lot regardless of tier.
+//  Lot multiplies by InpTierMultiplier for each successive grid level.
+//  When ALL positions close (cycle ends), lot resets to InpBaseLot.
+//  Example  BaseLot=0.01  LotMultiplier=2.0 :
+//    Level 1 → 0.01   Level 2 → 0.02   Level 3 → 0.04 …
+//  Cap: InpMaxLot hard-limits the lot regardless of level.
 //
 //  CIRCUIT BREAKERS
 //  ────────────────
@@ -61,16 +61,14 @@ input int    InpMaxLevels      = 5;            // Max open positions per directi
 input bool   InpAllowBuy       = true;         // Enable BUY grid
 input bool   InpAllowSell      = false;        // Enable SELL grid  [data: GOLDM# bullish even below EMA — sell loses edge]
 
-input group "=== Tier Lot Sizing ==="
-// Lot steps up by TierMultiplier every TierSize CLOSED trades (counted from history).
-// Example  BaseLot=0.01  TierSize=10  TierMultiplier=2.0 :
-//   trades  1-10  → 0.01   trades 11-20 → 0.02
-//   trades 21-30  → 0.04   trades 31-40 → 0.08  …
-// This is far safer than per-level martingale: lot only increases after
-// completing a full tier, not because price moved against you.
-input double InpBaseLot        = 0.01;         // Starting lot size (tier 0)
-input int    InpTierSize       = 10;           // Closed trades per tier before lot doubles
-input double InpTierMultiplier = 2.0;          // Lot multiplier per tier (x2 = double)
+input group "=== Martingale Lot Sizing ==="
+// Martingale: lot multiplies per grid level within a cycle.
+// When ALL positions close (cycle ends), lot resets to BaseLot for the next cycle.
+// Example  BaseLot=0.01  LotMultiplier=2.0 :
+//   Level 1 → 0.01   Level 2 → 0.02   Level 3 → 0.04   Level 4 → 0.08 …
+// WARNING: lot grows exponentially with levels — keep MaxLevels low.
+input double InpBaseLot        = 0.01;         // Starting lot size (reset every new cycle)
+input double InpTierMultiplier = 2.0;          // Lot multiplier per grid level (martingale)
 input double InpMaxLot         = 5.0;          // Hard cap on lot per position
 
 input group "=== Trend Filter ==="
@@ -194,7 +192,8 @@ void InitCSV()
    Print("EA5 CSV created: ", fullPath);
 }
 
-// Append one CSV line. Re-creates the file if it was deleted while EA is running.
+// Append one CSV line and force it to disk immediately.
+// Re-creates the file if it was deleted while EA is running.
 void WriteCSVRow(const string &line)
 {
    // Safety net: if file was manually deleted, recreate it
@@ -216,6 +215,7 @@ void WriteCSVRow(const string &line)
    }
    FileSeek(h, 0, SEEK_END);
    FileWriteString(h, line + "\n");
+   FileFlush(h);  // ensure row is persisted immediately (especially for CLOSE events)
    FileClose(h);
 }
 
@@ -454,7 +454,7 @@ double GetTotalPnL()
 
 
 //====================================================================
-//  LOT SIZING  —  Tier step-up system
+//  LOT SIZING  —  Martingale per level, reset on new cycle
 //====================================================================
 
 double NormalizeLot(double raw)
@@ -465,65 +465,20 @@ double NormalizeLot(double raw)
    return MathMax(mn, MathMin(mx, MathFloor(raw / step) * step));
 }
 
-// Count CLOSED trades (DEAL_ENTRY_OUT) for this EA on this symbol.
-// Used only to determine which tier a NEW cycle should start at.
-int GetClosedTradeCount()
-{
-   HistorySelect(0, TimeCurrent());
-   int count = 0;
-   int total = HistoryDealsTotal();
-   for(int i = 0; i < total; i++)
-   {
-      ulong d = HistoryDealGetTicket(i);
-      if((long)HistoryDealGetInteger(d, DEAL_MAGIC)  != InpMagicNumber) continue;
-      if(HistoryDealGetString(d, DEAL_SYMBOL)        != _Symbol)        continue;
-      if((ENUM_DEAL_ENTRY)HistoryDealGetInteger(d, DEAL_ENTRY) != DEAL_ENTRY_OUT) continue;
-      count++;
-   }
-   return count;
-}
-
-// Current tier index (0-based).
-//   tier = floor(closedTrades / InpTierSize)
-int GetCurrentTier()
-{
-   if(InpTierSize <= 0) return 0;
-   return GetClosedTradeCount() / InpTierSize;
-}
-
-// Lot for the FIRST position of a brand-new cycle.
-//   lot = BaseLot × TierMultiplier ^ tier
-double CalcTierLot()
-{
-   int    tier = GetCurrentTier();
-   double lot  = InpBaseLot * MathPow(InpTierMultiplier, tier);
-   return NormalizeLot(lot);
-}
-
 // ★ MAIN LOT FUNCTION ★
 //
-// Rule: ALL positions in the same grid cycle must use the same lot.
-//       Lot is decided ONCE when the first position of a cycle is opened,
-//       then locked in for the whole cycle by reading it back from the
-//       existing open positions.
+// Martingale: lot = BaseLot × LotMultiplier ^ openCount
+//   openCount=0 (new cycle)  → BaseLot × 2^0 = 0.01  ← resets here
+//   openCount=1 (level 2)    → BaseLot × 2^1 = 0.02
+//   openCount=2 (level 3)    → BaseLot × 2^2 = 0.04
+//   openCount=3 (level 4)    → BaseLot × 2^3 = 0.08
 //
-// Flow:
-//   positions exist  →  read Volume() from any open position (they all share the same lot)
-//   no positions     →  new cycle starting → CalcTierLot() from history count
+// When all positions close, openCount drops to 0 → next open always starts at BaseLot.
 //
 double GetCycleLot(ENUM_POSITION_TYPE type)
 {
-   for(int i = PositionsTotal() - 1; i >= 0; i--)
-   {
-      if(g_pos.SelectByIndex(i) &&
-         g_pos.Symbol()       == _Symbol        &&
-         g_pos.Magic()        == InpMagicNumber  &&
-         g_pos.PositionType() == type)
-      {
-         return g_pos.Volume();   // cycle already in progress → lock to existing lot
-      }
-   }
-   return CalcTierLot();          // no open positions → new cycle → tier decides lot
+   int openCount = CountPositions(type);
+   return NormalizeLot(InpBaseLot * MathPow(InpTierMultiplier, openCount));
 }
 
 //====================================================================
@@ -554,13 +509,12 @@ void CloseAll(string reason)
 
 void UpdateDashboard(double step, int trend, double rsi)
 {
-   string tr      = (trend == 1) ? "UP ↑" : (trend == -1) ? "DOWN ↓" : "NEUTRAL ↔";
-   int    tier    = GetCurrentTier();
-   int    closed  = GetClosedTradeCount();
-   // Show the lot that would be used if a new cycle started now
-   double curLot  = GetCycleLot(POSITION_TYPE_BUY);   // reflects live open positions if any
-   int    nextIn  = InpTierSize - (closed % InpTierSize);   // closed trades until next tier
-   double nextLot = NormalizeLot(InpBaseLot * MathPow(InpTierMultiplier, tier + 1));
+   string tr       = (trend == 1) ? "UP ↑" : (trend == -1) ? "DOWN ↓" : "NEUTRAL ↔";
+   int    buyLvl   = CountPositions(POSITION_TYPE_BUY);
+   int    sellLvl  = CountPositions(POSITION_TYPE_SELL);
+   // Current lot = what the NEXT open would use (level after the existing ones)
+   double buyLot   = GetCycleLot(POSITION_TYPE_BUY);
+   double sellLot  = GetCycleLot(POSITION_TYPE_SELL);
 
    Comment(StringFormat(
       "──── EA5 Dynamic Grid ────\n"
@@ -568,24 +522,27 @@ void UpdateDashboard(double step, int trend, double rsi)
       "Grid Step: %.2f  (ATR×%.1f)\n"
       "Trend    : %s  (EMA%d %s)\n"
       "RSI(14)  : %.1f\n"
-      "BUY  lvl : %d / %d\n"
-      "SELL lvl : %d / %d\n"
+      "BUY  lvl : %d / %d  next lot=%.2f\n"
+      "SELL lvl : %d / %d  next lot=%.2f\n"
       "Total PnL: $%.2f\n"
       "Group TP : $%.2f   SL: $%.2f\n"
-      "── Lot Tier ──\n"
-      "Tier     : %d  (closed=%d)\n"
-      "Cur Lot  : %.2f  → %.2f in %d trades\n"
+      "── Martingale ──\n"
+      "Base Lot : %.2f  Multiplier: %.1f\n"
+      "L1=%.2f  L2=%.2f  L3=%.2f  L4=%.2f\n"
       "CSV      : %s",
       _Symbol,
       step, InpATRMultiplier,
       tr, InpEMAPeriod, EnumToString(InpTrendTF),
       rsi,
-      CountPositions(POSITION_TYPE_BUY),  InpMaxLevels,
-      CountPositions(POSITION_TYPE_SELL), InpMaxLevels,
+      buyLvl,  InpMaxLevels, buyLot,
+      sellLvl, InpMaxLevels, sellLot,
       GetTotalPnL(),
       InpGroupTPMoney, InpGroupSLMoney,
-      tier, closed,
-      curLot, nextLot, nextIn,
+      InpBaseLot, InpTierMultiplier,
+      NormalizeLot(InpBaseLot * MathPow(InpTierMultiplier, 0)),
+      NormalizeLot(InpBaseLot * MathPow(InpTierMultiplier, 1)),
+      NormalizeLot(InpBaseLot * MathPow(InpTierMultiplier, 2)),
+      NormalizeLot(InpBaseLot * MathPow(InpTierMultiplier, 3)),
       g_csvFile
    ));
 }
@@ -661,8 +618,8 @@ void OnTick()
          string cmt     = BuildComment("B", buys + 1, gridStep);  // "EA5_B_L2_S8.64"
 
          if(g_trade.Buy(lot, _Symbol, ask, 0, tp, cmt))
-            PrintFormat("EA5 BUY  L%d | ask=%.2f tp=%.2f lot=%.2f step=%.2f tier=%d",
-                        buys + 1, ask, tp, lot, gridStep, GetCurrentTier());
+            PrintFormat("EA5 BUY  L%d | ask=%.2f tp=%.2f lot=%.2f step=%.2f",
+                        buys + 1, ask, tp, lot, gridStep);
       }
    }
 
@@ -694,8 +651,8 @@ void OnTick()
          string cmt     = BuildComment("S", sells + 1, gridStep);  // "EA5_S_L1_S12.30"
 
          if(g_trade.Sell(lot, _Symbol, bid, 0, tp, cmt))
-            PrintFormat("EA5 SELL L%d | bid=%.2f tp=%.2f lot=%.2f step=%.2f tier=%d",
-                        sells + 1, bid, tp, lot, gridStep, GetCurrentTier());
+            PrintFormat("EA5 SELL L%d | bid=%.2f tp=%.2f lot=%.2f step=%.2f",
+                        sells + 1, bid, tp, lot, gridStep);
       }
    }
 }
