@@ -1,6 +1,6 @@
 """Native desktop workspace; GUI callbacks never access the broker client."""
 
-from decimal import Decimal
+from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal, InvalidOperation
 
 from PySide6.QtCore import QSignalBlocker, Qt, Slot
 from PySide6.QtGui import QAction, QCloseEvent, QColor, QFont, QKeySequence
@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QPlainTextEdit,
+    QScrollArea,
     QSizePolicy,
     QStackedWidget,
     QTableWidgetItem,
@@ -24,7 +25,8 @@ from PySide6.QtWidgets import (
 )
 
 from .errors import BrokerError
-from .gui_state import DesktopSnapshot, supported_minutes, ticket_input
+from .gui_chart import PriceChart
+from .gui_state import DesktopSnapshot, expiration_choices, ticket_input
 from .gui_widgets import (
     STYLE,
     ReviewDialog,
@@ -37,7 +39,8 @@ from .gui_widgets import (
     table,
 )
 from .gui_worker import BrokerWorker
-from .models import AuthChallenge, Order, OrderState, SessionState, Symbol
+from .models import CHART_TIMEFRAMES, AuthChallenge, Order, OrderState, SessionState, Symbol
+from .protocol import expiration_for
 
 
 class TradingWindow(QMainWindow):
@@ -56,9 +59,12 @@ class TradingWindow(QMainWindow):
         self._unknown_signature = None
         self._pending_ack = False
         self._review: ReviewDialog | None = None
+        self._expiry_choices: dict[int, Symbol] = {}
+        self._chart_key = None
+        self._timeframe = 60
         self.setWindowTitle("NSL IQ Option")
-        self.resize(1280, 820)
-        self.setMinimumSize(1060, 740)
+        self.resize(1400, 860)
+        self.setMinimumSize(1280, 820)
         font = QFont()
         font.setFamilies(["Inter", "SF Pro Text", "Segoe UI", "DejaVu Sans"])
         font.setPointSize(10)
@@ -68,6 +74,7 @@ class TradingWindow(QMainWindow):
         self.worker.ready.connect(self._worker_ready)
         self.worker.snapshot.connect(self._on_snapshot)
         self.worker.completed.connect(self._completed)
+        self.worker.chart_updated.connect(self._chart_updated)
         self.worker.finished.connect(self._worker_finished)
         self._controls()
         quit_action = QAction("Quit", self)
@@ -84,7 +91,7 @@ class TradingWindow(QMainWindow):
         outer.setSpacing(0)
         sidebar = QFrame()
         sidebar.setObjectName("sidebar")
-        sidebar.setFixedWidth(172)
+        sidebar.setFixedWidth(148)
         side = QVBoxLayout(sidebar)
         side.setContentsMargins(18, 30, 18, 24)
         side.setSpacing(7)
@@ -108,8 +115,8 @@ class TradingWindow(QMainWindow):
         outer.addWidget(sidebar)
         content = QWidget()
         body = QVBoxLayout(content)
-        body.setContentsMargins(28, 27, 28, 20)
-        body.setSpacing(18)
+        body.setContentsMargins(20, 22, 20, 16)
+        body.setSpacing(14)
         header = QHBoxLayout()
         titles = QVBoxLayout()
         titles.setSpacing(5)
@@ -129,7 +136,7 @@ class TradingWindow(QMainWindow):
         self.notice = label(
             "Connect your IQ Option account to load markets and balances.", wrap=True
         )
-        self.notice.setMinimumHeight(38)
+        self.notice.setMinimumHeight(28)
         body.addWidget(self.notice)
         self.pages = QStackedWidget()
         self.pages.addWidget(self._workspace())
@@ -148,7 +155,7 @@ class TradingWindow(QMainWindow):
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(18)
+        layout.setSpacing(12)
         stats = QHBoxLayout()
         stats.setSpacing(12)
         self.account_stat = StatCard("Selected account", "Connect an account")
@@ -159,8 +166,10 @@ class TradingWindow(QMainWindow):
             stats.addWidget(widget, 1)
         layout.addLayout(stats)
         panels = QHBoxLayout()
-        panels.setSpacing(16)
+        panels.setSpacing(12)
         market_card, market = card()
+        market_card.setFixedWidth(286)
+        market.setContentsMargins(12, 16, 12, 16)
         heading = QHBoxLayout()
         heading.addWidget(label("Markets", "cardTitle"))
         heading.addStretch()
@@ -180,7 +189,7 @@ class TradingWindow(QMainWindow):
         self.otc_filter = QComboBox()
         self.otc_filter.addItems(["All markets", "OTC only", "Regular only"])
         self.otc_filter.currentIndexChanged.connect(self._render_markets)
-        filters.addWidget(self.search, 1)
+        market.addWidget(self.search)
         filters.addWidget(self.product_filter)
         filters.addWidget(self.otc_filter)
         market.addLayout(filters)
@@ -189,6 +198,15 @@ class TradingWindow(QMainWindow):
         market.addWidget(self.open_filter)
         self.market_stack = QStackedWidget()
         self.market_table = table(["SYMBOL", "PRODUCT", "STATUS", "PAYOUT"])
+        self.market_table.setStyleSheet(
+            "QHeaderView::section { padding: 9px 4px; } QTableWidget::item { padding: 6px 4px; }"
+        )
+        self.market_table.setColumnHidden(1, True)
+        self.market_table.setColumnWidth(2, 70)
+        self.market_table.setColumnWidth(3, 70)
+        self.market_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self.market_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
+        self.market_table.horizontalHeader().setStretchLastSection(False)
         self.market_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.market_table.itemSelectionChanged.connect(self._select_market)
         self.market_stack.addWidget(self.market_table)
@@ -212,11 +230,13 @@ class TradingWindow(QMainWindow):
         market.addWidget(self.market_stack, 1)
         self.catalog_note = label("No catalog loaded", "small")
         market.addWidget(self.catalog_note)
-        panels.addWidget(market_card, 1)
+        panels.addWidget(market_card)
+        panels.addWidget(self._chart_panel(), 1)
         ticket_card, ticket = card()
-        ticket_card.setFixedWidth(304)
+        ticket_card.setMinimumWidth(244)
+        ticket.setContentsMargins(16, 16, 16, 16)
         ticket.setSpacing(7)
-        ticket.addWidget(label("Order ticket", "cardTitle"))
+        ticket.addWidget(label("Binary options", "cardTitle"))
         self.market_name = label("Select a market", "marketName", wrap=True)
         self.market_detail = label("Choose a binary or turbo instrument.", "muted", wrap=True)
         ticket.addWidget(self.market_name)
@@ -230,9 +250,11 @@ class TradingWindow(QMainWindow):
         ticket.addWidget(self.balance_combo)
         ticket.addWidget(label("Direction", "formLabel"))
         directions = QHBoxLayout()
-        self.call_button = button("CALL  ↑")
+        self.call_button = button("Higher  ↑")
+        self.call_button.setToolTip("CALL: predict a closing price above the opening price")
         self.call_button.setObjectName("call")
-        self.put_button = button("PUT  ↓")
+        self.put_button = button("Lower  ↓")
+        self.put_button.setToolTip("PUT: predict a closing price below the opening price")
         self.put_button.setObjectName("put")
         self.direction_group = QButtonGroup(self)
         for widget in (self.call_button, self.put_button):
@@ -249,12 +271,26 @@ class TradingWindow(QMainWindow):
         self.amount.setAccessibleName("Stake amount")
         self.amount.textChanged.connect(self._controls)
         ticket.addWidget(self.amount)
-        ticket.addWidget(label("Duration", "formLabel"))
+        amount_actions = QHBoxLayout()
+        for title, action in (("−", "subtract"), ("+", "add"), ("½", "half"), ("2×", "double")):
+            control = button(title)
+            control.clicked.connect(lambda checked=False, a=action: self._adjust_amount(a))
+            amount_actions.addWidget(control)
+        ticket.addLayout(amount_actions)
+        ticket.addWidget(label("Trade expiry", "formLabel"))
         self.duration = QComboBox()
         self.duration.setPlaceholderText("Select a market first")
         self.duration.setAccessibleName("Expiration duration")
         self.duration.currentIndexChanged.connect(self._controls)
         ticket.addWidget(self.duration)
+        self.expiry_hint = label("Choose an expiry for this symbol.", "small", wrap=True)
+        ticket.addWidget(self.expiry_hint)
+        self.purchase_hint = label("", "small", wrap=True)
+        ticket.addWidget(self.purchase_hint)
+        self.profit_hint = label("Profit if successful: —", "cardTitle", wrap=True)
+        ticket.addWidget(self.profit_hint)
+        self.return_hint = label("Payout: unknown", "small", wrap=True)
+        ticket.addWidget(self.return_hint)
         self.limits_hint = label("Exact expiration is shown before submission.", "small", wrap=True)
         ticket.addWidget(self.limits_hint)
         self.ack_unknown = QCheckBox("Reviewed unresolved orders")
@@ -269,9 +305,165 @@ class TradingWindow(QMainWindow):
         self.review_button.setMinimumHeight(42)
         self.review_button.clicked.connect(self._prepare)
         ticket.addWidget(self.review_button)
-        panels.addWidget(ticket_card)
+        ticket_scroll = QScrollArea()
+        ticket_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        ticket_scroll.setWidgetResizable(True)
+        ticket_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        ticket_scroll.setFixedWidth(266)
+        ticket_scroll.setWidget(ticket_card)
+        ticket.removeWidget(self.review_button)
+        ticket_column = QVBoxLayout()
+        ticket_column.setSpacing(8)
+        ticket_column.addWidget(ticket_scroll, 1)
+        ticket_column.addWidget(self.review_button)
+        panels.addLayout(ticket_column)
         layout.addLayout(panels, 1)
         return page
+
+    def _chart_panel(self) -> QWidget:
+        frame, layout = card()
+        layout.setContentsMargins(14, 16, 14, 14)
+        layout.setSpacing(10)
+        self.chart_title = label("Price chart", "cardTitle")
+        layout.addWidget(self.chart_title)
+        timeframes = QHBoxLayout()
+        timeframes.setSpacing(4)
+        self.timeframe_buttons = {}
+        self.timeframe_group = QButtonGroup(self)
+        for title, seconds in CHART_TIMEFRAMES:
+            control = button(title)
+            control.setCheckable(True)
+            control.setObjectName("timeframe")
+            control.setAccessibleName(f"Chart timeframe {title}")
+            control.clicked.connect(lambda checked=False, value=seconds: self._set_timeframe(value))
+            self.timeframe_group.addButton(control)
+            self.timeframe_buttons[seconds] = control
+            timeframes.addWidget(control)
+        self.timeframe_buttons[60].setChecked(True)
+        timeframes.addStretch()
+        layout.addLayout(timeframes)
+        tools = QHBoxLayout()
+        tools.setSpacing(6)
+        self.chart_style = QComboBox()
+        self.chart_style.addItems(["Candles", "Line"])
+        self.chart_style.setAccessibleName("Chart type")
+        self.chart_style.currentTextChanged.connect(self._chart_options)
+        tools.addWidget(self.chart_style)
+        for title, attribute in (("SMA 20", "sma"), ("BB 20", "bands"), ("RSI 14", "rsi")):
+            control = QCheckBox(title)
+            control.toggled.connect(self._chart_options)
+            setattr(self, f"{attribute}_toggle", control)
+            tools.addWidget(control)
+        tools.addStretch()
+        layout.addLayout(tools)
+        self.chart = PriceChart()
+        layout.addWidget(self.chart, 1)
+        view = QHBoxLayout()
+        for title, action in (
+            ("−", lambda: self.chart.zoom(1.25)),
+            ("+", lambda: self.chart.zoom(0.8)),
+            ("Latest", self.chart.reset_view),
+        ):
+            control = button(title)
+            control.clicked.connect(action)
+            view.addWidget(control)
+        view.addStretch()
+        positions = button("Positions")
+        positions.clicked.connect(lambda: self._navigate(1))
+        view.addWidget(positions)
+        layout.addLayout(view)
+        self.chart_status = label(
+            "Broker candles · chart timeframe is independent of trade expiry", "small", wrap=True
+        )
+        layout.addWidget(self.chart_status)
+        self.positions_hint = label("No open positions for this symbol.", "small", wrap=True)
+        layout.addWidget(self.positions_hint)
+        return frame
+
+    def _set_timeframe(self, seconds: int) -> None:
+        self._timeframe = seconds
+        self._sync_chart()
+
+    def _chart_options(self) -> None:
+        if not hasattr(self, "chart"):
+            return
+        self.chart.chart_type = self.chart_style.currentText()
+        self.chart.sma = self.sma_toggle.isChecked()
+        self.chart.bands = self.bands_toggle.isChecked()
+        self.chart.rsi = self.rsi_toggle.isChecked()
+        self.chart.update()
+
+    def _sync_chart(self) -> None:
+        symbol = self._selected_symbol()
+        title = next(title for title, value in CHART_TIMEFRAMES if value == self._timeframe)
+        self.chart_title.setText(f"{symbol.symbol} · {title}" if symbol else "Price chart")
+        key = (
+            (self.snapshot.user_id, symbol.active_id, self._timeframe)
+            if self._ready and symbol and self.snapshot.state is SessionState.CONNECTED
+            else None
+        )
+        if key == self._chart_key:
+            return
+        self._chart_key = key
+        if key is None:
+            self.chart.clear("Connect and select a symbol to load broker price history.")
+            self.chart_status.setText("Price history paused · no connected symbol")
+            if self._ready:
+                self.worker.request("chart", active_id=None)
+        else:
+            self.chart.clear(f"Loading {symbol.symbol} · {title} candles…")
+            self.chart_status.setText("Loading broker price history…")
+            self.worker.request("chart", active_id=symbol.active_id, timeframe=self._timeframe)
+
+    @Slot(str, int, object, object)
+    def _chart_updated(self, active_id: str, timeframe: int, series: object, error: object) -> None:
+        if self._closing or self._chart_key != (self.snapshot.user_id, active_id, timeframe):
+            return
+        if error:
+            self.chart_status.setText(f"Chart unavailable · {error[1]} · retrying")
+            if self.chart.series is None:
+                self.chart.clear("Broker price history is unavailable. Retrying…")
+        else:
+            self.chart.set_series(series)
+            self.chart_status.setText(
+                f"{len(series.candles)} broker candles · sampled {local_time(series.server_time)} · refresh every 3s"
+            )
+
+    def _adjust_amount(self, action: str) -> None:
+        if not self.amount.isEnabled():
+            return
+        symbol = self._ticket_symbol()
+        balance = self.snapshot.selected_balance()
+        if symbol is None or balance is None or balance.currency_digits is None:
+            return
+        try:
+            current = Decimal(self.amount.text().strip() or str(symbol.min_stake or 1))
+            if not current.is_finite() or current <= 0:
+                return
+            values = {
+                "add": current + 1,
+                "subtract": current - 1,
+                "half": current / 2,
+                "double": current * 2,
+            }
+            maximum = min(
+                balance.amount, symbol.max_stake if symbol.max_stake is not None else balance.amount
+            )
+            minimum = (
+                symbol.min_stake
+                if symbol.min_stake is not None
+                else Decimal(1).scaleb(-balance.currency_digits)
+            )
+            unit = Decimal(1).scaleb(-balance.currency_digits)
+            minimum = minimum.quantize(unit, rounding=ROUND_CEILING)
+            maximum = maximum.quantize(unit, rounding=ROUND_FLOOR)
+            if minimum > maximum:
+                return
+            value = max(minimum, min(maximum, values[action]))
+            value = value.quantize(unit)
+            self.amount.setText(f"{value:.{balance.currency_digits}f}")
+        except (InvalidOperation, ValueError):
+            return
 
     def _orders_page(self) -> QWidget:
         page = QWidget()
@@ -414,6 +606,7 @@ class TradingWindow(QMainWindow):
     def _worker_ready(self) -> None:
         self._ready = True
         self._controls()
+        self._sync_chart()
 
     @Slot(object)
     def _on_snapshot(self, snapshot: DesktopSnapshot) -> None:
@@ -469,6 +662,7 @@ class TradingWindow(QMainWindow):
         self._render_orders()
         self._sync_ticket()
         self._controls()
+        self._sync_chart()
 
     def _filtered_symbols(self) -> list[Symbol]:
         search = self.search.text().strip().casefold()
@@ -494,7 +688,7 @@ class TradingWindow(QMainWindow):
                 for row, symbol in enumerate(symbols):
                     status = symbol.market_status(now)
                     values = (
-                        symbol.symbol,
+                        f"{symbol.symbol}\n{symbol.product.title()}",
                         symbol.product.title(),
                         status.title(),
                         f"{symbol.payout_percent}%" if symbol.payout_percent is not None else "—",
@@ -503,6 +697,9 @@ class TradingWindow(QMainWindow):
                         item = QTableWidgetItem(value)
                         item.setData(
                             Qt.ItemDataRole.UserRole, (symbol.active_id, symbol.product.value)
+                        )
+                        item.setToolTip(
+                            f"{symbol.display_name} · {symbol.product.title()} · {status.title()}"
                         )
                         if column == 2:
                             item.setForeground(QColor("#22835b" if status == "open" else "#8b989b"))
@@ -544,27 +741,38 @@ class TradingWindow(QMainWindow):
             self._market_key = tuple(self.market_table.item(row, 0).data(Qt.ItemDataRole.UserRole))
         self._sync_ticket()
         self._controls()
+        self._sync_chart()
+
+    def _ticket_symbol(self) -> Symbol | None:
+        return self._expiry_choices.get(self.duration.currentData())
 
     def _sync_ticket(self) -> None:
         symbol = self._selected_symbol()
         self.market_name.setText(symbol.symbol if symbol else "Select a market")
-        self.market_detail.setText(
-            f"{symbol.product.title()} · {'OTC' if symbol.otc else 'Regular'} · {symbol.market_status(self.snapshot.now()).title()}"
-            if symbol
-            else "Choose a binary or turbo instrument."
-        )
-        durations = supported_minutes(symbol) if symbol else ()
+        choices = expiration_choices(symbol, self.snapshot.symbols) if symbol else ()
+        self._expiry_choices = dict(choices)
+        durations = tuple(self._expiry_choices)
         existing = tuple(self.duration.itemData(index) for index in range(self.duration.count()))
         if durations != existing:
             previous = self.duration.currentData()
             with QSignalBlocker(self.duration):
                 self.duration.clear()
                 for minutes in durations:
-                    self.duration.addItem(f"{minutes} minute{'s' if minutes != 1 else ''}", minutes)
+                    self.duration.addItem(f"{minutes}m", minutes)
                 if previous in durations:
                     self.duration.setCurrentIndex(self.duration.findData(previous))
                 elif durations:
-                    self.duration.setCurrentIndex(0)
+                    available = next(
+                        (m for m, s in choices if s.market_status(self.snapshot.now()) == "open"),
+                        durations[0],
+                    )
+                    self.duration.setCurrentIndex(self.duration.findData(available))
+        self.market_detail.setText(
+            f"{'OTC' if symbol.otc else 'Regular'} · {symbol.display_name}"
+            if symbol
+            else "Choose a binary options symbol."
+        )
+        symbol = self._ticket_symbol()
         balance = self.snapshot.selected_balance()
         if symbol and (symbol.min_stake is not None or symbol.max_stake is not None):
             self.limits_hint.setText(
@@ -572,6 +780,88 @@ class TradingWindow(QMainWindow):
             )
         else:
             self.limits_hint.setText("Exact expiration is shown before submission.")
+
+    def _update_ticket_preview(self) -> None:
+        symbol = self._ticket_symbol()
+        balance = self.snapshot.selected_balance()
+        now = self.snapshot.now()
+        self.chart.expiration = self.chart.cutoff = None
+        self.expiry_hint.setText(
+            "No supported expiries for this symbol."
+            if self._selected_symbol()
+            else "Choose a symbol."
+        )
+        self.purchase_hint.setText("")
+        if symbol:
+            self.expiry_hint.setText(
+                f"{self.duration.currentData()}m expiry · {symbol.market_status(now).title()}"
+            )
+            if now is None:
+                self.purchase_hint.setText("Waiting for fresh broker time.")
+            else:
+                try:
+                    expiration = expiration_for(symbol, self.duration.currentData(), now)
+                    self.expiry_hint.setText(
+                        f"Expires {local_time(expiration)} · {max(0, int(expiration - now))}s left"
+                    )
+                    self.purchase_hint.setText(
+                        f"Purchase window: {max(0, int(expiration - symbol.purchase_cutoff - now))}s"
+                    )
+                    self.chart.expiration = expiration
+                    self.chart.cutoff = expiration - symbol.purchase_cutoff
+                except BrokerError as error:
+                    self.purchase_hint.setText(error.message)
+        self.chart.update()
+        self.profit_hint.setText("Profit if successful: —")
+        self.return_hint.setText(
+            "Payout: unknown"
+            if not self.snapshot.catalog_stale
+            else "Payout: waiting for fresh catalog"
+        )
+        if symbol and symbol.payout_percent is not None and not self.snapshot.catalog_stale:
+            self.return_hint.setText(f"Payout: {symbol.payout_percent}%")
+            if balance:
+                try:
+                    stake = Decimal(self.amount.text().strip())
+                    if stake.is_finite() and stake > 0:
+                        profit = stake * symbol.payout_percent / 100
+                        digits = (
+                            balance.currency_digits if balance.currency_digits is not None else 2
+                        )
+                        self.profit_hint.setText(
+                            f"Profit if successful:\n≈ {profit:.{digits}f} {balance.currency}"
+                        )
+                        self.return_hint.setText(
+                            f"Payout: {symbol.payout_percent}% · total return ≈ {stake + profit:.{digits}f} {balance.currency}"
+                        )
+                except InvalidOperation:
+                    pass
+        selected = self._selected_symbol()
+        positions = [
+            o
+            for o in self.snapshot.orders
+            if selected
+            and o.active_id == selected.active_id
+            and o.balance_id == self.snapshot.selected_balance_id
+            and o.state in (OrderState.ACCEPTED, OrderState.SUBMITTING, OrderState.UNKNOWN)
+        ]
+        lines = []
+        for order in positions[:3]:
+            remaining = max(0, int(order.expiration - now)) if now is not None else None
+            timing = (
+                f"{remaining}s left"
+                if remaining
+                else "Awaiting settlement"
+                if remaining == 0
+                else "Time unavailable"
+            )
+            lines.append(
+                f"{order.direction.upper()} · {order.amount} {order.currency} · {timing}"
+                + (f" · {order.state}" if order.state is not OrderState.ACCEPTED else "")
+            )
+        self.positions_hint.setText(
+            "\n".join(lines) if lines else "No open positions for this symbol."
+        )
 
     def _select_balance(self) -> None:
         balance_id = self.balance_combo.currentData()
@@ -612,7 +902,7 @@ class TradingWindow(QMainWindow):
         self._request("login", identifier=identifier, secret=secret)
 
     def _prepare(self) -> None:
-        symbol = self._selected_symbol()
+        symbol = self._ticket_symbol()
         if symbol is None:
             return
         direction = (
@@ -737,12 +1027,13 @@ class TradingWindow(QMainWindow):
         self.logout_button.setEnabled(ready and self.snapshot.user_id is not None)
         self.refresh_markets.setEnabled(ready and connected)
         self.balance_combo.setEnabled(ready and connected)
-        symbol = self._selected_symbol()
+        symbol = self._ticket_symbol()
         tradable = bool(
             ready and connected and symbol and symbol.market_status(self.snapshot.now()) == "open"
         )
-        for widget in (self.call_button, self.put_button, self.amount, self.duration):
+        for widget in (self.call_button, self.put_button, self.amount):
             widget.setEnabled(tradable)
+        self.duration.setEnabled(bool(ready and connected and self._expiry_choices))
         direction = self.call_button.isChecked() or self.put_button.isChecked()
         unresolved = any(
             o.balance_id == self.snapshot.selected_balance_id
@@ -772,6 +1063,7 @@ class TradingWindow(QMainWindow):
         self.review_saved_button.setEnabled(
             bool(ready and connected and order and order.state is OrderState.PREPARED)
         )
+        self._update_ticket_preview()
 
     @Slot(str, object, object)
     def _completed(self, operation: str, value: object, error: object) -> None:
@@ -816,6 +1108,18 @@ class TradingWindow(QMainWindow):
                     break
         elif operation == "symbols":
             self._notify(f"Loaded {len(value.symbols)} binary and turbo products.")
+            if self._selected_symbol() is None:
+                symbols = self._filtered_symbols()
+                row = next(
+                    (
+                        i
+                        for i, s in enumerate(symbols)
+                        if s.market_status(self.snapshot.now()) == "open"
+                    ),
+                    0,
+                )
+                if symbols:
+                    self.market_table.selectRow(row)
         elif operation == "logout":
             self._notify(
                 "Disconnected. Remote logout confirmed."
@@ -824,6 +1128,7 @@ class TradingWindow(QMainWindow):
             )
             self._market_key = None
             self._sync_ticket()
+            self._sync_chart()
         elif operation == "balance":
             self._notify(f"Selected {value.mode} balance {value.id} · {value.currency}.")
         elif operation == "reconcile":

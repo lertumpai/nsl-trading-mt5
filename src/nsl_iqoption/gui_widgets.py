@@ -50,6 +50,8 @@ QPushButton#call { background: #eaf5ef; color: #167b50; border-color: #deeee4; }
 QPushButton#call:checked { background: #188354; color: #ffffff; border-color: #188354; }
 QPushButton#put { background: #fcf0ed; color: #ba5947; border-color: #f2e4df; }
 QPushButton#put:checked { background: #bc5847; color: #ffffff; border-color: #bc5847; }
+QPushButton#timeframe { padding: 8px 10px; }
+QPushButton#timeframe:checked { background: #1a654f; color: white; border-color: #1a654f; }
 QPushButton#call:disabled, QPushButton#put:disabled { color: #9caeb2; background: #f3f6f6; border-color: #e5ecee; }
 QLineEdit, QComboBox { background: #ffffff; border: 1px solid #d9e3e5; border-radius: 7px; padding: 9px 11px; min-height: 18px; selection-background-color: #c5e4d9; }
 QLineEdit:focus, QComboBox:focus { border: 1px solid #3c9273; }

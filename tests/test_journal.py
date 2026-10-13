@@ -63,3 +63,19 @@ class JournalTests(unittest.TestCase):
         self.journal.close()
         self.journal = OrderJournal(self.path)
         self.assertEqual(self.journal.get("local-1").state, OrderState.ACCEPTED)
+
+    def test_settled_draw_survives_restart_and_cannot_be_sent_again(self):
+        settled = replace(
+            self.order,
+            state=OrderState.SETTLED,
+            broker_id="10001",
+            gross_return=self.order.amount,
+            net_profit=Decimal(0),
+        )
+        self.journal.save(settled)
+        self.journal.close()
+        self.journal = OrderJournal(self.path)
+        self.assertEqual(self.journal.get("local-1"), settled)
+        with self.assertRaises(BrokerError) as caught:
+            self.journal.claim("local-1", "another-request", 2_000_000_100)
+        self.assertEqual(caught.exception.code, "ORDER_ALREADY_SUBMITTED")

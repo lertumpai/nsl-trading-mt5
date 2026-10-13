@@ -11,6 +11,7 @@ from PySide6.QtCore import QThread, Signal
 from .client import IQOptionClient
 from .errors import BrokerError
 from .gui_state import DesktopSnapshot
+from .models import SessionState
 from .transport import WebSocketTransport
 
 log = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class BrokerWorker(QThread):
     ready = Signal()
     snapshot = Signal(object)
     completed = Signal(str, object, object)
+    chart_updated = Signal(str, int, object, object)
 
     def __init__(
         self,
@@ -41,6 +43,8 @@ class BrokerWorker(QThread):
         self._active: asyncio.Task | None = None
         self._stopping = False
         self._client: IQOptionClient | None = None
+        self._chart_task: asyncio.Task | None = None
+        self._chart_tasks: set[asyncio.Task] = set()
 
     def request(self, operation: str, **payload: object) -> bool:
         if self._loop is None or self._stopping:
@@ -56,7 +60,40 @@ class BrokerWorker(QThread):
         if self._stopping:
             payload.clear()
             return
+        if operation == "chart":
+            if self._chart_task is not None:
+                self._chart_task.cancel()
+                self._chart_task = None
+            active_id = payload.get("active_id")
+            if active_id is not None:
+                task = asyncio.create_task(self._chart_loop(active_id, payload["timeframe"]))
+                self._chart_task = task
+                self._chart_tasks.add(task)
+                task.add_done_callback(self._chart_tasks.discard)
+            payload.clear()
+            return
         self._queue.put_nowait((operation, payload))
+
+    async def _chart_loop(self, active_id: str, timeframe: int) -> None:
+        while not self._stopping:
+            delay = 3
+            if self._client.state is SessionState.CONNECTED:
+                try:
+                    series = await self._client.get_candles(active_id, timeframe)
+                    self.chart_updated.emit(active_id, timeframe, series, None)
+                except BrokerError as error:
+                    self.chart_updated.emit(active_id, timeframe, None, (error.code, error.message))
+                    delay = 10
+                except Exception as error:  # noqa: BLE001 - Keep account data out of UI errors.
+                    log.warning("Chart fetch failed: type=%s", type(error).__name__)
+                    self.chart_updated.emit(
+                        active_id,
+                        timeframe,
+                        None,
+                        ("CHART_UNAVAILABLE", "Price history unavailable."),
+                    )
+                    delay = 10
+            await asyncio.sleep(delay)
 
     def shutdown(self) -> None:
         self._stopping = True
@@ -67,6 +104,8 @@ class BrokerWorker(QThread):
                 pass
 
     def _stop_in_loop(self) -> None:
+        for task in self._chart_tasks:
+            task.cancel()
         while not self._queue.empty():
             _, payload = self._queue.get_nowait()
             payload.clear()
@@ -136,6 +175,10 @@ class BrokerWorker(QThread):
                     payload.clear()
                     self._active = None
         finally:
+            for task in self._chart_tasks:
+                task.cancel()
+            if self._chart_tasks:
+                await asyncio.gather(*self._chart_tasks, return_exceptions=True)
             poll.cancel()
             try:
                 await poll

@@ -6,7 +6,7 @@
         "enabled": true, "is_suspended": false,
         "schedule": [[1000000000, 4000000000]],
         "minimal_bet": "1.00", "maximal_bet": "1000.00",
-        "option": {"expiration_times": {"900": {}, "1800": {}}, "deadtime": 300}
+        "option": {"profit": {"commission": 15, "refund_min": 0, "refund_max": 0}, "expiration_times": {"900": {}, "1800": {}}, "deadtime": 300}
       }
     }
   },
@@ -17,13 +17,13 @@
         "enabled": true, "is_suspended": false,
         "schedule": [[1000000000, 4000000000]],
         "minimal_bet": "1.00", "maximal_bet": "1000.00",
-        "option": {"expiration_times": {"60": {}, "120": {}, "300": {}}, "deadtime": 30}
+        "option": {"profit": {"commission": 15, "refund_min": 0, "refund_max": 0}, "expiration_times": {"60": {}, "120": {}, "300": {}}, "deadtime": 30}
       },
       "1": {
         "id": 1, "name": "front.EURUSD", "ticker": "EURUSD",
         "enabled": true, "is_suspended": true,
         "schedule": [[1000000000, 4000000000]],
-        "option": {"expiration_times": {"60": {}}, "deadtime": 30}
+        "option": {"profit": {"commission": 15, "refund_min": 0, "refund_max": 0}, "expiration_times": {"60": {}}, "deadtime": 30}
       }
     }
   }

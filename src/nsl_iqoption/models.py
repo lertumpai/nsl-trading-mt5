@@ -94,6 +94,28 @@ class SymbolCatalog:
     stale: bool
 
 
+CHART_TIMEFRAMES = (("1m", 60), ("5m", 300), ("15m", 900), ("1h", 3600), ("1day", 86400))
+
+
+@dataclass(frozen=True)
+class Candle:
+    start: int
+    end: int
+    open: Decimal
+    high: Decimal
+    low: Decimal
+    close: Decimal
+    volume: Decimal | None = None
+
+
+@dataclass(frozen=True)
+class CandleSeries:
+    active_id: str
+    timeframe: int
+    candles: tuple[Candle, ...]
+    server_time: float
+
+
 @dataclass(frozen=True)
 class OrderInput:
     symbol: str

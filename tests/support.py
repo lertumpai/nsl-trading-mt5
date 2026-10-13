@@ -23,6 +23,7 @@ class FakeBroker:
         self.catalog = deepcopy(FIXTURE)
         self.order_action = "accept"
         self.orders = []
+        self.candle_response = None
         self.history = []
         self.requests = []
         self.auth_ok = True
@@ -120,6 +121,28 @@ class FakeBroker:
                         )
                     elif name == "get-balances":
                         await self.reply(ws, "balances", self.balances, rid)
+                    elif name == "get-candles":
+                        size = body["size"]
+                        start = (body["to"] // size - 1) * size
+                        candles = {
+                            "candles": [
+                                {
+                                    "from": start,
+                                    "to": start + size,
+                                    "open": "1.10",
+                                    "close": "1.12",
+                                    "max": "1.13",
+                                    "min": "1.09",
+                                    "volume": 12,
+                                }
+                            ]
+                        }
+                        await self.reply(
+                            ws,
+                            "candles",
+                            self.candle_response if self.candle_response is not None else candles,
+                            rid,
+                        )
                     elif name == "get-initialization-data":
                         if self.reject_v4 and envelope["msg"]["version"] == "4.0":
                             await self.reply(

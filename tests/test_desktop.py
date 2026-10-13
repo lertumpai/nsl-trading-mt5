@@ -29,6 +29,8 @@ from nsl_iqoption.errors import BrokerError
 from nsl_iqoption.gui_state import DesktopSnapshot
 from nsl_iqoption.models import (
     Balance,
+    Candle,
+    CandleSeries,
     Order,
     OrderState,
     Product,
@@ -43,13 +45,18 @@ if QT_AVAILABLE:
         ready = Signal()
         snapshot = Signal(object)
         completed = Signal(str, object, object)
+        chart_updated = Signal(str, int, object, object)
         finished = Signal()
 
         def __init__(self):
             super().__init__()
             self.requests = []
+            self.chart_requests = []
 
         def request(self, operation, **payload):
+            if operation == "chart":
+                self.chart_requests.append(payload)
+                return True
             self.requests.append((operation, payload))
             return True
 
@@ -138,10 +145,93 @@ class DesktopTests(unittest.TestCase):
         self.connect()
         self.window.market_table.selectRow(0)
         self.assertEqual(self.window._selected_symbol().product, Product.BINARY)
-        self.assertEqual(self.window.duration.itemData(0), 15)
+        self.assertEqual(
+            [self.window.duration.itemData(i) for i in range(self.window.duration.count())],
+            [1, 2, 5, 15, 30],
+        )
+        self.assertEqual(self.window._ticket_symbol().product, Product.TURBO)
+        self.window.duration.setCurrentIndex(self.window.duration.findData(15))
+        self.assertEqual(self.window._ticket_symbol().product, Product.BINARY)
         self.window.market_table.selectRow(1)
         self.assertEqual(self.window._selected_symbol().product, Product.TURBO)
         self.assertEqual(self.window.duration.itemData(0), 1)
+
+    def test_one_minute_from_binary_row_routes_to_turbo(self):
+        self.connect()
+        self.window.market_table.selectRow(0)
+        self.window.call_button.click()
+        self.window.amount.setText("1.00")
+        self.window.review_button.click()
+        order_input = self.worker.requests[-1][1]["order_input"]
+        self.assertEqual((order_input.duration_minutes, order_input.product), (1, Product.TURBO))
+
+    def test_chart_timeframes_do_not_change_trade_expiry(self):
+        self.ticket()
+        for seconds in (60, 300, 900, 3600, 86400):
+            self.window.timeframe_buttons[seconds].click()
+            self.assertEqual(
+                self.worker.chart_requests[-1], {"active_id": "76", "timeframe": seconds}
+            )
+            self.assertEqual(self.window.duration.currentData(), 1)
+            self.assertEqual(self.window._ticket_symbol().product, Product.TURBO)
+        self.assertEqual(self.worker.requests, [])
+
+    def test_old_chart_reply_is_ignored_and_disconnect_clears_data(self):
+        self.ticket()
+        series = CandleSeries(
+            "76",
+            60,
+            (Candle(1_999_999_920, 1_999_999_980, Decimal(1), Decimal(2), Decimal(1), Decimal(2)),),
+            2_000_000_000,
+        )
+        self.worker.chart_updated.emit("76", 60, series, None)
+        self.assertIs(self.window.chart.series, series)
+        self.window.timeframe_buttons[300].click()
+        self.worker.chart_updated.emit("76", 60, series, None)
+        self.assertIsNone(self.window.chart.series)
+        self.worker.snapshot.emit(replace(self.connected, state=SessionState.RECONNECTING))
+        self.assertIsNone(self.window.chart.series)
+        self.assertEqual(self.worker.chart_requests[-1], {"active_id": None})
+
+    def test_chart_error_does_not_disable_trading_or_release_trade_request(self):
+        self.ticket()
+        self.window._busy = True
+        self.worker.chart_updated.emit("76", 60, None, ("NETWORK_TIMEOUT", "Timed out."))
+        self.assertTrue(self.window._busy)
+        self.assertIn("Timed out", self.window.chart_status.text())
+        self.window._busy = False
+        self.window._controls()
+        self.assertTrue(self.window.review_button.isEnabled())
+
+    def test_payout_and_amount_shortcuts_use_product_and_currency(self):
+        self.connect()
+        symbols = tuple(
+            replace(s, payout_percent=Decimal(85) if s.product is Product.TURBO else Decimal(70))
+            for s in self.connected.symbols
+        )
+        self.worker.snapshot.emit(replace(self.connected, symbols=symbols))
+        self.window.market_table.selectRow(0)
+        self.window.amount.setText("1.00")
+        self.assertIn("0.85 USD", self.window.profit_hint.text())
+        self.window.duration.setCurrentIndex(self.window.duration.findData(15))
+        self.assertIn("0.70 USD", self.window.profit_hint.text())
+        self.window._adjust_amount("double")
+        self.assertEqual(self.window.amount.text(), "2.00")
+        self.worker.snapshot.emit(replace(self.connected, catalog_stale=True))
+        self.assertEqual(self.window.profit_hint.text(), "Profit if successful: —")
+
+    def test_amount_shortcuts_round_inside_broker_limits(self):
+        self.ticket()
+        symbols = tuple(
+            replace(s, min_stake=Decimal("1.001"), max_stake=Decimal("4.999"))
+            for s in self.connected.symbols
+        )
+        self.worker.snapshot.emit(replace(self.connected, symbols=symbols))
+        self.window._adjust_amount("half")
+        self.assertEqual(self.window.amount.text(), "1.01")
+        self.window.amount.setText("4.99")
+        self.window._adjust_amount("double")
+        self.assertEqual(self.window.amount.text(), "4.99")
 
     def test_search_and_otc_filters_do_not_change_broker_data(self):
         self.connect()
@@ -255,6 +345,8 @@ class ThreadBoundClient:
         self.balances = []
         self.transport = SimpleNamespace(clock=SimpleNamespace(now=lambda: 2_000_000_000))
         self.closed = False
+        self.chart_calls = []
+        self.canceled_charts = []
 
     def check_thread(self):
         if threading.get_ident() != self.owner:
@@ -275,6 +367,15 @@ class ThreadBoundClient:
         self.state = SessionState.CONNECTED
         self.user_id = "123"
         return Session("123", None, self.state)
+
+    async def get_candles(self, active_id, timeframe):
+        self.check_thread()
+        self.chart_calls.append((active_id, timeframe))
+        try:
+            await asyncio.sleep(30)
+        except asyncio.CancelledError:
+            self.canceled_charts.append((active_id, timeframe))
+            raise
 
     async def close(self):
         self.check_thread()
@@ -338,3 +439,27 @@ class WorkerTests(unittest.TestCase):
         self.worker.wait(3000)
         self.assertFalse(self.worker.isRunning())
         self.assertTrue(self.clients[0].closed)
+
+    def test_slow_chart_does_not_block_commands_and_latest_watch_cancels_previous(self):
+        self.worker.request("login", identifier="synthetic", secret="synthetic")
+        self.wait_until(lambda: len(self.results) == 1)
+        self.worker.request("chart", active_id="76", timeframe=60)
+        self.wait_until(lambda: bool(self.clients[0].chart_calls))
+        self.worker.request("login", identifier="synthetic", secret="synthetic")
+        self.wait_until(lambda: len(self.results) == 2)
+        self.worker.request("chart", active_id="76", timeframe=300)
+        self.wait_until(lambda: len(self.clients[0].chart_calls) == 2)
+        self.assertEqual(self.clients[0].canceled_charts, [("76", 60)])
+        self.worker.request("chart", active_id=None)
+        self.wait_until(lambda: len(self.clients[0].canceled_charts) == 2)
+        self.assertEqual(self.clients[0].canceled_charts[-1], ("76", 300))
+
+    def test_shutdown_cancels_chart_before_closing_broker(self):
+        self.worker.request("login", identifier="synthetic", secret="synthetic")
+        self.wait_until(lambda: bool(self.results))
+        self.worker.request("chart", active_id="76", timeframe=60)
+        self.wait_until(lambda: bool(self.clients[0].chart_calls))
+        self.worker.shutdown()
+        self.worker.wait(3000)
+        self.assertFalse(self.worker.isRunning())
+        self.assertEqual(self.clients[0].canceled_charts, [("76", 60)])

@@ -4,6 +4,7 @@ import unittest
 from dataclasses import replace
 from decimal import Decimal
 from pathlib import Path
+from unittest.mock import patch
 
 from support import FakeBroker
 
@@ -138,6 +139,100 @@ class ClientTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(catalog.symbols), 2)
         self.assertEqual({s.product for s in catalog.symbols}, {Product.BINARY, Product.TURBO})
         self.assertEqual(catalog.symbols[0].payout_percent, Decimal(85))
+
+    async def test_available_initialization_payout_never_calls_optional_endpoint(self):
+        await self.login()
+        with patch.object(self.client, "_payouts", side_effect=AssertionError("Not needed")):
+            catalog = await self.client.list_symbols(refresh=True)
+            self.assertEqual(catalog.symbols[1].payout_percent, Decimal(85))
+            self.assertIsNone(self.client._payout_task)
+            order = await self.prepare()
+            self.assertEqual(order.state, OrderState.PREPARED)
+        self.assertEqual(self.broker.orders, [])
+
+    async def test_slow_optional_payout_cannot_make_preparation_stale(self):
+        for section in self.broker.catalog.values():
+            for active in section["actives"].values():
+                active["option"].pop("profit", None)
+        await self.login()
+        release = asyncio.Event()
+
+        async def slow_payouts():
+            await release.wait()
+            return {("76", Product.TURBO): Decimal(88)}
+
+        with patch.object(self.client, "_payouts", side_effect=slow_payouts):
+            catalog = await asyncio.wait_for(self.client.list_symbols(refresh=True), 0.5)
+            self.assertIsNone(catalog.symbols[1].payout_percent)
+            sampled_at = self.client._catalog_mono
+            order = await asyncio.wait_for(self.prepare(), 0.5)
+            self.assertEqual(order.state, OrderState.PREPARED)
+            release.set()
+            await self.client._payout_task
+            self.assertEqual(self.client.cached_symbols().symbols[1].payout_percent, Decimal(88))
+            self.assertEqual(self.client._catalog_mono, sampled_at)
+        self.assertEqual(self.broker.orders, [])
+
+    async def test_old_optional_payout_response_cannot_replace_new_catalog(self):
+        for section in self.broker.catalog.values():
+            for active in section["actives"].values():
+                active["option"].pop("profit", None)
+        await self.login()
+        started = asyncio.Event()
+
+        async def late_payouts():
+            started.set()
+            try:
+                await asyncio.sleep(30)
+            except asyncio.CancelledError:
+                return {("76", Product.TURBO): Decimal(99)}
+
+        with patch.object(self.client, "_payouts", side_effect=late_payouts):
+            await self.client.list_symbols(refresh=True)
+            old_task = self.client._payout_task
+            await started.wait()
+            self.broker.catalog["turbo"]["actives"]["76"]["option"]["profit"] = {"commission": 20}
+            await self.client.list_symbols(refresh=True)
+            await old_task
+            self.assertEqual(self.client.cached_symbols().symbols[1].payout_percent, Decimal(80))
+
+    async def test_each_chart_timeframe_uses_account_active_and_places_no_orders(self):
+        self.broker.object_acknowledgements = True
+        await self.login()
+        for seconds in (60, 300, 900, 3600, 86400):
+            series = await self.client.get_candles("76", seconds)
+            self.assertEqual((series.active_id, series.timeframe), ("76", seconds))
+            self.assertEqual(series.candles[0].end - series.candles[0].start, seconds)
+            self.assertEqual(series.candles[0].close, Decimal("1.12"))
+        requests = [
+            r["msg"]
+            for r in self.broker.requests
+            if isinstance(r.get("msg"), dict) and r["msg"].get("name") == "get-candles"
+        ]
+        self.assertEqual([r["body"]["size"] for r in requests], [60, 300, 900, 3600, 86400])
+        self.assertEqual(self.broker.orders, [])
+        self.assertEqual(self.client.list_orders(), [])
+
+    async def test_chart_rejects_unknown_symbol_invalid_timeframe_and_future_data(self):
+        await self.login()
+        for active_id, timeframe in (("76", 30), ("999", 60), ("76", True)):
+            with self.assertRaises(BrokerError):
+                await self.client.get_candles(active_id, timeframe)
+        self.broker.candle_response = {
+            "candles": [
+                {
+                    "from": 2_000_000_100,
+                    "to": 2_000_000_160,
+                    "open": 1,
+                    "close": 1,
+                    "max": 1,
+                    "min": 1,
+                }
+            ]
+        }
+        with self.assertRaises(BrokerError):
+            await self.client.get_candles("76", 60)
+        self.assertEqual(self.broker.orders, [])
 
     async def test_initialization_read_only_version_fallback(self):
         self.broker.reject_v4 = True
@@ -296,6 +391,35 @@ class ClientTests(unittest.IsolatedAsyncioTestCase):
             and r["msg"].get("name") == "portfolio.get-history-positions"
         ]
         self.assertEqual(offsets, [0, 100])
+
+    async def test_draw_settlement_records_returned_stake_and_ignores_open_pnl(self):
+        await self.login()
+        order = await self.prepare(Decimal("30.00"))
+        accepted = await self.client.submit_order(order.local_id)
+        opening = dict(self.broker.position(self.broker.orders[0], closed=False), pnl="-15.336")
+        self.client._on_event({"name": "position-changed", "msg": opening})
+        current = self.client.journal.get(order.local_id)
+        self.assertEqual(current.state, OrderState.ACCEPTED)
+        self.assertIsNone(current.net_profit)
+        self.broker.history = [
+            dict(
+                self.broker.position(self.broker.orders[0]),
+                invest="30.00",
+                close_profit="30.00",
+                pnl="0",
+                open_quote="1.1178",
+                close_quote="1.1178",
+                close_reason="equal",
+                raw_event={
+                    "binary_options_option_changed1": {"direction": "call", "result": "equal"}
+                },
+            )
+        ]
+        settled = await self.client.get_order(accepted.local_id)
+        self.assertEqual(settled.state, OrderState.SETTLED)
+        self.assertEqual(settled.broker_id, accepted.broker_id)
+        self.assertEqual(settled.gross_return, Decimal("30.00"))
+        self.assertEqual(settled.net_profit, Decimal(0))
 
     async def test_unknown_cannot_be_guessed_from_similar_trade(self):
         await self.login()

@@ -43,6 +43,19 @@ def supported_minutes(symbol: Symbol) -> tuple[int, ...]:
     )
 
 
+def expiration_choices(
+    symbol: Symbol, symbols: tuple[Symbol, ...]
+) -> tuple[tuple[int, Symbol], ...]:
+    """Present all advertised expiries for the selected asset, preserving product routing."""
+    choices = {}
+    for candidate in symbols:
+        if candidate.active_id != symbol.active_id or candidate.symbol != symbol.symbol:
+            continue
+        for minutes in supported_minutes(candidate):
+            choices[minutes] = candidate
+    return tuple(sorted(choices.items()))
+
+
 def ticket_input(symbol: Symbol, amount: str, minutes: int, direction: str) -> OrderInput:
     try:
         stake = Decimal(amount.strip())

@@ -30,6 +30,22 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(self.binary.expiration_seconds, (900, 1800))
         self.assertTrue(self.turbo.otc)
 
+    def test_initialization_commission_gives_product_specific_payout(self):
+        raw = deepcopy(FIXTURE)
+        raw["binary"]["actives"]["76"]["option"]["profit"]["commission"] = 20
+        raw["turbo"]["actives"]["76"]["option"]["profit"]["commission"] = 12
+        symbols = parse_symbols(raw)
+        self.assertEqual(symbols[0].payout_percent, Decimal(80))
+        self.assertEqual(symbols[1].payout_percent, Decimal(88))
+
+    def test_bad_or_missing_optional_commission_does_not_block_catalog(self):
+        for value in (None, "NaN", True, -1, 101, "unsupported"):
+            raw = deepcopy(FIXTURE)
+            raw["turbo"]["actives"]["76"]["option"]["profit"]["commission"] = value
+            symbol = parse_symbols(raw)[1]
+            self.assertIsNone(symbol.payout_percent)
+            self.assertEqual(symbol.market_status(2_000_000_000), "open")
+
     def test_missing_schedule_is_unknown(self):
         raw = deepcopy(FIXTURE)
         del raw["turbo"]["actives"]["76"]["schedule"]

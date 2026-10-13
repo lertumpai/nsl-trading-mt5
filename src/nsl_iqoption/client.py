@@ -13,8 +13,10 @@ from .auth import AuthClient
 from .errors import BrokerError, BrokerRejection, RequestError, broker_failure
 from .journal import OrderJournal
 from .models import (
+    CHART_TIMEFRAMES,
     AuthChallenge,
     Balance,
+    CandleSeries,
     Order,
     OrderInput,
     OrderState,
@@ -31,7 +33,9 @@ from .protocol import (
     message,
     order_body,
     parse_balances,
+    parse_candles,
     parse_symbols,
+    payout_from_commission,
     profile_user,
     validate_expiration,
 )
@@ -64,6 +68,8 @@ class IQOptionClient:
         self._closing = True
         self._reconnect_task: asyncio.Task | None = None
         self._refresh_task: asyncio.Task | None = None
+        self._payout_task: asyncio.Task | None = None
+        self._catalog_generation = 0
         self._balance_dirty = False
         self.protocol_versions: dict[str, str] = {}
         self.transport.on_event = self._on_event
@@ -174,6 +180,40 @@ class IQOptionClient:
         self._require_connection()
         return await self._load_balances()
 
+    async def get_candles(
+        self, active_id: str, timeframe: int = 60, *, count: int = 120
+    ) -> CandleSeries:
+        """Read price history for an account-listed active, independently of trade expiry."""
+        self._require_connection()
+        if type(timeframe) is not int or timeframe not in {v for _, v in CHART_TIMEFRAMES}:
+            raise BrokerError("INVALID_INPUT", "Choose a supported chart timeframe.")
+        if type(count) is not int or not 1 <= count <= 500:
+            raise BrokerError("INVALID_INPUT", "Request between 1 and 500 candles.")
+        if self._symbols is None:
+            await self.list_symbols()
+        active_id = identifier(active_id)
+        if not any(symbol.active_id == active_id for symbol in self._symbols):
+            raise BrokerError("SYMBOL_UNAVAILABLE", "Select a symbol from the broker catalog.")
+        now = self.transport.clock.now()
+        raw = await self.transport.request(
+            message(
+                "get-candles",
+                "2.0",
+                {
+                    "active_id": int(active_id),
+                    "size": timeframe,
+                    "to": int(now),
+                    "count": count,
+                    "split_normalization": True,
+                },
+            ),
+            expected={"candles", "result"},
+        )
+        candles = parse_candles(raw, timeframe)
+        if any(c.start > now or c.end > now + timeframe for c in candles):
+            raise BrokerError("PROTOCOL_UNSUPPORTED", "Broker returned future candle times.")
+        return CandleSeries(active_id, timeframe, candles[-count:], now)
+
     def select_balance(self, balance_id: str, *, enable_real: bool = False) -> Balance:
         self._require_connection()
         balance = self._balance(balance_id)
@@ -203,20 +243,23 @@ class IQOptionClient:
         payouts = {}
         for product in Product:
             try:
-                payload = await self.transport.request(
-                    message(
-                        "trading-settings.get-trading-group-params",
-                        "2.0",
-                        {"instrument_type": product.instrument_type},
-                    ),
-                    expected={"trading-group-params", "result"},
-                )
+                async with asyncio.timeout(2):
+                    payload = await self.transport.request(
+                        message(
+                            "trading-settings.get-trading-group-params",
+                            "2.0",
+                            {"instrument_type": product.instrument_type},
+                        ),
+                        expected={"trading-group-params", "result"},
+                    )
                 if not isinstance(payload, dict):
                     continue
                 for item in payload.get("commissions", []):
-                    payout = Decimal(100) - decimal(item["value"])
-                    if Decimal(0) <= payout <= Decimal(100):
+                    payout = payout_from_commission(item["value"])
+                    if payout is not None:
                         payouts[(identifier(item["active_id"]), product)] = payout
+            except TimeoutError:
+                log.info("Optional payout lookup timed out: product=%s", product)
             except BrokerError as error:
                 if error.code == "SESSION_EXPIRED":
                     raise
@@ -224,6 +267,20 @@ class IQOptionClient:
             except (KeyError, TypeError):
                 log.info("Payout metadata schema unrecognized: product=%s", product)
         return payouts
+
+    async def _refresh_payouts(self, generation: int) -> None:
+        try:
+            payouts = await self._payouts()
+            if generation != self._catalog_generation or self.state is not SessionState.CONNECTED:
+                return
+            self._symbols = tuple(
+                replace(symbol, payout_percent=payouts.get((symbol.active_id, symbol.product)))
+                if symbol.payout_percent is None
+                else symbol
+                for symbol in self._symbols
+            )
+        except BrokerError as error:
+            log.info("Optional payout refresh unavailable: code=%s", error.code)
 
     async def _refresh_catalog(self) -> None:
         async with self._catalog_lock:
@@ -246,11 +303,19 @@ class IQOptionClient:
                 except BrokerError as error:
                     if error.code != "PROTOCOL_UNSUPPORTED" or version == versions[-1]:
                         raise
-            # Eligibility freshness starts at receipt, not after slower optional
-            # payout queries have finished.
+            # Publish eligibility immediately. Optional payout transport must not
+            # consume the five-second preparation/submission freshness window.
             self._catalog_at = time.time()
             self._catalog_mono = time.monotonic()
-            self._symbols = parse_symbols(payload, await self._payouts())
+            self._symbols = parse_symbols(payload)
+            self._catalog_generation += 1
+            if self._payout_task is not None:
+                self._payout_task.cancel()
+            self._payout_task = None
+            if any(symbol.payout_percent is None for symbol in self._symbols):
+                self._payout_task = asyncio.create_task(
+                    self._refresh_payouts(self._catalog_generation), name="iqoption-payouts"
+                )
 
     async def list_symbols(
         self,
@@ -679,14 +744,14 @@ class IQOptionClient:
 
     async def logout(self) -> bool:
         self._closing = True
-        for task in (self._refresh_task, self._reconnect_task):
+        for task in (self._refresh_task, self._reconnect_task, self._payout_task):
             if task is not None and task is not asyncio.current_task():
                 task.cancel()
                 try:
                     await task
                 except asyncio.CancelledError:
                     pass
-        self._refresh_task = self._reconnect_task = None
+        self._refresh_task = self._reconnect_task = self._payout_task = None
         await self.transport.close()
         invalidated = await self.auth.logout()
         self.state = SessionState.DISCONNECTED

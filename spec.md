@@ -2,7 +2,7 @@
 
 Date: 2026-10-13
 
-Status: adapter, terminal, and GUI implemented. Live login, balances, and binary/turbo symbol discovery verified on 2026-10-13; live trade verification remains pending.
+Status: adapter, terminal, and GUI implemented. Live login, balances, binary/turbo discovery, all five EURUSD chart timeframes, and one approved EURUSD practice Turbo order verified on 2026-10-13, including acceptance, settlement/history, and journal reopening.
 
 ## 1. Objective
 
@@ -220,7 +220,7 @@ Automated tests should cover protocol parsing with sanitized fixtures; request c
 
 Recovery tests must cover disconnection before send, during send, after broker acceptance but before acknowledgement, and before settlement. Verify that restarting preserves unresolved intent and cannot automatically create a duplicate order.
 
-Live checks proceed in order: authentication, balances, symbol comparison, one agreed practice order, settlement/history comparison, and recovery. Live order tests must be opt-in and excluded from routine automated test runs. Authentication, balance loading, and catalog discovery have passed live checks with a user-authorized account. No credentials are stored in the repository; order/settlement acceptance remains unverified.
+Live checks proceed in order: authentication, balances, symbol comparison, one agreed practice order, settlement/history comparison, and recovery. Live order tests must be opt-in and excluded from routine automated test runs. Authentication, balance loading, and catalog discovery have passed live checks with a user-authorized account. The approved EURUSD practice CALL order was accepted, settled as a draw with the 30 USD stake returned, and matched in broker history; the journal retained SETTLED after reopening. No credentials are stored in the repository. Live real-money trading and disconnect-during-submission cases remain unverified.
 
 ## 11. Implementation milestones
 
@@ -238,4 +238,4 @@ Live checks proceed in order: authentication, balances, symbol comparison, one a
 - Which live message versions, quote/payout fields, expiration slots, and purchase cutoffs the target account requires.
 - Exact practice order parameters for opt-in verification; these must come from the user and live broker metadata.
 
-The specification-first step is complete. Adapter, terminal, and desktop GUI implementations are present. Live login and catalog discovery are verified; live order/settlement acceptance remains pending.
+The specification-first step is complete. Adapter, terminal, and desktop GUI implementations are present. Live login, catalog discovery, charting, and the approved one-minute EURUSD practice order are verified, including settlement/history and journal reopening. The remaining live scope includes other products/accounts, win/loss settlement, and disconnect-during-submission cases.

@@ -6,7 +6,7 @@ from typing import Any
 import simplejson
 
 from .errors import BrokerError
-from .models import Balance, Product, Symbol
+from .models import Balance, Candle, Product, Symbol
 
 LOGIN_URL = "https://auth.iqoption.com/api/v2/login"
 LOGOUT_URL = "https://auth.iqoption.com/api/v1.0/logout"
@@ -121,6 +121,15 @@ def parse_balances(payload: object) -> list[Balance]:
     return balances
 
 
+def payout_from_commission(value: object) -> Decimal | None:
+    """Optional commission data must never make instrument eligibility unusable."""
+    try:
+        commission = decimal(value)
+    except BrokerError:
+        return None
+    return Decimal(100) - commission if Decimal(0) <= commission <= Decimal(100) else None
+
+
 def parse_symbols(
     payload: object, payouts: dict[tuple[str, Product], Decimal] | None = None
 ) -> tuple[Symbol, ...]:
@@ -140,6 +149,10 @@ def parse_symbols(
                 name = str(raw["name"]).removeprefix("front.")
                 symbol = str(raw.get("ticker") or name.replace("/", ""))
                 option = raw.get("option", {})
+                profit = option.get("profit", {})
+                payout = (payouts or {}).get((active_id, product))
+                if payout is None and isinstance(profit, dict):
+                    payout = payout_from_commission(profit.get("commission"))
                 expirations = option.get("expiration_times", {})
                 # Candidate metadata expresses durations in seconds. Never interpret
                 # small/ambiguous keys as minutes or substitute a guessed duration.
@@ -175,7 +188,7 @@ def parse_symbols(
                         schedule,
                         durations,
                         cutoff,
-                        (payouts or {}).get((active_id, product)),
+                        payout,
                         decimal(raw.get("minimal_bet"), optional=True),
                         decimal(raw.get("maximal_bet"), optional=True),
                     )
@@ -190,6 +203,39 @@ def parse_symbols(
             "PROTOCOL_UNSUPPORTED", "Duplicate product/active IDs in instrument response."
         )
     return tuple(symbols)
+
+
+def parse_candles(payload: object, timeframe: int) -> tuple[Candle, ...]:
+    """Validate broker OHLC data, including incomplete current candles."""
+    if not isinstance(payload, dict) or not isinstance(payload.get("candles"), list):
+        raise BrokerError("PROTOCOL_UNSUPPORTED", "Broker candle response was not recognized.")
+    candles = []
+    try:
+        for raw in payload["candles"]:
+            start, end = raw["from"], raw["to"]
+            if type(start) is not int or type(end) is not int or start <= 0:
+                raise ValueError
+            if end - start != timeframe:
+                raise ValueError
+            opening, closing = decimal(raw["open"]), decimal(raw["close"])
+            high, low = decimal(raw["max"]), decimal(raw["min"])
+            if not low <= min(opening, closing) <= max(opening, closing) <= high:
+                raise ValueError
+            # Reject values that cannot be rendered as finite chart coordinates.
+            if any(not -1e100 < float(v) < 1e100 for v in (opening, closing, high, low)):
+                raise ValueError
+            volume = decimal(raw.get("volume"), optional=True)
+            if volume is not None and volume < 0:
+                raise ValueError
+            candles.append(Candle(start, end, opening, high, low, closing, volume))
+    except (KeyError, TypeError, ValueError, OverflowError):
+        raise BrokerError(
+            "PROTOCOL_UNSUPPORTED", "Broker candle fields were not recognized."
+        ) from None
+    candles.sort(key=lambda candle: candle.start)
+    if len({c.start for c in candles}) != len(candles):
+        raise BrokerError("PROTOCOL_UNSUPPORTED", "Broker returned duplicate candle times.")
+    return tuple(candles)
 
 
 def expiration_for(symbol: Symbol, minutes: int, now: float) -> int:
