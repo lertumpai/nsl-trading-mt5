@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nsl-iqoption"
+version = "0.1.0"
+description = "IQ Option broker adapter with desktop and terminal interfaces"
+requires-python = ">=3.11"
+dependencies = ["aiohttp>=3.13,<4", "simplejson>=3.20,<4"]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.14,<1"]
+gui = ["PySide6-Essentials>=6.8,<7"]
+
+[project.scripts]
+nsl-iqoption = "nsl_iqoption.cli:main"
+nsl-iqoption-gui = "nsl_iqoption.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
