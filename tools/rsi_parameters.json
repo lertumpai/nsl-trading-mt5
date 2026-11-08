@@ -1,1 +1,0 @@
-{"isError": false, "content": [{"type": "text", "text": "{ \"name\": \"Relative Strength Index\", \"group\": \"Oscillators\", \"subwindow_used\": true, \"parameters\": { \"period\": \"14\", \"applied_price\": \"1\" } }"}]}
