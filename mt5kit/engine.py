@@ -18,6 +18,7 @@ from .ledger import Ledger, make_plan_id
 from .scoring import score as score_fn
 from .setups import H1, Context, detect_live, liquidity_levels, scan_row
 from .timeutil import ServerClock, fmt_local, iso, next_local_time_utc, trading_day_key
+from .watch import chart_watch, watch_for
 
 UTC = timezone.utc
 PKG = Path(__file__).parent
@@ -566,12 +567,30 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
         "charts": {p["plan_id"]: chart_for(contexts[p["std_symbol"]], p, now, events) for p in chosen},
         "narrative": {}, "actions": [], "execution": None,
     }
-    if not chosen:
-        # แสดงกราฟของคู่ที่น่าสนใจที่สุด 1 คู่ (ผู้สมัครที่คะแนนสูงสุด หรือคู่แรกที่มีทิศทาง)
-        best = max(candidates, key=lambda p: p["score"]["total"], default=None)
-        if best:
-            report["charts"]["watch:" + best["std_symbol"]] = chart_for(contexts[best["std_symbol"]], best, now, events)
-            report["watch_plan"] = {k: v for k, v in best.items() if k != "checks"} | {"fails": [c["name"] for c in best["checks"] if not c["ok"]]}
+    # เฝ้าดูรายคู่: ทุกคู่ที่ยังไม่มีแผน — บอกว่ารออะไร รอตรงไหน (เพื่อการเรียนรู้)
+    watch = []
+    chosen_std = {p["std_symbol"] for p in chosen}
+    tz = report["report_tz"]
+    for std, ctx in contexts.items():
+        if std in chosen_std:
+            continue
+        cand = max([p for p in candidates if p["std_symbol"] == std], key=lambda p: p["score"]["total"], default=None)
+        mp = ((macro or {}).get("pairs", {}) or {}).get(std)
+        sym = symbols.get(ctx.broker_name)
+        try:
+            w = watch_for(ctx, now, cfg, events, mp, sym.digits if sym else 5, tz, cand)
+        except Exception as e:  # noqa: BLE001 — ส่วนเรียนรู้ห้ามทำให้ทั้งรอบล้ม
+            warnings.append(f"สร้างส่วนเฝ้าดู {std} ไม่ได้: {str(e)[:80]}")
+            continue
+        watch.append(w)
+        report["charts"]["watch:" + std] = chart_watch(ctx, w, now, events)
+    watch.sort(key=lambda w: (-w["progress"], not w["side_ok"], w["dist_atr"], w["symbol"]))
+    wmap = {w["symbol"]: w for w in watch}
+    for row in scan_rows:
+        w = wmap.get(row["symbol"])
+        if w and row.get("result") in ("เฝ้าดู", "ข้าม"):
+            row["reason"] = f"{w['status']} ({w['progress']}/4)"
+    report["watch"] = watch
     (run_dir / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     if hasattr(source, "save_raw") and source.kind == "live":
         source.save_raw(run_dir / "raw")
@@ -597,6 +616,8 @@ def compact_summary(report: dict, run_dir: Path) -> dict:
         "management": [{k: m.get(k) for k in ("ticket", "symbol", "kind", "side", "owner", "action", "reason", "new_sl")} for m in report["management"]],
         "scan": [{k: r.get(k) for k in ("symbol", "h4_bias", "result", "reason", "score")} for r in report["scan"]],
         "next_news": [{"time_th": fmt_local(n["t"], tz), "ccy": n["ccy"], "tier": n["tier"], "name": n["name"]} for n in report["news"][:8]],
+        "watch": [{"symbol": w["symbol"], "side": w["side"], "status": w["status"], "progress": f"{w['progress']}/4",
+                   "wait": [x["text"] for x in w["wait"][:2]]} for w in report.get("watch", [])],
         "narrative_file": str(run_dir / "narrative.json"),
         "report_html": str(run_dir / "report.html"),
     }

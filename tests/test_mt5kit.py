@@ -178,6 +178,25 @@ class TestEndToEnd(unittest.TestCase):
         self.assertNotIn("Bearer", h)
         self.assertNotIn("51234567", h)  # เลขบัญชีเต็มต้องไม่อยู่ใน HTML
 
+    def test_watch_explains_every_pair_without_plan(self):
+        from mt5kit.engine import run_scan
+        from mt5kit.render import render
+        root = self.tmp / "proj_w"; root.mkdir(exist_ok=True)
+        run_dir, rep = run_scan(root, FixtureSource(self.fx), "plan_only", "london", DEMO_NOW)
+        planned = {p["std_symbol"] for p in rep["plans"]}
+        watched = {w["symbol"] for w in rep["watch"]}
+        scanned = {r["symbol"] for r in rep["scan"] if not r["reason"].startswith(("BLOCKED", "Symbol"))}
+        self.assertEqual(watched | planned, scanned)
+        for w in rep["watch"]:
+            self.assertEqual(len(w["steps"]), 4)
+            self.assertTrue(w["wait"])
+            self.assertIn("watch:" + w["symbol"], rep["charts"])
+            for lv in w["levels"]:
+                self.assertIsInstance(lv["price"], float)
+        (run_dir / "narrative.json").write_text(json.dumps({"overview": "x", "per_watch": {rep["watch"][0]["symbol"]: "ราคา 9.99999 ไม่มีจริง"}}))
+        _, issues = render(run_dir)
+        self.assertTrue(any("per_watch" in i for i in issues))
+
     def test_place_mode_falls_back_when_execution_disabled(self):
         from mt5kit.engine import run_scan
         root = self.tmp / "proj2"; root.mkdir(exist_ok=True)

@@ -25,9 +25,9 @@ def merge_narrative(report: dict, run_dir: Path) -> list[str]:
     nar = json.loads(p.read_text(encoding="utf-8"))
     ov = str(nar.get("overview", ""))[:MAX_OVERVIEW]
     per = {}
-    valid_ids = {x["plan_id"] for x in report.get("plans", [])} | ({report["watch_plan"]["plan_id"]} if report.get("watch_plan") else set())
+    valid_ids = {x["plan_id"] for x in report.get("plans", [])}
     allowed_nums = set()
-    for pl in report.get("plans", []) + ([report["watch_plan"]] if report.get("watch_plan") else []):
+    for pl in report.get("plans", []):
         for k in ("entry", "sl", "tp", "volume"):
             if pl.get(k) is not None:
                 allowed_nums.add(_norm(pl[k]))
@@ -44,7 +44,27 @@ def merge_narrative(report: dict, run_dir: Path) -> list[str]:
                     t = t.replace(num, "…")
             clean.append(t)
         per[pid] = clean
-    report["narrative"] = {"overview": ov, "per_plan": per, "macro_note": str(nar.get("macro_note", ""))[:MAX_OVERVIEW]}
+    # per_watch: คำอธิบายเพื่อการเรียนรู้รายคู่ (ไม่บังคับ) ตัวเลขต้องตรงกับระดับที่โค้ดคำนวณ
+    watch_nums = set()
+    for w in report.get("watch", []):
+        for lv in w.get("levels", []):
+            watch_nums.add(_norm(round(lv["price"], w.get("digits", 5))))
+        for z in w.get("zones", []):
+            watch_nums.add(_norm(round(z["top"], w.get("digits", 5)))); watch_nums.add(_norm(round(z["bottom"], w.get("digits", 5))))
+    valid_watch = {w["symbol"] for w in report.get("watch", [])}
+    per_watch = {}
+    for sym, text in (nar.get("per_watch") or {}).items():
+        if sym not in valid_watch:
+            issues.append(f"narrative อ้างคู่ที่ไม่มีในส่วนเฝ้าดู: {sym}")
+            continue
+        t = str(text)[:MAX_OVERVIEW]
+        for num in re.findall(r"\d+\.\d{3,}", t):
+            if _norm(num) not in watch_nums:
+                issues.append(f"ตัวเลข {num} ใน per_watch[{sym}] ไม่ตรงกับระดับที่คำนวณ — ตัดออก")
+                t = t.replace(num, "…")
+        per_watch[sym] = t
+    report["narrative"] = {"overview": ov, "per_plan": per, "per_watch": per_watch,
+                           "macro_note": str(nar.get("macro_note", ""))[:MAX_OVERVIEW]}
     return issues
 
 

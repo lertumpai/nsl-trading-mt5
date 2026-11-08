@@ -91,6 +91,27 @@ summary{cursor:pointer;font-weight:600}
 .banner{border-radius:14px;padding:10px 14px;border:1px solid;margin-top:10px;font-size:14px}
 .banner.plan{border-color:var(--amber);background:var(--amber-a)} .banner.done{border-color:var(--green);background:var(--green-a)} .banner.bad{border-color:var(--red);background:var(--red-a)}
 footer{color:var(--muted);font-size:12px;margin:28px 0 40px;text-align:center}
+
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:2px 0 4px}
+.step{border:1px solid var(--line);border-radius:10px;padding:6px 8px;font-size:12px;color:var(--muted);background:var(--panel2);min-width:0}
+.step b{display:block;font-size:12.5px;color:var(--text)}
+.step.ok{border-color:var(--green);background:var(--green-a)} .step.ok b::before{content:"✓ ";color:var(--green)}
+.step.next{border-color:var(--amber);background:var(--amber-a)} .step.next b::before{content:"→ ";color:var(--amber)}
+.step.todo b::before{content:"○ ";color:var(--muted)}
+.waitlist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.waitlist li{background:var(--panel2);border-radius:10px;padding:8px 10px;font-size:13.5px;border-left:3px solid var(--line)}
+.waitlist li .l{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:2px}
+.waitlist li.a{border-left-color:var(--violet)} .waitlist li.b{border-left-color:var(--amber)} .waitlist li.n{border-left-color:var(--blue)} .waitlist li.x{border-left-color:var(--red)}
+.lvtable td{padding:5px 4px;font-size:13px} .lvtable td:first-child{color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.wcard .chart{height:360px}
+.edu svg{width:100%;height:auto;display:block;background:var(--panel2);border-radius:12px;border:1px solid var(--line)}
+.edu .g2{align-items:start}
+.gloss{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.gloss div{background:var(--panel2);border-radius:10px;padding:8px 10px;font-size:13.5px}
+.gloss b{color:var(--text)}
+.filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+@media (max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.gloss{grid-template-columns:1fr}.wcard .chart{height:300px}}
 @media (max-width:900px){.plan-body{grid-template-columns:1fr}.chartbox{border-right:0;border-bottom:1px solid var(--line)}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.wrap{padding:12px 16px}.decision{font-size:21px}.hero{grid-template-columns:1fr}.chart{height:340px}.g2{grid-template-columns:1fr}.heat{grid-template-columns:repeat(4,minmax(0,1fr))}.ev{grid-template-columns:80px 44px 1fr}.riskrow{grid-template-columns:70px 1fr 90px}.legend{display:none}}
 </style>
@@ -258,17 +279,110 @@ function limits(){
   return `<details><summary>ข้อจำกัดและแหล่งข้อมูล</summary><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="small">เวลาเซิร์ฟเวอร์: ${esc(R.clock)} · แหล่งข้อมูล: ${esc(R.source)}</div></details>`;
 }
 
+
+// ---------- เฝ้าดูรายคู่ (ตอนยังไม่มีจุดเข้า) ----------
+function watchCard(w, i){
+  const d=w.digits||5, P=v=>v==null?'-':Number(v).toFixed(d);
+  const sideB = w.side==='long'?'<span class="badge b-green">รอฝั่ง Long</span>': w.side==='short'?'<span class="badge b-red">รอฝั่ง Short</span>':'<span class="badge b-gray">ยังไม่มีฝั่ง</span>';
+  const stB = w.progress>=2?'b-blue': w.progress===1?'b-amber':'b-gray';
+  const firstTodo = (w.steps||[]).findIndex(s=>!s.ok);
+  const steps=(w.steps||[]).map((s,k)=>`<div class="step ${s.ok?'ok':k===firstTodo?'next':'todo'}" title="${esc(s.detail)}"><b>${s.n}. ${esc(s.label)}</b>${esc(s.detail).slice(0,70)}${s.detail.length>70?'…':''}</div>`).join('');
+  const cls=l=>l.startsWith('รูปแบบ A')?'a':l.startsWith('รูปแบบ B')?'b':l.startsWith('ไอเดียผิด')||l==='Macro'?'x':'n';
+  const waits=(w.wait||[]).map(x=>`<li class="${cls(x.label)}"><span class="l">${esc(x.label)}</span>${esc(x.text)}</li>`).join('');
+  const nar=(R.narrative.per_watch||{})[w.symbol];
+  const rows=[];
+  (w.zones||[]).filter(z=>z.kind!=='asia').forEach(z=>rows.push([`<span class="dot" style="background:${z.kind==='fvg'?'var(--blue)':'var(--violet)'}"></span>${esc(z.label)}`, `${P(z.bottom)} – ${P(z.top)}`]));
+  if(w.trigger) rows.push(['<span class="dot" style="background:var(--blue)"></span>รอปิดทะลุ (BOS)', P(w.trigger.price)]);
+  (w.levels||[]).filter(l=>l.kind==='sweep').forEach(l=>rows.push([`<span class="dot" style="background:var(--amber)"></span>${esc(l.name)}`, P(l.price)]));
+  if(w.invalidation) rows.push(['<span class="dot" style="background:var(--red)"></span>ไอเดียผิดถ้าหลุด', P(w.invalidation.price)]);
+  if(w.target) rows.push(['<span class="dot" style="background:var(--green)"></span>เป้าหมายแรก', P(w.target.price)]);
+  const cand = w.candidate ? `<div class="banner plan" style="margin-top:0">มีสัญญาณรูปแบบ ${esc(w.candidate.setup)} แต่ไม่ผ่าน: ${esc(w.candidate.fails.slice(0,3).join('; '))}</div>`:'';
+  return `<div class="card plan wcard" id="watch-${i}">
+   <div class="plan-head"><div class="plan-title">${esc(w.symbol)} ${sideB}<span class="badge ${stB}">${esc(w.status)}</span><span class="badge b-gray">ความคืบหน้า ${w.progress}/4</span></div>
+     <div class="small num">ราคาล่าสุด <b>${P(w.price)}</b> · ${th(w.price_t+3600)} น.</div></div>
+   <div style="padding:10px 16px 0"><div class="steps">${steps}</div></div>
+   <div class="plan-body">
+    <div class="chartbox">
+      <div class="tabs"><button class="tab on" data-tf="H1">H1</button><button class="tab" data-tf="H4">H4</button><button class="tab" data-tf="D1">D1</button>
+        <div class="legend"><span><i style="border-color:var(--violet)"></i>โซนย่อ</span><span><i style="border-color:var(--amber);border-top-style:dotted"></i>รอกวาด</span><span><i style="border-color:var(--blue);border-top-style:dashed"></i>รอปิดทะลุ</span><span><i style="border-color:var(--red);border-top-style:dashed"></i>จุดผิด</span><span><i style="border-color:var(--green);border-top-style:dashed"></i>เป้าหมาย</span></div></div>
+      <div class="chart" id="wchart-${i}" data-key="watch:${esc(w.symbol)}"><div class="empty small">กำลังโหลดกราฟ…</div></div>
+      <div class="small" style="margin-top:6px">เส้นประสีม่วงด้านขวา = <b>ภาพที่รอ (ยังไม่เกิด)</b> ไม่ใช่การทำนาย · สลับ H4/D1 เพื่อดูภาพใหญ่</div>
+    </div>
+    <div class="side">
+      ${cand}
+      <div><div class="small" style="margin-bottom:6px">กำลังรออะไร</div><ul class="waitlist">${waits}</ul></div>
+      ${nar?`<div class="reasons"><li><span class="tag infer">ข้อสันนิษฐาน</span>${esc(nar)}</li></div>`:''}
+      ${rows.length?`<table class="lvtable"><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="num" style="text-align:right"><b>${r[1]}</b></td></tr>`).join('')}</tbody></table>`:''}
+      ${w.news_note?`<div class="small">📅 ${esc(w.news_note)}</div>`:''}
+    </div></div></div>`;
+}
+
+function watchBlock(){
+  const W=R.watch||[]; if(!W.length) return '';
+  const active=W.filter(w=>w.side_ok), idle=W.filter(w=>!w.side_ok);
+  const idleRows = idle.length? `<div class="card tablewrap" style="margin-top:12px"><table><thead><tr><th>คู่</th><th>ทำไมยังไม่มีอะไรให้รอ</th></tr></thead><tbody>
+     ${idle.map(w=>`<tr><td><b>${esc(w.symbol)}</b></td><td class="small">${esc((w.wait[0]||{}).text||w.status)}</td></tr>`).join('')}</tbody></table></div>`:'';
+  return `<section><h2>รอจุดไหน — เฝ้าดูรายคู่ <span class="count">${active.length} คู่มีทิศทาง</span></h2>
+    <div class="small" style="margin-bottom:10px">ยังไม่มีจุดเข้าไม่ได้แปลว่าไม่มีอะไรทำ ส่วนนี้บอกว่าแต่ละคู่ผ่านขั้นไหนแล้ว (✓) ขั้นถัดไปคืออะไร (→) และราคาตรงไหนที่ต้องจับตา เรียงจากคู่ที่ใกล้จุดเข้าที่สุด</div>
+    ${active.map((w,i)=>watchCard(w,i)).join('<div style="height:12px"></div>')}${idleRows}</section>`;
+}
+
+function eduBlock(open){
+  const svgA = `<svg viewBox="0 0 600 300" role="img" aria-label="แผนภาพรูปแบบ A ย่อตามเทรนด์">
+   <rect x="250" y="150" width="340" height="90" fill="var(--violet-a)" stroke="var(--violet)" stroke-dasharray="4 3"/>
+   <text x="470" y="232" fill="var(--violet)" font-size="12">โซนย่อ (ครึ่งล่างของขา)</text>
+   <line x1="20" y1="240" x2="590" y2="240" stroke="var(--red)" stroke-dasharray="6 4"/><text x="24" y="256" fill="var(--red)" font-size="12">ต้นขา H4 = จุดไอเดียผิด</text>
+   <line x1="200" y1="60" x2="590" y2="60" stroke="var(--green)" stroke-dasharray="6 4"/><text x="470" y="52" fill="var(--green)" font-size="12">ยอดขา = เป้าหมาย (TP)</text>
+   <line x1="300" y1="100" x2="440" y2="100" stroke="var(--blue)" stroke-dasharray="5 3" stroke-width="2"/><text x="446" y="104" fill="var(--blue)" font-size="12">Swing High H1 ระหว่างย่อ</text>
+   <rect x="400" y="112" width="30" height="22" fill="var(--blue-a)" stroke="var(--blue)"/><text x="436" y="128" fill="var(--blue)" font-size="12">FVG → วาง Limit</text>
+   <line x1="320" y1="186" x2="560" y2="186" stroke="var(--red)" stroke-width="1.5"/><text x="470" y="200" fill="var(--red)" font-size="12">SL ใต้จุดย่อสุด</text>
+   <polyline fill="none" stroke="var(--text)" stroke-width="2.2" points="30,240 80,195 105,212 165,120 195,138 240,60 275,112 300,100 330,150 350,140 368,176 385,150 400,140 425,88 440,84"/>
+   <polyline fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="7 5" points="440,84 460,124 560,62"/>
+   <g font-size="13" font-weight="700" fill="var(--amber)"><text x="120" y="110">①</text><text x="350" y="200">②</text><text x="430" y="76">③</text><text x="463" y="146">④</text><text x="555" y="80">⑤</text></g>
+  </svg>`;
+  const svgB = `<svg viewBox="0 0 600 300" role="img" aria-label="แผนภาพรูปแบบ B กวาดสภาพคล่อง">
+   <rect x="30" y="120" width="200" height="50" fill="var(--amber-a)" stroke="var(--amber)" stroke-dasharray="4 3"/>
+   <text x="36" y="114" fill="var(--amber)" font-size="12">กรอบเอเชีย (High/Low)</text>
+   <line x1="230" y1="20" x2="230" y2="280" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="236" y="34" fill="var(--muted)" font-size="12">ลอนดอนเปิด</text>
+   <line x1="160" y1="132" x2="380" y2="132" stroke="var(--blue)" stroke-dasharray="5 3" stroke-width="2"/><text x="386" y="146" fill="var(--blue)" font-size="12">Swing High ก่อนกวาด</text>
+   <line x1="30" y1="170" x2="590" y2="170" stroke="var(--amber)" stroke-dasharray="2 4"/><text x="470" y="164" fill="var(--amber)" font-size="12">Low กรอบเอเชีย</text>
+   <line x1="240" y1="214" x2="560" y2="214" stroke="var(--red)" stroke-width="1.5"/><text x="470" y="230" fill="var(--red)" font-size="12">SL ใต้จุดกวาด</text>
+   <rect x="330" y="140" width="28" height="18" fill="var(--blue-a)" stroke="var(--blue)"/><text x="300" y="196" fill="var(--blue)" font-size="12">FVG → วาง Limit</text>
+   <line x1="400" y1="80" x2="590" y2="80" stroke="var(--green)" stroke-dasharray="6 4"/><text x="470" y="72" fill="var(--green)" font-size="12">ระดับถัดไป = TP</text>
+   <polyline fill="none" stroke="var(--text)" stroke-width="2.2" points="40,150 70,128 95,160 125,140 160,132 190,165 220,150 245,168 262,205 278,160 300,150 320,140 345,120 375,110"/>
+   <polyline fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="7 5" points="375,110 395,150 560,82"/>
+   <g font-size="13" font-weight="700" fill="var(--amber)"><text x="110" y="196">①</text><text x="250" y="232">②</text><text x="282" y="196">③</text><text x="340" y="106">④</text><text x="398" y="176">⑤</text></g>
+  </svg>`;
+  return `<section class="edu"><details ${open?'open':''}><summary>เรียนรู้: ระบบรออะไร — อ่านกราฟแบบแกะรอยสภาพคล่อง</summary>
+   <div class="grid g2" style="margin-top:12px">
+    <div><h3 style="margin:0 0 8px">รูปแบบ A · ย่อตามเทรนด์ (ตัวอย่าง Long)</h3>${svgA}
+      <ol class="small" style="padding-left:18px"><li>H4 ทำ High และ Low สูงขึ้น = ขาขึ้น</li><li>รอราคาย่อลงครึ่งล่างของขา (ถูก) หรือแตะ FVG H4</li><li>รอแท่ง H1 แรงปิดทะลุ Swing High ที่เกิดระหว่างย่อ (BOS) = ผู้ซื้อกลับมา</li><li>วาง Buy Limit ที่กึ่งกลาง FVG ที่แท่งแรงทิ้งไว้ รอราคาย่อกลับมา</li><li>เป้าหมายคือยอดขาเดิม · ถ้าหลุดต้นขา ไอเดียผิด</li></ol></div>
+    <div><h3 style="margin:0 0 8px">รูปแบบ B · กวาดสภาพคล่อง (ตัวอย่าง Long)</h3>${svgB}
+      <ol class="small" style="padding-left:18px"><li>ช่วงเอเชีย ราคาแกว่งในกรอบ คนวาง Stop ไว้ใต้ Low</li><li>ลอนดอน/นิวยอร์กเปิด ราคาทะลุ Low (กวาด Stop)</li><li>แท่งปิดกลับเข้ากรอบภายใน 2 แท่ง = ทะลุไม่สำเร็จ</li><li>แท่งแรงปิดทะลุ Swing High ก่อนกวาด (BOS)</li><li>วาง Limit ที่ FVG · SL ใต้จุดกวาด · TP ที่ระดับถัดไป</li></ol></div>
+   </div>
+   <div class="gloss">
+    <div><b>Swing High/Low</b> — จุดสูง/ต่ำกว่า 2 แท่งซ้ายและ 2 แท่งขวา ใช้บอกโครงสร้าง</div>
+    <div><b>BOS (ปิดทะลุโครงสร้าง)</b> — แท่งปิด (ไม่ใช่แค่ไส้) ทะลุ Swing ล่าสุด แปลว่าแรงเปลี่ยน</div>
+    <div><b>แท่งแรง (Displacement)</b> — 1–3 แท่งทิศเดียวกัน วิ่งรวม ≥ 1.5×ATR ตัวแท่งใหญ่ ปิดใกล้ปลาย</div>
+    <div><b>FVG (ช่องว่างราคา)</b> — ช่องที่แท่ง 1 กับแท่ง 3 ไม่ทับกัน ราคามักกลับมาเติม ใช้เป็นจุดเข้า</div>
+    <div><b>Sweep (กวาด)</b> — ราคาทะลุ High/Low ที่คนวาง Stop ไว้ แล้วปิดกลับ = เบรกหลอก</div>
+    <div><b>Discount / Premium</b> — ครึ่งล่าง/ครึ่งบนของขาราคา ซื้อในครึ่งล่าง ขายในครึ่งบน</div>
+    <div><b>PDH/PDL · PWH/PWL</b> — High/Low ของเมื่อวาน และของสัปดาห์ก่อน (ที่สะสม Stop)</div>
+    <div><b>ATR</b> — ระยะแกว่งเฉลี่ยต่อแท่ง ใช้วัดว่าเคลื่อนที่ "แรง" หรือ "ไกล" แค่ไหน</div>
+   </div>
+   <div class="small" style="margin-top:8px">ทั้งหมดนี้เป็นการอ่านร่องรอยในราคา ไม่ได้เห็นคำสั่งจริงของสถาบัน และยังไม่ผ่าน Backtest</div>
+  </details></section>`;
+}
+
 // ---------- render page ----------
 const plans=R.plans.map(p=>({...p,_chart_key:p.plan_id}));
-let watch=null;
-if(!plans.length && R.watch_plan){ watch={...R.watch_plan,_chart_key:'watch:'+(R.watch_plan.symbol_std||Object.keys(R.charts)[0]?.slice(6))}; watch._chart_key=Object.keys(R.charts)[0]; }
 $('#meta').textContent = `${th(R.generated_at)} น. · บัญชี ${R.account.masked} (${R.account.trade_mode}) · ${R.run_id}`;
 $('#app').innerHTML = hero() +
   `<section>${kpis()}</section><section><div class="grid g2">${riskCard()}<div class="card"><h3>ข่าวถัดไป (เวลาไทย)</h3>${newsBlock().replace(/^<div class="card[^"]*"/,'<div')}</div></div></section>` +
   `<section><h2>ไม้ที่เปิดอยู่และ Pending <span class="count">${(R.management||[]).length} รายการ</span></h2>${mgmt()}</section>` +
   `<section><h2>แผนที่เลือก <span class="count">${plans.length} แผน</span></h2>${plans.length? plans.map((p,i)=>planCard(p,i)).join('<div style="height:12px"></div>') :
-     (watch? `<div class="small" style="margin-bottom:8px">ยังไม่มีแผนที่ผ่านทุกกฎ — ด้านล่างคือคู่ที่ใกล้เคียงที่สุด (ไม่ใช่แผนพร้อมส่ง)</div>`+planCard(watch,0,true) : '<div class="card empty">ไม่มีแผนรอบนี้</div>')}</section>` +
-  execBlock() +
+     '<div class="card empty">รอบนี้ยังไม่มีจุดเข้าที่ผ่านทุกกฎ — ดูส่วน “รอจุดไหน” ด้านล่างว่าแต่ละคู่กำลังรออะไร</div>'}</section>` +
+  execBlock() + watchBlock() + eduBlock(!plans.length) +
   `<section><h2>สแกน 10 คู่เงิน</h2>${scanTable()}</section><section>${macroBlock()}${limits()}</section>`;
 $('#foot').textContent = 'สร้างอัตโนมัติจากข้อมูล MT5 โดย mt5kit · ตัวเลขทั้งหมดมาจากโค้ด ไม่ได้พิมพ์โดยโมเดล';
 document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{ navigator.clipboard?.writeText(b.dataset.copy).then(()=>{b.textContent='คัดลอกแล้ว ✓'; setTimeout(()=>b.textContent=b.dataset.copy,1600);}); });
@@ -306,8 +420,18 @@ function drawOverlay(sc, src){
     const c=col[b.kind]||col.zone; ctx.fillStyle=c[0]; ctx.fillRect(Math.min(x1,x2), Math.min(y1,y2), Math.abs(x2-x1), Math.abs(y2-y1));
     if(c[1]!=='transparent'){ ctx.strokeStyle=c[1]; ctx.lineWidth=1*hr; ctx.setLineDash([4*hr,3*hr]); ctx.strokeRect(Math.min(x1,x2), Math.min(y1,y2), Math.abs(x2-x1), Math.abs(y2-y1)); ctx.setLineDash([]); }
     if(b.label){ ctx.fillStyle=c[1]; const yy = b.kind==='asia' ? Math.max(y1,y2)+14*vr : Math.min(y1,y2)-5*vr; ctx.fillText(b.label, Math.min(x1,x2)+4*hr, yy); } });
-  (st.levels||[]).forEach(l=>{ const yy=y(l.price); if(yy==null) return; ctx.strokeStyle=css('--muted'); ctx.globalAlpha=.55; ctx.lineWidth=1*hr; ctx.setLineDash([2*hr,4*hr]);
-    ctx.beginPath(); ctx.moveTo(0,yy); ctx.lineTo(W,yy); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=.9; ctx.fillStyle=css('--muted'); ctx.fillText(l.name, 6*hr, yy-4*vr); ctx.globalAlpha=1; });
+  const USED=[];
+  const LK={trigger:['--blue',[6,4],2], sweep:['--amber',[2,4],1.5], invalid:['--red',[6,4],1.5], target:['--green',[6,4],1.5], structure:['--muted',[3,3],1.2]};
+  (st.levels||[]).forEach(l=>{ const yy=y(l.price); if(yy==null) return; const k=LK[l.kind];
+    if(!k){ ctx.strokeStyle=css('--muted'); ctx.globalAlpha=.55; ctx.lineWidth=1*hr; ctx.setLineDash([2*hr,4*hr]);
+      ctx.beginPath(); ctx.moveTo(0,yy); ctx.lineTo(W,yy); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=.9; ctx.fillStyle=css('--muted'); ctx.fillText(l.name, 6*hr, yy-4*vr); ctx.globalAlpha=1; return; }
+    ctx.strokeStyle=css(k[0]); ctx.lineWidth=k[2]*hr; ctx.setLineDash(k[1].map(v=>v*hr)); ctx.beginPath(); ctx.moveTo(0,yy); ctx.lineTo(W,yy); ctx.stroke(); ctx.setLineDash([]);
+    const xx=x(st.lastT - 2*st.step) ?? W*0.7; ctx.font=`600 ${11.5*vr}px "Noto Sans Thai", system-ui`;
+    const tw=ctx.measureText(l.name).width+10*hr, h=16*vr, bx=Math.max(4*hr, xx-tw); let by=yy-h-1*vr;
+    for(let t=0;t<6 && USED.some(u=>Math.abs(u-by)<h+1);t++) by += (t%2? -1:1)*(h+2)*(t+1);
+    USED.push(by);
+    ctx.fillStyle=css('--panel'); ctx.globalAlpha=.85; ctx.fillRect(bx,by,tw,h); ctx.globalAlpha=1; ctx.fillStyle=css(k[0]); ctx.fillText(l.name, bx+5*hr, by+12*vr);
+    ctx.font=`${12*vr}px "Noto Sans Thai", system-ui`; });
   (st.plines||[]).forEach(l=>{ const yy=y(l.price), xx=x(st.lastT - 2*st.step); if(yy==null||xx==null) return;
     ctx.font=`600 ${12*vr}px "Noto Sans Thai", system-ui`; const w=ctx.measureText(l.label).width+12*hr, h=18*vr;
     const bx=Math.max(4*hr, xx-w), by=yy-h-2*vr; ctx.fillStyle=css(l.color); ctx.globalAlpha=.92; ctx.beginPath();
@@ -318,11 +442,11 @@ function drawOverlay(sc, src){
     ctx.strokeStyle=c; ctx.lineWidth=1*hr; ctx.setLineDash([5*hr,4*hr]); ctx.beginPath(); ctx.moveTo(xx,0); ctx.lineTo(xx,H); ctx.stroke(); ctx.setLineDash([]);
     ctx.fillStyle=c; ctx.save(); ctx.translate(xx+4*hr, 8*vr); ctx.fillText(v.label, 0, 8*vr); ctx.restore(); });
   (st.scenario||[]).forEach(p=>{ const pts=p.pts.map(q=>[x(q[0]),y(q[1])]); if(pts.some(q=>q[0]==null||q[1]==null)) return;
-    const c=p.kind==='win'?css('--green'):css('--red'); ctx.strokeStyle=c; ctx.globalAlpha=.85; ctx.lineWidth=2*hr; ctx.setLineDash([7*hr,5*hr]);
+    const c=p.kind==='win'?css('--green'):p.kind==='watch'?css('--violet'):css('--red'); ctx.strokeStyle=c; ctx.globalAlpha=.85; ctx.lineWidth=2*hr; ctx.setLineDash([7*hr,5*hr]);
     ctx.beginPath(); pts.forEach((q,i)=> i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.stroke(); ctx.setLineDash([]);
     const [a,b]=[pts[pts.length-2],pts[pts.length-1]]; const ang=Math.atan2(b[1]-a[1],b[0]-a[0]), L=9*hr;
     ctx.fillStyle=c; ctx.beginPath(); ctx.moveTo(b[0],b[1]); ctx.lineTo(b[0]-L*Math.cos(ang-0.45), b[1]-L*Math.sin(ang-0.45)); ctx.lineTo(b[0]-L*Math.cos(ang+0.45), b[1]-L*Math.sin(ang+0.45)); ctx.closePath(); ctx.fill();
-    ctx.globalAlpha=1; ctx.font=`600 ${12*vr}px "Noto Sans Thai", system-ui`; ctx.fillText(p.label, b[0]-60*hr, b[1]+(p.kind==='win'?-8:16)*vr); ctx.font=`${12*vr}px "Noto Sans Thai", system-ui`; });
+    ctx.globalAlpha=1; ctx.font=`600 ${12*vr}px "Noto Sans Thai", system-ui`; ctx.fillText(p.label, b[0]-(p.kind==='watch'?110:60)*hr, b[1]+(p.kind==='loss'?16:-8)*vr); ctx.font=`${12*vr}px "Noto Sans Thai", system-ui`; });
   ctx.restore();
 }
 
@@ -342,8 +466,9 @@ function makeChart(el, key, plan, tf){
   const st={chart,series,times,step,boxes:[],levels:C.levels||[],vlines:[],scenario:C.scenario||[],bos:tf==='H1'?C.bos_level:null};
   (C.boxes||[]).forEach(b=>st.boxes.push(b)); if(C.asia && tf==='H1') st.boxes.push({t1:C.asia.t_start,t2:C.asia.t_end,top:C.asia.top,bottom:C.asia.bottom,kind:'asia',label:'กรอบเอเชีย'});
   (C.vlines||[]).forEach(v=>st.vlines.push(v)); (C.news||[]).filter(n=>n.tier===1||tf==='H1').forEach(n=>st.vlines.push({t:n.t,kind:n.tier===1?'news1':'news2',label:`${n.ccy} ${n.name}`.slice(0,26)}));
+  st.lastT=lastT;
   series.attachPrimitive(new Overlay(()=>st));
-  if(plan){
+  if(plan && plan.entry!=null){
     const d=plan.digits||5, lots=plan.volume? ` · ${plan.volume} lot`:'';
     series.createPriceLine({price:plan.entry,color:css('--blue'),lineWidth:2,lineStyle:0,axisLabelVisible:true,title:''});
     series.createPriceLine({price:plan.sl,color:css('--red'),lineWidth:2,lineStyle:0,axisLabelVisible:true,title:''});
@@ -363,24 +488,29 @@ function makeChart(el, key, plan, tf){
     const left=Math.min(param.point.x+12, el.clientWidth-270); tip.style.left=Math.max(0,left)+'px'; tip.style.top=Math.max(0,param.point.y-60)+'px'; });
   const n=raw.length, vis=tf==='H1'?60:tf==='H4'?60:80;
   let fut=6; (C.scenario||[]).forEach(p=>p.pts.forEach(q=>fut=Math.max(fut, Math.ceil((q[0]-lastT)/step)+3)));
-  chart.timeScale().setVisibleLogicalRange({from:Math.max(0,n-vis), to:Math.min(data.length-1, n-1+fut)});
+  const applyRange=()=>chart.timeScale().setVisibleLogicalRange({from:Math.max(0,n-vis), to:Math.min(data.length-1, n-1+fut)});
+  applyRange(); requestAnimationFrame(applyRange); setTimeout(applyRange,120); el.__chart=chart;
   const obj={chart,retheme:()=>{chart.applyOptions(theme()); series.applyOptions({upColor:css('--up'),downColor:css('--down'),wickUpColor:css('--up'),wickDownColor:css('--down')});}};
   CHARTS.push(obj); return obj;
 }
 
-function mountPlanCharts(list){
-  list.forEach((p,i)=>{
-    const box=document.getElementById('chart-'+i); if(!box) return;
-    const holders={}; let cur=null;
-    const show=tf=>{ Object.values(holders).forEach(h=>h.el.style.display='none');
-      if(!holders[tf]){ const el=document.createElement('div'); el.style.cssText='position:absolute;inset:0'; const t=document.createElement('div'); t.className='tip'; el.appendChild(t); box.appendChild(el);
-        holders[tf]={el}; holders[tf].c=makeChart(el,p._chart_key,p,tf); }
-      holders[tf].el.style.display='block'; cur=tf; };
-    box.querySelector('.tip')?.remove(); show('H1');
-    box.parentElement.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ box.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b)); show(b.dataset.tf); });
-  });
+function mountBox(box, key, planLike){
+  if(!box || box.dataset.mounted) return; box.dataset.mounted='1'; box.innerHTML='';
+  const holders={};
+  const show=tf=>{ Object.values(holders).forEach(h=>h.el.style.display='none');
+    if(!holders[tf]){ const el=document.createElement('div'); el.style.cssText='position:absolute;inset:0'; const t=document.createElement('div'); t.className='tip'; el.appendChild(t); box.appendChild(el);
+      holders[tf]={el}; holders[tf].c=makeChart(el,key,planLike,tf); }
+    holders[tf].el.style.display='block'; };
+  show('H1');
+  box.parentElement.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ box.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b)); show(b.dataset.tf); });
 }
-mountPlanCharts(plans.length? plans : (watch? [watch]:[]));
+plans.forEach((p,i)=>mountBox(document.getElementById('chart-'+i), p._chart_key, p));
+const WACT=(R.watch||[]).filter(w=>w.side_ok);
+const lazy=(i)=>{ const w=WACT[i]; mountBox(document.getElementById('wchart-'+i), 'watch:'+w.symbol, {digits:w.digits}); };
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ lazy(+e.target.id.slice(7)); io.unobserve(e.target); } }),{rootMargin:'300px'});
+  WACT.forEach((w,i)=>{ const el=document.getElementById('wchart-'+i); if(el) io.observe(el); });
+} else WACT.forEach((w,i)=>lazy(i));
 window.__REPORT_OK__ = true;
 </script>
 </body>
