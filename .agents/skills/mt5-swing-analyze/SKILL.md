@@ -5,13 +5,14 @@ description: วิเคราะห์สวิงเทรดสั้น For
 
 # MT5 Swing Analyze
 
+สกิลนี้ใช้ได้กับ AI agent ทุกตัวที่รันคำสั่ง shell ได้และเชื่อม MT5 MCP ไว้ (Claude Code, Codex, Gemini CLI, Cursor ฯลฯ)
 ทำงานจากรากโปรเจกต์ (โฟลเดอร์ที่มี `mt5kit/`) ทุกคำสั่งคือ `python3 -m mt5kit ...` และพิมพ์ผลเป็น JSON สั้น ๆ
 โค้ดเป็นคนอ่านข้อมูล MT5 หาสัญญาณ คำนวณล็อต และสร้างกราฟ **คุณไม่ต้องอ่านแท่งเทียนเอง** หน้าที่ของคุณคือ
 ถามโหมด → รันคำสั่ง → สรุป Macro → เขียนคำอธิบายสั้น → ส่งผลให้ผู้ใช้
 
 ## ขั้นที่ 0 — ถามโหมดก่อนทำอะไรทั้งหมด
 
-ถ้าข้อความผู้ใช้ยังไม่บอกโหมดชัดเจน ให้ใช้ AskUserQuestion ถาม **คำถามเดียว**:
+ถ้าข้อความผู้ใช้ยังไม่บอกโหมดชัดเจน ให้ถาม **คำถามเดียว** (ใช้เครื่องมือถามคำถามแบบตัวเลือกของ agent ถ้ามี เช่น AskUserQuestion ไม่มีก็ถามในแชต):
 
 - `วิเคราะห์แล้ววางออเดอร์เลย` — ถ้ามีแผนผ่านทุกกฎ จะวาง Pending ทันที (ไม่เกินโควตาวันละ 2 และอยู่ใน Risk profile)
 - `เอาแค่แผนมาอ่าน` — วิเคราะห์และทำรายงาน แต่ไม่ส่งคำสั่ง (สั่ง `ส่ง {Plan ID}` ทีหลังได้)
@@ -37,7 +38,7 @@ python3 -m mt5kit status
 python3 -m mt5kit macro-template      # สร้างไฟล์ runs/macro/<วันที่>.json
 ```
 
-แล้วมอบงานให้ subagent `macro-news` (หรือค้นเว็บเอง) กรอกไฟล์นั้นตาม [references/news-macro.md](references/news-macro.md)
+แล้วทำตามสกิล **mt5-macro-news** (ถ้า agent มี subagent ให้มอบงานนี้ให้ subagent) รายละเอียดรูปแบบไฟล์อยู่ใน [references/news-macro.md](references/news-macro.md)
 ใส่ `conflict` เฉพาะเมื่อข่าว/นโยบายขัดกับทิศนั้นชัดเจน นอกนั้นให้ `neutral` หรือ `support`
 COT ดึงสัปดาห์ละครั้งพอ: `python3 -m mt5kit cot` (ถ้าดึงไม่ได้ ให้ปล่อยไว้ ห้ามสร้างข้อมูลแทน)
 
@@ -66,7 +67,7 @@ python3 -m mt5kit scan --mode <plan_only|analyze_and_place>
 
 ```bash
 python3 -m mt5kit render --run <run_id>
-open runs/<run_id>/report.html        # macOS: เปิดรายงานในเบราว์เซอร์
+open runs/<run_id>/report.html        # macOS (Linux ใช้ xdg-open): เปิดรายงานในเบราว์เซอร์
 ```
 
 ## ขั้นที่ 5 — ตอบผู้ใช้

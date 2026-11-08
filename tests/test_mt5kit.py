@@ -121,6 +121,18 @@ class TestSafety(unittest.TestCase):
             with self.assertRaises(ForbiddenToolError):
                 c.call_tool(name, {})
 
+    def test_reads_codex_config(self):
+        from mt5kit.mcp_client import load_server_config
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "mt5kit").mkdir()
+            (Path(d) / ".codex").mkdir()
+            (Path(d) / ".codex" / "config.toml").write_text(
+                '[mcp_servers.terminal]\nurl = "http://127.0.0.1:22346/mcp"\nenabled = true\n'
+                'http_headers = { "Authorization" = "Bearer abc123xyz" }\n')
+            url, hdr = load_server_config("terminal", Path(d))
+            self.assertEqual(url, "http://127.0.0.1:22346/mcp")
+            self.assertEqual(hdr["Authorization"], "Bearer abc123xyz")
+
     def test_no_script_calls_trade_tools(self):
         for p in (ROOT / "mt5kit").glob("*.py"):
             src = p.read_text(encoding="utf-8")

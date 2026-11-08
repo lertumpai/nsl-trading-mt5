@@ -41,18 +41,44 @@ def load_server_config(server: str = "terminal", root: Path | None = None) -> tu
     token = os.environ.get("MT5_MCP_TOKEN")
     headers: dict[str, str] = {}
     if not url:
-        cfg_path = find_project_root(root) / ".mcp.json"
-        if not cfg_path.exists():
-            raise McpError("ไม่พบ .mcp.json และไม่ได้ตั้ง MT5_MCP_URL (ดู .mcp.example.json)")
-        cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
-        srv = cfg.get("mcpServers", {}).get(server)
-        if not srv:
-            raise McpError(f"ไม่พบ server '{server}' ใน .mcp.json")
-        url = srv["url"]
-        headers.update(srv.get("headers", {}))
+        proj = find_project_root(root)
+        mcp_json, codex = proj / ".mcp.json", proj / ".codex" / "config.toml"
+        if mcp_json.exists():
+            cfg = json.loads(mcp_json.read_text(encoding="utf-8"))
+            srv = cfg.get("mcpServers", {}).get(server)
+            if not srv:
+                raise McpError(f"ไม่พบ server '{server}' ใน .mcp.json")
+            url = srv["url"]
+            headers.update(srv.get("headers", {}))
+        elif codex.exists():
+            url, hdr = _read_codex_toml(codex, server)
+            headers.update(hdr)
+        else:
+            raise McpError("ไม่พบ .mcp.json หรือ .codex/config.toml และไม่ได้ตั้ง MT5_MCP_URL (ดู .mcp.example.json)")
     if token:
         headers["Authorization"] = f"Bearer {token}"
     return url, headers
+
+
+def _read_codex_toml(path: Path, server: str) -> tuple[str, dict]:
+    """อ่าน [mcp_servers.<server>] จาก config ของ Codex (ใช้ tomllib ถ้ามี ไม่งั้นอ่านแบบง่าย)"""
+    text = path.read_text(encoding="utf-8")
+    try:
+        import tomllib  # Python 3.11+
+        srv = tomllib.loads(text).get("mcp_servers", {}).get(server)
+        if not srv:
+            raise McpError(f"ไม่พบ [mcp_servers.{server}] ใน .codex/config.toml")
+        return srv["url"], dict(srv.get("http_headers", {}))
+    except ImportError:
+        m = re.search(r"\[mcp_servers\." + re.escape(server) + r"\](.*?)(?=\n\[|\Z)", text, re.S)
+        if not m:
+            raise McpError(f"ไม่พบ [mcp_servers.{server}] ใน .codex/config.toml") from None
+        block = m.group(1)
+        u = re.search(r'^\s*url\s*=\s*"([^"]+)"', block, re.M)
+        a = re.search(r'"Authorization"\s*=\s*"([^"]+)"', block)
+        if not u:
+            raise McpError("ไม่พบ url ใน .codex/config.toml") from None
+        return u.group(1), ({"Authorization": a.group(1)} if a else {})
 
 
 def _redact(text: str, headers: dict) -> str:

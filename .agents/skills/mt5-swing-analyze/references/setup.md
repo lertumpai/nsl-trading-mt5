@@ -1,10 +1,25 @@
 # ตั้งค่าครั้งแรกและแก้ปัญหา
 
+## 0. ติดตั้งสกิลให้ agent
+
+สกิลตัวจริงอยู่ที่ `.agents/skills/` (มาตรฐาน Agent Skills) Codex อ่านโฟลเดอร์นี้ได้เอง agent อื่นใช้ symlink:
+
+```bash
+bash scripts/link-agents.sh          # Claude Code: .claude/skills → .agents/skills และ CLAUDE.md → AGENTS.md
+bash scripts/link-agents.sh all      # เพิ่ม Gemini CLI, Cursor, GitHub Copilot
+```
+
+แก้สกิลที่ `.agents/skills/` ที่เดียว ทุก agent เห็นพร้อมกัน
+
 ## 1. การเชื่อมต่อ MCP
 
-- คัดลอก `.mcp.example.json` เป็น `.mcp.json` แล้วใส่ Token **ใหม่** (Token เก่าเคยหลุดขึ้น GitHub ต้องเปลี่ยนใน MT5)
-- `.mcp.json` อยู่ใน `.gitignore` ห้าม commit
-- สคริปต์อ่าน URL/Token จาก `.mcp.json` (server `terminal`) หรือ env `MT5_MCP_URL` / `MT5_MCP_TOKEN`
+ตั้งค่า MCP ให้ agent ของคุณตามปกติ (ใส่ Token **ใหม่** — Token เก่าเคยหลุดขึ้น GitHub ต้องเปลี่ยนใน MT5):
+
+- Claude Code / agent ที่ใช้ `.mcp.json`: คัดลอก `.mcp.example.json` เป็น `.mcp.json`
+- Codex: `.codex/config.toml` (ดูตัวอย่างใน `mcp.txt` เดิม)
+- ทั้งสองไฟล์อยู่ใน `.gitignore` ห้าม commit
+
+สคริปต์ `mt5kit` อ่าน URL/Token ตามลำดับ: env `MT5_MCP_URL` + `MT5_MCP_TOKEN` → `.mcp.json` (server `terminal`) → `.codex/config.toml` (`[mcp_servers.terminal]`)
 
 ## 2. Probe — ปรับ mcp-map ให้ตรงกับเครื่องมือจริง
 
