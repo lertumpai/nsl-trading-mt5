@@ -1,0 +1,34 @@
+{
+  "_note": "คัดลอกเป็น account-profile.json แล้วแก้ค่า (account-profile.json อยู่ใน .gitignore) ไฟล์นี้เป็นตัวอย่าง ยังไม่ใช่ Profile ที่อนุมัติแล้ว",
+  "strategy_id": "nsl-swing-v2",
+  "expected_account_login": null,
+  "expected_server_contains": null,
+  "symbol_suffix": "",
+  "symbol_overrides": {},
+  "risk": {
+    "risk_per_idea": 0.0025,
+    "max_risk_per_idea": 0.005,
+    "portfolio_cap": 0.01,
+    "currency_cap": 0.005,
+    "max_concurrent_ideas": 4,
+    "daily_loss_stop": 0.0075,
+    "weekly_loss_stop": 0.02,
+    "dd_half_risk": 0.04,
+    "dd_stop": 0.06,
+    "max_margin_frac_after_fill": 0.20
+  },
+  "costs": {
+    "commission_per_lot_roundtrip": {"default": 7.0},
+    "slippage_ticks": 2
+  },
+  "server_time": {"mode": "auto", "_modes": "auto | ny_close (เวลาเซิร์ฟเวอร์ = นิวยอร์ก+7) | fixed:+2"},
+  "execution": {
+    "enabled": false,
+    "allow_live": false,
+    "magic": 260211,
+    "comment_prefix": "nsl",
+    "auto_place_allows": ["PLACE_PENDING", "CANCEL_PENDING"]
+  },
+  "scheduled_default_mode": "plan_only",
+  "report_timezone": "Asia/Bangkok"
+}

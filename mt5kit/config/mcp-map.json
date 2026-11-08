@@ -1,0 +1,110 @@
+{
+  "_note": "จับคู่ชื่อเครื่องมือ MCP กับงานของ mt5kit ชื่ออาร์กิวเมนต์ยังเป็นค่าที่เดา ต้องรัน `python3 -m mt5kit probe` แล้วแก้ให้ตรงกับ input schema จริง จากนั้นตั้ง verified เป็น true",
+  "verified": false,
+  "server": "terminal",
+  "read": {
+    "account": {
+      "tool": "get_trading_account_info",
+      "args": {}
+    },
+    "positions": {
+      "tool": "get_trading_open_positions",
+      "args": {
+        "include_orders": true
+      }
+    },
+    "symbols": {
+      "tool": "get_marketwatch_symbols",
+      "args": {}
+    },
+    "symbol_info": {
+      "tool": "get_marketwatch_symbols",
+      "args": {
+        "symbol": "{symbol}"
+      }
+    },
+    "history": {
+      "tool": "get_chart_history",
+      "args": {
+        "symbol": "{symbol}",
+        "timeframe": "{tf}",
+        "count": "{count}"
+      }
+    },
+    "time": {
+      "tool": "get_time_information",
+      "args": {}
+    },
+    "calendar": {
+      "tool": "economic_calendar_get_values",
+      "args": {
+        "from": "{from}",
+        "to": "{to}"
+      }
+    },
+    "history_orders": {
+      "tool": "get_trading_history_orders",
+      "args": {
+        "from": "{from}",
+        "to": "{to}"
+      }
+    },
+    "history_positions": {
+      "tool": "get_trading_history_positions",
+      "args": {
+        "from": "{from}",
+        "to": "{to}"
+      }
+    }
+  },
+  "timeframes": {
+    "W1": "W1",
+    "D1": "D1",
+    "H4": "H4",
+    "H1": "H1",
+    "M15": "M15"
+  },
+  "trade_templates": {
+    "_note": "ใช้โดยโมเดลเท่านั้น สคริปต์ห้ามเรียก prepare-actions จะเติมค่าตามแม่แบบนี้ให้โมเดลคัดลอกไปเรียกเครื่องมือ",
+    "PLACE_PENDING": {
+      "tool": "trade_send_pending_order",
+      "args": {
+        "symbol": "{symbol}",
+        "type": "{order_type}",
+        "volume": "{volume}",
+        "price": "{price}",
+        "sl": "{sl}",
+        "tp": "{tp}",
+        "expiration": "{expiry_server}",
+        "comment": "{comment}",
+        "magic": "{magic}"
+      }
+    },
+    "CANCEL_PENDING": {
+      "tool": "trade_delete_order",
+      "args": {
+        "ticket": "{ticket}"
+      }
+    },
+    "MODIFY_SL": {
+      "tool": "trade_modify_sl_tp",
+      "args": {
+        "ticket": "{ticket}",
+        "sl": "{sl}",
+        "tp": "{tp}"
+      }
+    },
+    "CLOSE_POSITION": {
+      "tool": "trade_close_single_position",
+      "args": {
+        "ticket": "{ticket}"
+      }
+    }
+  },
+  "order_types": {
+    "_note": "ค่าที่เครื่องมือ trade_send_pending_order ต้องการ (แก้ตาม schema จริง)",
+    "buy_limit": "BUY_LIMIT",
+    "sell_limit": "SELL_LIMIT"
+  },
+  "calendar_time_format": "%Y.%m.%d %H:%M"
+}

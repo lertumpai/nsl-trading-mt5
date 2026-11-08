@@ -1,0 +1,213 @@
+"""ทดสอบ mt5kit ด้วยข้อมูลจำลอง: python3 -m unittest discover -s tests -v"""
+from __future__ import annotations
+
+import json
+import re
+import shutil
+import sys
+import tempfile
+import unittest
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).parent))
+
+from mt5kit import adapters as ad  # noqa: E402
+from mt5kit import risk as rk  # noqa: E402
+from mt5kit import structure as st  # noqa: E402
+from mt5kit.datasource import FixtureSource  # noqa: E402
+from mt5kit.mcp_client import ForbiddenToolError, McpClient  # noqa: E402
+from mt5kit.timeutil import ServerClock, trading_day_key  # noqa: E402
+
+UTC = timezone.utc
+DEMO_NOW = 1792491300  # มีแผน AUDUSD ผ่านทุกกฎในข้อมูลจำลอง seed 7
+
+
+def bars_from(rows):
+    return [ad.Bar(t=i * 3600.0, o=o, h=h, l=l, c=c) for i, (o, h, l, c) in enumerate(rows)]
+
+
+class TestStructure(unittest.TestCase):
+    def test_swing_confirm_needs_right_bars(self):
+        rows = [(1, 1.1, .9, 1), (1, 1.2, .95, 1.1), (1.1, 1.5, 1, 1.4), (1.4, 1.3, 1.1, 1.2), (1.2, 1.25, 1.0, 1.1)]
+        sw = st.find_swings(bars_from(rows), 2, 2)
+        highs = [s for s in sw if s.kind == "high"]
+        self.assertEqual(len(highs), 1)
+        self.assertEqual(highs[0].idx, 2)
+        self.assertEqual(highs[0].confirm_idx, 4)
+        self.assertEqual(st.confirmed(sw, 3, "high"), [])
+
+    def test_fvg_bull(self):
+        rows = [(1, 1.01, .99, 1)] * 20 + [(1.0, 1.01, 0.99, 1.0), (1.0, 1.10, 1.0, 1.09), (1.09, 1.12, 1.05, 1.11)]
+        b = bars_from(rows)
+        atr = st.atr_wilder(b, 14)
+        f = st.find_fvgs(b, atr, 0.1)
+        self.assertTrue(any(x.direction == "bull" and abs(x.bottom - 1.01) < 1e-9 and abs(x.top - 1.05) < 1e-9 for x in f))
+
+    def test_displacement_group_multi_bar(self):
+        rows = [(1, 1.01, .99, 1)] * 20 + [(1.0, 1.012, .999, 1.011), (1.011, 1.024, 1.010, 1.023), (1.023, 1.036, 1.022, 1.035)]
+        b = bars_from(rows)
+        atr = st.atr_wilder(b, 14)
+        cfg = {"max_bars": 3, "min_move_atr": 1.5, "min_body_ratio": 0.5, "close_outer_frac": 0.3}
+        self.assertIsNotNone(st.displacement_group(b, atr, len(b) - 1, "long", cfg))
+        self.assertIsNone(st.displacement_group(b, atr, len(b) - 1, "short", cfg))
+
+
+class TestTime(unittest.TestCase):
+    def test_ny_close_dst(self):
+        c = ServerClock("ny_close")
+        self.assertEqual(c.to_utc(datetime(2026, 7, 1, 0, 0)).isoformat(), "2026-06-30T21:00:00+00:00")
+        self.assertEqual(c.to_utc(datetime(2026, 12, 1, 0, 0)).isoformat(), "2026-11-30T22:00:00+00:00")
+
+    def test_trading_day_rollover(self):
+        r = {"tz": "America/New_York", "time": "17:00"}
+        t1 = datetime(2026, 11, 9, 21, 59, tzinfo=UTC).timestamp()  # 16:59 NY
+        t2 = datetime(2026, 11, 9, 22, 1, tzinfo=UTC).timestamp()   # 17:01 NY
+        self.assertEqual(trading_day_key(t1, r), "2026-11-09")
+        self.assertEqual(trading_day_key(t2, r), "2026-11-10")
+
+    def test_parse_formats(self):
+        from mt5kit.timeutil import parse_server_time
+        self.assertEqual(parse_server_time("2026.11.06 12:00:00.250"), datetime(2026, 11, 6, 12, 0))
+        self.assertEqual(parse_server_time(86400), datetime(1970, 1, 2))
+
+
+class TestRisk(unittest.TestCase):
+    def sym(self):
+        return ad.SymbolInfo("EURUSD", "EUR", "USD", "USD", 5, 1e-5, 1e-5, 1.0, 1.0, 100000, 0.01, 50, 0.01, 0, 0, 0,
+                             1.0850, 1.0851, None, 0.0, 0.0, "points", True, "", "", None)
+
+    def test_lot_example_from_plan(self):
+        acct = ad.Account("1", "s", "USD", 10000, 10000, 0, 10000, None, 100, "hedging", "demo")
+        prof = json.loads((ROOT / "mt5kit/config/account-profile.example.json").read_text())
+        cfg = json.loads((ROOT / "mt5kit/config/strategy-v2.json").read_text())
+        r = rk.size_position(acct, self.sym(), "long", 1.08450, 1.08200, rk.Exposure(), prof, 1.0, cfg)
+        self.assertTrue(r.ok)
+        self.assertAlmostEqual(r.loss_per_lot, 250.0, places=6)
+        self.assertEqual(r.volume, 0.09)          # 25 / (250 + 7 + 2) = 0.0965 → ปัดลง 0.09
+        self.assertLessEqual(r.risk_money, 25.0)
+
+    def test_currency_cap_blocks_third_short_usd(self):
+        acct = ad.Account("1", "s", "USD", 10000, 10000, 0, 10000, None, 100, "hedging", "demo")
+        prof = json.loads((ROOT / "mt5kit/config/account-profile.example.json").read_text())
+        cfg = json.loads((ROOT / "mt5kit/config/strategy-v2.json").read_text())
+        ex = rk.Exposure()
+        ex.add_ccy("EUR", "USD", "long", 25.0)
+        ex.add_ccy("GBP", "USD", "long", 25.0)
+        ex.total = 50.0
+        s = self.sym(); s.name, s.base = "AUDUSD", "AUD"
+        r = rk.size_position(acct, s, "long", 1.08450, 1.08200, ex, prof, 1.0, cfg)
+        self.assertFalse(r.ok)
+
+    def test_volume_below_min_skips(self):
+        acct = ad.Account("1", "s", "USD", 100, 100, 0, 100, None, 100, "hedging", "demo")
+        prof = json.loads((ROOT / "mt5kit/config/account-profile.example.json").read_text())
+        cfg = json.loads((ROOT / "mt5kit/config/strategy-v2.json").read_text())
+        r = rk.size_position(acct, self.sym(), "long", 1.08450, 1.08200, rk.Exposure(), prof, 1.0, cfg)
+        self.assertFalse(r.ok)
+
+    def test_zero_tick_value_blocked(self):
+        s = self.sym(); s.tick_value = s.tick_value_loss = 0
+        with self.assertRaises(rk.RiskDataError):
+            rk.money_per_lot(s, 0.001)
+
+
+class TestSafety(unittest.TestCase):
+    def test_client_refuses_trade_tools(self):
+        c = McpClient("http://127.0.0.1:1/mcp", {})
+        for name in ("trade_send_pending_order", "trade_delete_order", "trade_modify_sl_tp", "trade_close_single_position"):
+            with self.assertRaises(ForbiddenToolError):
+                c.call_tool(name, {})
+
+    def test_no_script_calls_trade_tools(self):
+        for p in (ROOT / "mt5kit").glob("*.py"):
+            src = p.read_text(encoding="utf-8")
+            self.assertIsNone(re.search(r"call_tool\(\s*['\"]trade_", src), p.name)
+            self.assertIsNone(re.search(r"\border_send\(", src), p.name)
+
+
+def make_fixture(tmp: Path, now_ts: float, positions=None) -> Path:
+    from fixturegen import build, write_fixture
+    full = build(tmp / "x")
+    fx = tmp / "fx"
+    write_fixture(fx, full, datetime.fromtimestamp(now_ts, UTC), positions=positions)
+    return fx
+
+
+class TestEndToEnd(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = Path(tempfile.mkdtemp())
+        cls.root = cls.tmp / "proj"
+        cls.root.mkdir()
+        cls.fx = make_fixture(cls.tmp, DEMO_NOW)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_scan_and_render(self):
+        from mt5kit.engine import run_scan
+        from mt5kit.render import render
+        run_dir, rep = run_scan(self.root, FixtureSource(self.fx), "plan_only", "london", DEMO_NOW)
+        self.assertEqual(rep["mode"], "plan_only")
+        self.assertEqual(len(rep["scan"]), 10)
+        self.assertGreaterEqual(len(rep["plans"]), 1)
+        p = rep["plans"][0]
+        self.assertTrue(all(c["ok"] for c in p["checks"]))
+        self.assertGreaterEqual(p["rr_net"], 1.5)
+        self.assertLessEqual(p["risk_pct"], 0.0025 + 1e-9)
+        html, issues = render(run_dir)
+        self.assertEqual(issues, [])
+        h = html.read_text(encoding="utf-8")
+        self.assertIn("LightweightCharts", h)
+        self.assertNotIn("Bearer", h)
+        self.assertNotIn("51234567", h)  # เลขบัญชีเต็มต้องไม่อยู่ใน HTML
+
+    def test_place_mode_falls_back_when_execution_disabled(self):
+        from mt5kit.engine import run_scan
+        root = self.tmp / "proj2"; root.mkdir(exist_ok=True)
+        _, rep = run_scan(root, FixtureSource(self.fx), "analyze_and_place", "london", DEMO_NOW)
+        self.assertEqual(rep["mode"], "plan_only")
+        self.assertTrue(any("execution.enabled" in w for w in rep["warnings"]))
+
+    def test_execution_flow_demo(self):
+        from mt5kit.engine import run_scan
+        from mt5kit.execution import ExecutionRefused, prepare_actions, reconcile, record_result
+        root = self.tmp / "proj3"; root.mkdir(exist_ok=True)
+        prof = json.loads((ROOT / "mt5kit/config/account-profile.example.json").read_text())
+        _, rep = run_scan(root, FixtureSource(self.fx), "analyze_and_place", "london", DEMO_NOW)
+        pid = rep["plans"][0]["plan_id"]
+        with self.assertRaises(ExecutionRefused):
+            prepare_actions(root, FixtureSource(self.fx), rep["run_id"], [pid], "user", now=DEMO_NOW + 60)
+        prof["execution"]["enabled"] = True
+        (root / "account-profile.json").write_text(json.dumps(prof))
+        out = prepare_actions(root, FixtureSource(self.fx), rep["run_id"], [pid], "mode", now=DEMO_NOW + 60)
+        self.assertEqual(out["refused"], [])
+        a = out["actions"][0]
+        self.assertEqual(a["tool"], "trade_send_pending_order")
+        self.assertEqual(a["args"]["price"], rep["plans"][0]["entry"])
+        self.assertTrue(a["args"]["comment"].startswith("nsl "))
+        # เรียกแผนเดิมซ้ำ → ต้องถูกปฏิเสธหลังส่งแล้ว
+        r = record_result(root, rep["run_id"], a["action_id"], {"retcode": 10009, "order": 777001})
+        self.assertEqual(r["status"], "submitted")
+        again = prepare_actions(root, FixtureSource(self.fx), rep["run_id"], [pid], "mode", now=DEMO_NOW + 90)
+        self.assertEqual(again["actions"], [])
+        # กระทบยอด: บัญชีจริงมี Pending ตาม comment
+        p = rep["plans"][0]
+        pos = {"positions": [], "orders": [{"ticket": 777001, "symbol": p["symbol"], "type": "ORDER_TYPE_SELL_LIMIT" if p["side"] == "short" else "ORDER_TYPE_BUY_LIMIT",
+                                             "volume": a["args"]["volume"], "price_open": p["entry"], "sl": p["sl"], "tp": p["tp"],
+                                             "time_expiration": a["args"]["expiration"], "magic": prof["execution"]["magic"], "comment": a["args"]["comment"]}]}
+        (self.fx / "positions.json").write_text(json.dumps(pos))
+        try:
+            ex = reconcile(root, FixtureSource(self.fx), rep["run_id"])
+        finally:
+            (self.fx / "positions.json").write_text(json.dumps({"positions": [], "orders": []}))
+        self.assertEqual(ex["status"], "success")
+        self.assertEqual(ex["actions"][0]["ticket"], "777001")
+
+
+if __name__ == "__main__":
+    unittest.main()

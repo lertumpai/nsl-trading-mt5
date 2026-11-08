@@ -13,3 +13,7 @@ ledger/
 __pycache__/
 *.pyc
 .venv/
+
+# Account profile and recorded live data (contain account details)
+account-profile.json
+tests/fixtures/live-*/

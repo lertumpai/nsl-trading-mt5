@@ -1,0 +1,14 @@
+{
+  "_note": "ข่าว Tier 1: จับคู่ด้วยคำในชื่อข่าว (ไม่สนตัวพิมพ์เล็กใหญ่) ต่อสกุลเงิน ข่าวอื่นที่ปฏิทินให้ความสำคัญสูง = Tier 2",
+  "common": ["interest rate decision", "rate decision", "cash rate", "official cash rate", "monetary policy statement", "press conference", "cpi", "consumer price index"],
+  "by_currency": {
+    "USD": ["nonfarm payrolls", "non-farm payrolls", "fomc", "federal funds rate", "core pce", "pce price index"],
+    "EUR": ["ecb", "deposit facility rate", "main refinancing rate"],
+    "GBP": ["boe", "bank rate", "claimant count", "average earnings", "unemployment rate"],
+    "JPY": ["boj", "policy rate"],
+    "AUD": ["rba", "employment change", "unemployment rate"],
+    "NZD": ["rbnz", "employment change", "unemployment rate"],
+    "CAD": ["boc", "employment change", "unemployment rate"]
+  },
+  "exclude": ["speech", "speaks", "minutes", "ppi", "producer price"]
+}

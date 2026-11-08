@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>รายงานสวิงเทรด</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f17; --panel:#121826; --panel2:#182033; --line:#243049; --text:#e6ebf5; --muted:#8d99b3;
+  --green:#22c55e; --green-a:rgba(34,197,94,.14); --red:#ef4444; --red-a:rgba(239,68,68,.14);
+  --blue:#3b82f6; --blue-a:rgba(59,130,246,.16); --amber:#f59e0b; --amber-a:rgba(245,158,11,.16);
+  --violet:#a78bfa; --violet-a:rgba(167,139,250,.14); --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px rgba(0,0,0,.25);
+  --up:#26a69a; --down:#ef5350; --grid:rgba(141,153,179,.08);
+}
+:root[data-theme="light"]{
+  --bg:#f5f7fb; --panel:#ffffff; --panel2:#f0f3f9; --line:#dfe5ef; --text:#0f172a; --muted:#5b6780;
+  --green-a:rgba(34,197,94,.12); --red-a:rgba(239,68,68,.10); --blue-a:rgba(59,130,246,.12); --amber-a:rgba(245,158,11,.14);
+  --violet-a:rgba(124,58,237,.10); --shadow:0 1px 2px rgba(15,23,42,.06), 0 6px 18px rgba(15,23,42,.06); --grid:rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.55}
+.num,.mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;padding-top:10px;padding-bottom:10px}
+.brand{font-weight:700;letter-spacing:.2px}
+.meta{color:var(--muted);font-size:13px}
+.btn{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.btn:hover{border-color:var(--blue)}
+.hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin:18px 0 8px}
+.decision{font-size:26px;font-weight:700;line-height:1.3}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 10px;font-size:12.5px;color:var(--muted)}
+.chip b{color:var(--text);font-weight:600}
+.chip.warn{border-color:var(--amber);color:var(--amber)} .chip.ok{border-color:var(--green);color:var(--green)} .chip.bad{border-color:var(--red);color:var(--red)} .chip.info{border-color:var(--blue);color:var(--blue)}
+.badge{display:inline-block;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:600}
+.b-green{background:var(--green-a);color:var(--green)} .b-red{background:var(--red-a);color:var(--red)} .b-blue{background:var(--blue-a);color:var(--blue)} .b-amber{background:var(--amber-a);color:var(--amber)} .b-gray{background:var(--panel2);color:var(--muted)} .b-violet{background:var(--violet-a);color:var(--violet)}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))} .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);min-width:0}
+.card h3{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--muted)}
+.kpi .lab{color:var(--muted);font-size:12.5px} .kpi .val{font-size:22px;font-weight:700;margin-top:2px} .kpi .sub{color:var(--muted);font-size:12.5px}
+section{margin-top:22px} section>h2{font-size:18px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+section>h2 .count{color:var(--muted);font-weight:500;font-size:14px}
+.bar{height:12px;border-radius:999px;background:var(--panel2);position:relative;overflow:hidden;border:1px solid var(--line)}
+.bar>span{position:absolute;top:0;bottom:0;left:0;border-radius:999px}
+.bar .cap{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);opacity:.6}
+.riskrow{display:grid;grid-template-columns:90px 1fr 110px;gap:10px;align-items:center;margin:8px 0;font-size:13.5px}
+.heat{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:10px}
+.heat .cell{border-radius:10px;padding:8px 6px;text-align:center;border:1px solid var(--line);font-size:12px}
+.heat .cell b{display:block;font-size:13px;color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{color:var(--muted);font-weight:500;text-align:left;border-bottom:1px solid var(--line);padding:8px 6px;white-space:nowrap}
+td{border-bottom:1px solid var(--line);padding:8px 6px;vertical-align:top}
+tr:last-child td{border-bottom:0}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tablewrap table{min-width:760px}
+.plan{padding:0;overflow:hidden}
+.plan-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.plan-title{font-size:20px;font-weight:700;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.plan-body{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:0}
+.chartbox{padding:10px 12px 12px;border-right:1px solid var(--line);min-width:0}
+.tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
+.tab{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:8px;padding:3px 10px;font-size:12.5px;cursor:pointer}
+.tab.on{background:var(--blue-a);color:var(--blue);border-color:var(--blue)}
+.legend{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:4px}
+.chart{height:440px;position:relative}
+.tip{position:absolute;z-index:3;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 9px;font-size:12.5px;max-width:260px;box-shadow:var(--shadow);display:none}
+.side{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.order{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.order .o{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.order .o .l{font-size:12px;color:var(--muted)} .order .o .v{font-size:17px;font-weight:700}
+.o.entry{border-color:color-mix(in srgb,var(--blue) 55%,var(--line))} .o.sl{border-color:color-mix(in srgb,var(--red) 55%,var(--line))} .o.tp{border-color:color-mix(in srgb,var(--green) 55%,var(--line))}
+.reasons{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.reasons li{background:var(--panel2);border-radius:10px;padding:8px 10px;font-size:13.5px}
+.tag{font-size:11px;border-radius:6px;padding:1px 6px;margin-right:6px;font-weight:600}
+.tag.fact{background:var(--blue-a);color:var(--blue)} .tag.infer{background:var(--violet-a);color:var(--violet)}
+.small{font-size:12.5px;color:var(--muted)}
+.copy{width:100%;justify-content:center;display:flex;gap:6px;align-items:center;font-weight:600}
+.scen{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scen div{border-radius:10px;padding:8px 10px;font-size:13px;border:1px dashed}
+.scen .w{border-color:var(--green);background:var(--green-a)} .scen .x{border-color:var(--red);background:var(--red-a)}
+.timeline{display:flex;flex-direction:column;gap:8px}
+.ev{display:grid;grid-template-columns:96px 52px 1fr;gap:10px;align-items:center;background:var(--panel2);border-radius:10px;padding:8px 10px;font-size:13.5px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-top:10px}
+summary{cursor:pointer;font-weight:600}
+.empty{color:var(--muted);text-align:center;padding:18px}
+.banner{border-radius:14px;padding:10px 14px;border:1px solid;margin-top:10px;font-size:14px}
+.banner.plan{border-color:var(--amber);background:var(--amber-a)} .banner.done{border-color:var(--green);background:var(--green-a)} .banner.bad{border-color:var(--red);background:var(--red-a)}
+footer{color:var(--muted);font-size:12px;margin:28px 0 40px;text-align:center}
+@media (max-width:900px){.plan-body{grid-template-columns:1fr}.chartbox{border-right:0;border-bottom:1px solid var(--line)}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.wrap{padding:12px 16px}.decision{font-size:21px}.hero{grid-template-columns:1fr}.chart{height:340px}.g2{grid-template-columns:1fr}.heat{grid-template-columns:repeat(4,minmax(0,1fr))}.ev{grid-template-columns:80px 44px 1fr}.riskrow{grid-template-columns:70px 1fr 90px}.legend{display:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div><div class="brand">NSL Swing · MT5</div><div class="meta" id="meta"></div></div>
+  <button class="btn" id="themeBtn" type="button">สลับธีม</button>
+</div></header>
+<main class="wrap" id="app"></main>
+<footer id="foot"></footer>
+<script>/*__LWC__*/</script>
+<script>
+const R = /*__REPORT_JSON__*/null;
+const TZ_SHIFT = R.tz_shift_sec || 25200;
+const CUR = R.account.currency || '';
+const $ = (s, el=document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = (v, d=2) => v==null ? '-' : Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct = (v, d=2) => v==null ? '-' : (v*100).toFixed(d)+'%';
+const px = (v, digits) => v==null ? '-' : Number(v).toFixed(digits ?? 5);
+const th = (t, withDate=true) => { if(t==null) return '-'; const d=new Date((t+TZ_SHIFT)*1000); const p=n=>String(n).padStart(2,'0');
+  return (withDate? `${p(d.getUTCDate())}/${p(d.getUTCMonth()+1)} `:'') + `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`; };
+const sideTh = s => s==='long' ? 'ซื้อ (Long)' : 'ขาย (Short)';
+const typeTh = t => ({buy_limit:'Buy Limit', sell_limit:'Sell Limit'}[t] || t);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// ---------- theme ----------
+(function(){ let t=null; try{ t=localStorage.getItem('nsl-theme'); }catch(e){}
+  if(t) document.documentElement.dataset.theme=t;
+  $('#themeBtn').onclick=()=>{ const n=document.documentElement.dataset.theme==='dark'?'light':'dark'; document.documentElement.dataset.theme=n;
+    try{localStorage.setItem('nsl-theme',n);}catch(e){} CHARTS.forEach(c=>c.retheme()); };
+})();
+
+// ---------- sections ----------
+function hero(){
+  const m = R.mode==='plan_only' ? '<span class="chip info">โหมด: <b>แผนอย่างเดียว</b></span>' : '<span class="chip warn">โหมด: <b>วิเคราะห์แล้ววางออเดอร์</b></span>';
+  const slot = {london:'รอบลอนดอน', newyork:'รอบนิวยอร์ก', manage:'รอบดูแล', auto:'รอบอัตโนมัติ'}[R.slot] || R.slot;
+  const st = R.plans.length ? (R.mode==='plan_only' ? 'b-amber':'b-blue') : (R.gates.length ? 'b-red':'b-gray');
+  const chips = [m, `<span class="chip">${esc(slot)}</span>`, `<span class="chip">ข้อมูล ณ <b class="num">${th(R.generated_at)}</b> น.</span>`,
+    `<span class="chip">โควตาวันนี้ <b class="num">${R.risk.orders_today}/${R.risk.quota}</b></span>`, `<span class="chip">${esc(R.strategy_version)}</span>`];
+  if(R.source!=='live') chips.push('<span class="chip warn">ข้อมูลจาก Fixture — ไม่ใช่ราคาสด</span>');
+  (R.gates||[]).forEach(g=>chips.push(`<span class="chip bad">${esc(g)}</span>`));
+  (R.warnings||[]).forEach(g=>chips.push(`<span class="chip warn">${esc(g)}</span>`));
+  const nar = R.narrative && R.narrative.overview ? `<p style="margin:10px 0 0;max-width:820px">${esc(R.narrative.overview)}</p>` : '';
+  return `<div class="hero"><div><span class="badge ${st}">${R.plans.length? 'มีแผน':'ไม่มีออเดอร์ใหม่'}</span>
+    <div class="decision">${esc(R.decision)}</div>${nar}<div class="chips">${chips.join('')}</div></div></div>
+    ${R.mode==='plan_only' && R.plans.length ? '<div class="banner plan">แผนที่เสนอ — <b>ยังไม่ได้ส่งคำสั่ง</b> ถ้าต้องการวาง ให้พิมพ์ <span class="mono">ส่ง {Plan ID}</span> ในแชต</div>':''}`;
+}
+
+function kpis(){
+  const a=R.account, eq=R.risk.equity||{};
+  const k=(lab,val,sub='')=>`<div class="card kpi"><div class="lab">${lab}</div><div class="val num">${val}</div><div class="sub">${sub}</div></div>`;
+  const dd = eq.drawdown!=null ? `Drawdown ${pct(eq.drawdown)}` : '';
+  return `<div class="grid g4">${k('Balance',money(a.balance),CUR+' · '+esc(a.server))}${k('Equity',money(a.equity),dd)}
+    ${k('Free margin',money(a.free_margin), a.margin_level? 'Margin level '+money(a.margin_level,0)+'%':'')}
+    ${k('กำไร/ขาดทุนวันนี้', `<span style="color:${(eq.day_pnl_frac||0)>=0?'var(--green)':'var(--red)'}">${pct(eq.day_pnl_frac||0)}</span>`, 'เพดานหยุด −'+pct(R.risk.daily_loss_stop||0.0075))}</div>`;
+}
+
+function riskCard(){
+  const r=R.risk, base=r.capital_base, cap=base*r.portfolio_cap;
+  const row=(lab,v,color)=>{ const w=Math.min(100, v/cap*100); return `<div class="riskrow"><div>${lab}</div>
+    <div class="bar"><span style="width:${w}%;background:${color}"></span><i class="cap" style="left:calc(100% - 2px)"></i></div>
+    <div class="num" style="text-align:right">${money(v)} <span class="small">${CUR}</span></div></div>`; };
+  const ccys=['USD','EUR','GBP','JPY','AUD','NZD','CAD'];
+  const ccap=base*r.currency_cap;
+  const heat=ccys.map(c=>{ const v=(r.by_ccy||{})[c]||{long:0,short:0}; const m=Math.max(v.long,v.short); const f=Math.min(1,m/ccap);
+    const dir = v.long>v.short ? 'Long' : v.short>v.long ? 'Short' : '—';
+    const bg = f===0 ? 'var(--panel2)' : `color-mix(in srgb, ${f>=1?'var(--red)':f>=.5?'var(--amber)':'var(--blue)'} ${Math.round(20+f*45)}%, var(--panel))`;
+    return `<div class="cell" style="background:${bg}"><b>${c}</b>${dir} <span class="num">${Math.round(f*100)}%</span></div>`; }).join('');
+  const unk = (r.unknown||[]).length ? `<div class="banner bad">มี ${r.unknown.length} ไม้ที่คำนวณความเสี่ยงไม่ได้ (เช่น ไม่มี SL) — งดเปิดเพิ่ม</div>`:'';
+  return `<div class="card"><h3>ความเสี่ยงทั้งพอร์ต (เทียบเพดาน ${pct(r.portfolio_cap,0)} = ${money(cap)} ${CUR})</h3>
+    ${row('ก่อน', r.reserved_before, 'var(--blue)')}${row('หลัง*', r.reserved_after, r.reserved_after>cap?'var(--red)':'var(--violet)')}
+    <div class="small">* หลัง = รวมแผนที่เสนอ เสมือน Pending ทุกตัว Fill พร้อมกัน</div>
+    <h3 style="margin-top:14px">ความเสี่ยงรายสกุลเงิน (เทียบเพดาน ${pct(r.currency_cap)} ต่อทิศ)</h3><div class="heat">${heat}</div>${unk}</div>`;
+}
+
+function mgmt(){
+  const rows=R.management||[];
+  if(!rows.length) return `<div class="card empty">ไม่มีไม้เปิดหรือ Pending ในบัญชี</div>`;
+  const act={KEEP:['ถือ','b-gray'],CANCEL:['ยกเลิก','b-red'],MODIFY_SL:['เลื่อน SL','b-blue'],PROPOSE_CLOSE:['เสนอปิด','b-amber'],REPORT_ONLY:['ไม่มีสิทธิ์แก้','b-violet'],REVIEW:['ทบทวน','b-amber']};
+  return `<div class="card tablewrap"><table><thead><tr><th>Ticket</th><th>คู่ / ฝั่ง</th><th>ประเภท</th><th class="num">Lot</th><th class="num">ราคา</th><th class="num">SL / TP</th><th>R</th><th>คำตัดสิน</th><th>เหตุผล</th></tr></thead><tbody>
+  ${rows.map(m=>{ const a=act[m.action]||[m.action,'b-gray']; return `<tr><td class="mono">#${esc(m.ticket)}</td><td><b>${esc(m.symbol)}</b> ${m.side==='long'?'<span class="badge b-green">Long</span>':'<span class="badge b-red">Short</span>'}</td>
+    <td>${m.kind==='pending'?'Pending':'Position'}${m.owner!=='skill'?' <span class="small">(ไม่ใช่ของสกิล)</span>':''}</td><td class="num">${m.volume}</td><td class="num">${m.price}</td>
+    <td class="num">${m.sl||'—'} / ${m.tp||'—'}</td><td class="num">${m.r_now!=null? m.r_now+'R':'—'}</td><td><span class="badge ${a[1]}">${a[0]}</span>${m.new_sl?` <span class="num small">→ ${m.new_sl}</span>`:''}</td><td>${esc(m.reason)}</td></tr>`; }).join('')}
+  </tbody></table></div>`;
+}
+
+function planCard(p, idx, isWatch=false){
+  const d=p.digits||5, n=(R.narrative.per_plan||{})[p.plan_id]||[];
+  const sg=p.signal||{};
+  const facts=[];
+  facts.push(`H4 ${sg.h4_bias==='up'?'ขาขึ้น':sg.h4_bias==='down'?'ขาลง':'เป็นกลาง'} · D1 ${({support:'สนับสนุน',neutral:'เป็นกลาง',opposite:'สวนทาง'})[sg.d1_state]||'-'}`);
+  if(sg.sweep) facts.push(`กวาด ${sg.sweep.level_name} ที่ ${px(sg.sweep.level,d)} แล้วปิดกลับ`);
+  if(sg.pullback) facts.push(`ย่อถึง${sg.pullback.zone==='discount'?'ครึ่งล่างของขา H4':'FVG H4'} แล้วปิดทะลุโครงสร้าง`);
+  facts.push(`แท่งแรง ${sg.disp_move_atr}×ATR ${sg.entry_from_fvg?'· เข้าที่กึ่งกลาง FVG':'· ไม่มี FVG ใช้ 50% ของแท่งแรง'}`);
+  const reasons = (n.length? n.map(t=>`<li><span class="tag infer">ข้อสันนิษฐาน</span>${esc(t)}</li>`):[]).concat(facts.map(t=>`<li><span class="tag fact">ข้อมูลจริง</span>${esc(t)}</li>`)).join('');
+  const st = isWatch ? `<span class="badge b-gray">เฝ้าดู — ไม่ผ่าน: ${esc((p.fails||[]).slice(0,2).join('; '))}</span>` :
+    (p.status==='SUBMITTED'||p.status==='PENDING') ? '<span class="badge b-green">ยืนยันจาก MT5 แล้ว</span>' : '<span class="badge b-amber">แผนที่เสนอ — ยังไม่ได้ส่งคำสั่ง</span>';
+  const o=(cls,l,v,s='')=>`<div class="o ${cls}"><div class="l">${l}</div><div class="v num">${v}</div>${s?`<div class="small num">${s}</div>`:''}</div>`;
+  const rr = p.rr_net!=null ? Number(p.rr_net).toFixed(2)+'R' : '-';
+  return `<div class="card plan" id="plan-${idx}">
+   <div class="plan-head"><div class="plan-title">${esc(p.symbol)} <span class="badge ${p.side==='long'?'b-green':'b-red'}">${sideTh(p.side)}</span>
+     <span class="badge b-blue">${typeTh(p.order_type||(p.side==='long'?'buy_limit':'sell_limit'))}</span><span class="badge b-violet">รูปแบบ ${esc(p.setup)}</span>${p.score?`<span class="badge b-gray">คะแนนคุณภาพ ${p.score.total}/100</span>`:''}</div>
+     <div>${st}<div class="small mono" style="text-align:right;margin-top:4px">${esc(p.plan_id)} r${p.revision||1}</div></div></div>
+   <div class="plan-body">
+    <div class="chartbox">
+      <div class="tabs" data-k="${esc(p._chart_key)}"><button class="tab on" data-tf="H1">H1</button><button class="tab" data-tf="H4">H4</button><button class="tab" data-tf="D1">D1</button>
+        <div class="legend"><span><i style="border-color:var(--blue)"></i>Entry</span><span><i style="border-color:var(--red)"></i>SL</span><span><i style="border-color:var(--green)"></i>TP</span><span><i style="border-color:var(--green);border-top-style:dashed"></i>ฉากทัศน์</span></div></div>
+      <div class="chart" id="chart-${idx}"><div class="tip"></div></div>
+      <div class="small" style="margin-top:6px">เวลาไทย · เส้นประด้านขวาเป็น <b>ฉากทัศน์ ไม่ใช่การทำนาย</b> · ชี้ที่วงกลมตัวเลขเพื่อดูคำอธิบาย</div>
+    </div>
+    <div class="side">
+      <div class="order">${o('entry',typeTh(p.order_type||'')+' (Entry)',px(p.entry,d),`${p.volume} lot`)}${o('',"R:R สุทธิ",rr,'หลังหักต้นทุน')}
+        ${o('sl','Stop Loss',px(p.sl,d),`−${money(p.risk_money)} ${CUR} (${pct(p.risk_pct||0)})`)}${o('tp','Take Profit',px(p.tp,d),p.reward_money!=null?`+${money(p.reward_money)} ${CUR} · ${esc(p.tp_name||'')}`:esc(p.tp_name||''))}</div>
+      <div class="small">Pending หมดอายุ <b class="num">${th(p.expiry_utc)}</b> น. · Macro: ${esc(p.macro||'neutral')}</div>
+      <div><div class="small" style="margin-bottom:6px">เหตุผลที่เลือก</div><ul class="reasons">${reasons}</ul></div>
+      <div class="scen"><div class="w"><b>ถ้าเป็นตามแผน</b><br>ราคาย่อมาที่ ${px(p.entry,d)} แล้วไปถึง ${px(p.tp,d)}</div><div class="x"><b>ถ้าผิดทาง</b><br>${(p.invalidation||[]).slice(0,2).map(esc).join('<br>')||'หลุด SL'}</div></div>
+      ${isWatch?'':`<button class="btn copy" data-copy="ส่ง ${esc(p.plan_id)}">คัดลอกคำสั่ง “ส่ง ${esc(p.plan_id)}”</button>`}
+    </div></div></div>`;
+}
+
+function scanTable(){
+  const res={'เลือก':'b-green','ผู้สมัคร':'b-blue','เฝ้าดู':'b-amber','ผ่านแต่เต็มโควตา':'b-blue','ผ่านแต่ถูกระงับ':'b-red','คะแนนไม่ถึง':'b-gray','ไม่ผ่าน':'b-gray','ข้าม':'b-gray'};
+  const bias=b=>b==='up'?'<span class="badge b-green">ขาขึ้น</span>':b==='down'?'<span class="badge b-red">ขาลง</span>':'<span class="badge b-gray">กลาง</span>';
+  return `<div class="card tablewrap"><table><thead><tr><th>คู่</th><th>H4</th><th>D1 (Long/Short)</th><th>รูปแบบ</th><th class="num">คะแนน</th><th>ผล</th><th>เหตุผล</th></tr></thead><tbody>
+  ${R.scan.map(r=>`<tr><td><b>${esc(r.symbol)}</b>${r.broker&&r.broker!==r.symbol?`<div class="small">${esc(r.broker)}</div>`:''}</td><td>${bias(r.h4_bias)}</td>
+   <td class="small">${esc(r.d1_long||'-')} / ${esc(r.d1_short||'-')}</td><td>${esc(r.setup||'—')}</td><td class="num">${r.score??'—'}</td>
+   <td><span class="badge ${res[r.result]||'b-gray'}">${esc(r.result)}</span></td><td class="small">${esc(r.reason)}${r.stale_hours?` · ข้อมูลล่าสุด ${r.stale_hours} ชม.ก่อน`:''}</td></tr>`).join('')}
+  </tbody></table><div class="small" style="margin-top:8px">คะแนนคุณภาพใช้เรียงลำดับเท่านั้น ไม่ใช่โอกาสชนะ</div></div>`;
+}
+
+function newsBlock(){
+  if(!R.news.length) return `<div class="card empty">ไม่มีข่าว Tier 1/2 ใน 36 ชั่วโมงข้างหน้า${R.gates.some(g=>g.includes('ปฏิทิน'))?' (อ่านปฏิทินไม่ได้)':''}</div>`;
+  return `<div class="card timeline">${R.news.map(e=>`<div class="ev"><div class="num"><b>${th(e.t)}</b></div><div><span class="badge ${e.tier===1?'b-red':'b-amber'}">T${e.tier}</span></div>
+    <div><b>${esc(e.ccy)}</b> ${esc(e.name)} ${e.forecast?`<span class="small">คาด ${esc(e.forecast)} · ก่อนหน้า ${esc(e.previous)}</span>`:''}</div></div>`).join('')}
+    <div class="small">Tier 1: ห้ามมี Pending ตั้งแต่ 2 ชม.ก่อนถึง 1 ชม.หลังข่าว (เฉพาะสกุลเงินในคู่)</div></div>`;
+}
+
+function macroBlock(){
+  const m=R.macro, c=R.cot; let h='';
+  if(m && m.currencies){ h+=`<table><tbody>${Object.entries(m.currencies).map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${esc(typeof v==='string'?v:(v.summary||JSON.stringify(v)))}</td></tr>`).join('')}</tbody></table>`; }
+  else h+='<div class="small">ยังไม่มีสรุป Macro ของวันนี้ — ถือว่าเป็นกลางทุกคู่</div>';
+  if(c && c.available){ h+=`<h3 style="margin-top:12px">COT (บริบทเท่านั้น ไม่เพิ่มคะแนน)</h3><table><thead><tr><th>สกุล</th><th>รายงาน</th><th class="num">Asset Mgr สุทธิ</th><th class="num">เปลี่ยน 4 สัปดาห์</th><th class="num">Lev Funds สุทธิ</th><th class="num">เปลี่ยน 4 สัปดาห์</th></tr></thead><tbody>
+    ${Object.entries(c.by_ccy).map(([k,v])=>`<tr><td>${k}</td><td class="num">${v.report_date}</td><td class="num">${money(v.asset_mgr_net,0)}</td><td class="num">${money(v.asset_mgr_chg4w,0)}</td><td class="num">${money(v.lev_funds_net,0)}</td><td class="num">${money(v.lev_funds_chg4w,0)}</td></tr>`).join('')}</tbody></table>`; }
+  else h+=`<div class="small" style="margin-top:8px">COT: ${esc((c&&c.note)||'ไม่มีข้อมูล')}</div>`;
+  const src=(m&&m.sources)||[];
+  if(src.length) h+=`<h3 style="margin-top:12px">แหล่งข่าว</h3><ul>${src.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title||s.url)}</a> <span class="small">${esc(s.published||'')}</span></li>`).join('')}</ul>`;
+  return `<details><summary>Macro และสถานะผู้เล่นรายใหญ่ (COT)</summary><div style="margin-top:10px">${h}</div></details>`;
+}
+
+function execBlock(){
+  const x=R.execution; if(!x) return '';
+  const cls = x.status==='success'?'done': x.status==='partial'?'plan':'bad';
+  const lab={success:'ส่งสำเร็จ',partial:'สำเร็จบางรายการ',rejected:'ถูกปฏิเสธ',unknown:'ผลยังไม่ทราบ — กำลังกระทบยอด'}[x.status]||x.status;
+  return `<section><h2>ผลดำเนินการ</h2><div class="banner ${cls}"><b>${lab}</b> · ยืนยันจาก MT5 เมื่อ ${th(x.verified_at)} น.</div>
+   <div class="card tablewrap" style="margin-top:10px"><table><thead><tr><th>Action</th><th>ประเภท</th><th>คู่</th><th>ผล</th><th>Ticket</th><th>ค่าที่โบรกเกอร์รับจริง</th></tr></thead><tbody>
+   ${(x.actions||[]).map(a=>`<tr><td class="mono">${esc(a.action_id)}</td><td>${esc(a.type)}</td><td>${esc(a.symbol||'')}</td><td><span class="badge ${a.status==='confirmed'?'b-green':a.status==='rejected'?'b-red':'b-amber'}">${esc(a.status)}</span></td>
+     <td class="mono">${esc(a.ticket||'—')}</td><td class="small num">${a.accepted?esc(Object.entries(a.accepted).map(([k,v])=>k+' '+v).join(' · ')):esc(a.note||'')}</td></tr>`).join('')}
+   </tbody></table></div></section>`;
+}
+
+function limits(){
+  const l=(R.limitations||[]).concat(['รายงานนี้เป็นเครื่องมือช่วยตัดสินใจ ไม่ใช่คำแนะนำการลงทุน และกลยุทธ์ยังไม่ผ่าน Backtest','SMC/โซนราคา เป็นข้อสันนิษฐานจากราคา ไม่ได้เห็นคำสั่งจริงของสถาบัน','ระหว่างรอบ ระบบพึ่ง SL/TP/Expiry ที่โบรกเกอร์รับไว้เท่านั้น ไม่ได้เฝ้าราคาตลอดเวลา']);
+  return `<details><summary>ข้อจำกัดและแหล่งข้อมูล</summary><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="small">เวลาเซิร์ฟเวอร์: ${esc(R.clock)} · แหล่งข้อมูล: ${esc(R.source)}</div></details>`;
+}
+
+// ---------- render page ----------
+const plans=R.plans.map(p=>({...p,_chart_key:p.plan_id}));
+let watch=null;
+if(!plans.length && R.watch_plan){ watch={...R.watch_plan,_chart_key:'watch:'+(R.watch_plan.symbol_std||Object.keys(R.charts)[0]?.slice(6))}; watch._chart_key=Object.keys(R.charts)[0]; }
+$('#meta').textContent = `${th(R.generated_at)} น. · บัญชี ${R.account.masked} (${R.account.trade_mode}) · ${R.run_id}`;
+$('#app').innerHTML = hero() +
+  `<section>${kpis()}</section><section><div class="grid g2">${riskCard()}<div class="card"><h3>ข่าวถัดไป (เวลาไทย)</h3>${newsBlock().replace(/^<div class="card[^"]*"/,'<div')}</div></div></section>` +
+  `<section><h2>ไม้ที่เปิดอยู่และ Pending <span class="count">${(R.management||[]).length} รายการ</span></h2>${mgmt()}</section>` +
+  `<section><h2>แผนที่เลือก <span class="count">${plans.length} แผน</span></h2>${plans.length? plans.map((p,i)=>planCard(p,i)).join('<div style="height:12px"></div>') :
+     (watch? `<div class="small" style="margin-bottom:8px">ยังไม่มีแผนที่ผ่านทุกกฎ — ด้านล่างคือคู่ที่ใกล้เคียงที่สุด (ไม่ใช่แผนพร้อมส่ง)</div>`+planCard(watch,0,true) : '<div class="card empty">ไม่มีแผนรอบนี้</div>')}</section>` +
+  execBlock() +
+  `<section><h2>สแกน 10 คู่เงิน</h2>${scanTable()}</section><section>${macroBlock()}${limits()}</section>`;
+$('#foot').textContent = 'สร้างอัตโนมัติจากข้อมูล MT5 โดย mt5kit · ตัวเลขทั้งหมดมาจากโค้ด ไม่ได้พิมพ์โดยโมเดล';
+document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{ navigator.clipboard?.writeText(b.dataset.copy).then(()=>{b.textContent='คัดลอกแล้ว ✓'; setTimeout(()=>b.textContent=b.dataset.copy,1600);}); });
+
+// ---------- charts ----------
+const CHARTS=[];
+const TF_SEC={H1:3600,H4:14400,D1:86400};
+class Overlay{
+  constructor(get){ this.get=get; this._v=new OverlayView(this); }
+  attached(p){ this.chart=p.chart; this.series=p.series; } detached(){}
+  updateAllViews(){} paneViews(){ return [this._v]; }
+}
+class OverlayView{
+  constructor(src){ this.src=src; } zOrder(){ return 'normal'; }
+  renderer(){ const s=this.src; return { draw:(target)=>{ target.useBitmapCoordinateSpace(sc=>drawOverlay(sc, s)); } }; }
+}
+function xOf(state, t){
+  // logicalToCoordinate รับเฉพาะเลขจำนวนเต็ม จึงต้องประมาณค่าระหว่างแท่งเอง
+  const T=state.times, ts=state.chart.timeScale(); if(!T.length) return null;
+  const at=i=>ts.logicalToCoordinate(i);
+  const n=T.length-1, sp=(at(1)??0)-(at(0)??0);
+  if(t<=T[0]) return at(0) - (T[0]-t)/state.step*sp;
+  if(t>=T[n]) return at(n) + (t-T[n])/state.step*sp;
+  let lo=0, hi=n; while(hi-lo>1){ const m=(lo+hi)>>1; if(T[m]<=t) lo=m; else hi=m; }
+  const a=at(lo), b=at(hi); if(a==null||b==null) return null;
+  return a + (b-a)*(t-T[lo])/(T[hi]-T[lo]);
+}
+function drawOverlay(sc, src){
+  const st=src.get(); if(!st) return; const ctx=sc.context, hr=sc.horizontalPixelRatio, vr=sc.verticalPixelRatio;
+  const y=p=>{ const v=st.series.priceToCoordinate(p); return v==null?null:v*vr; }; const x=t=>{ const v=xOf(st,t+TZ_SHIFT); return v==null?null:v*hr; };
+  const W=sc.bitmapSize.width, H=sc.bitmapSize.height;
+  ctx.save(); ctx.font=`${12*vr}px "Noto Sans Thai", system-ui, sans-serif`;
+  const col={fvg:[css('--blue-a'),css('--blue')], zone:[css('--violet-a'),css('--violet')], risk:[css('--red-a'),'transparent'], reward:[css('--green-a'),'transparent'], asia:[css('--amber-a'),css('--amber')]};
+  (st.boxes||[]).forEach(b=>{ const x1=x(b.t1), x2=x(b.t2), y1=y(b.top), y2=y(b.bottom); if([x1,x2,y1,y2].some(v=>v==null)) return;
+    const c=col[b.kind]||col.zone; ctx.fillStyle=c[0]; ctx.fillRect(Math.min(x1,x2), Math.min(y1,y2), Math.abs(x2-x1), Math.abs(y2-y1));
+    if(c[1]!=='transparent'){ ctx.strokeStyle=c[1]; ctx.lineWidth=1*hr; ctx.setLineDash([4*hr,3*hr]); ctx.strokeRect(Math.min(x1,x2), Math.min(y1,y2), Math.abs(x2-x1), Math.abs(y2-y1)); ctx.setLineDash([]); }
+    if(b.label){ ctx.fillStyle=c[1]; const yy = b.kind==='asia' ? Math.max(y1,y2)+14*vr : Math.min(y1,y2)-5*vr; ctx.fillText(b.label, Math.min(x1,x2)+4*hr, yy); } });
+  (st.levels||[]).forEach(l=>{ const yy=y(l.price); if(yy==null) return; ctx.strokeStyle=css('--muted'); ctx.globalAlpha=.55; ctx.lineWidth=1*hr; ctx.setLineDash([2*hr,4*hr]);
+    ctx.beginPath(); ctx.moveTo(0,yy); ctx.lineTo(W,yy); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=.9; ctx.fillStyle=css('--muted'); ctx.fillText(l.name, 6*hr, yy-4*vr); ctx.globalAlpha=1; });
+  (st.plines||[]).forEach(l=>{ const yy=y(l.price), xx=x(st.lastT - 2*st.step); if(yy==null||xx==null) return;
+    ctx.font=`600 ${12*vr}px "Noto Sans Thai", system-ui`; const w=ctx.measureText(l.label).width+12*hr, h=18*vr;
+    const bx=Math.max(4*hr, xx-w), by=yy-h-2*vr; ctx.fillStyle=css(l.color); ctx.globalAlpha=.92; ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(bx,by,w,h,5*hr); else ctx.rect(bx,by,w,h); ctx.fill(); ctx.globalAlpha=1;
+    ctx.fillStyle='#fff'; ctx.fillText(l.label, bx+6*hr, by+13*vr); ctx.font=`${12*vr}px "Noto Sans Thai", system-ui`; });
+  if(st.bos){ const x1=x(st.bos.t1), x2=x(st.bos.t2), yy=y(st.bos.price); if(x1!=null&&x2!=null&&yy!=null){ ctx.strokeStyle=css('--text'); ctx.lineWidth=1.5*hr; ctx.beginPath(); ctx.moveTo(x1,yy); ctx.lineTo(x2,yy); ctx.stroke(); ctx.fillStyle=css('--text'); ctx.fillText('BOS', x1, yy-5*vr);} }
+  (st.vlines||[]).forEach(v=>{ const xx=x(v.t); if(xx==null||xx<0||xx>W) return; const c=v.kind==='news1'?css('--red'):v.kind==='news2'?css('--amber'):css('--muted');
+    ctx.strokeStyle=c; ctx.lineWidth=1*hr; ctx.setLineDash([5*hr,4*hr]); ctx.beginPath(); ctx.moveTo(xx,0); ctx.lineTo(xx,H); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=c; ctx.save(); ctx.translate(xx+4*hr, 8*vr); ctx.fillText(v.label, 0, 8*vr); ctx.restore(); });
+  (st.scenario||[]).forEach(p=>{ const pts=p.pts.map(q=>[x(q[0]),y(q[1])]); if(pts.some(q=>q[0]==null||q[1]==null)) return;
+    const c=p.kind==='win'?css('--green'):css('--red'); ctx.strokeStyle=c; ctx.globalAlpha=.85; ctx.lineWidth=2*hr; ctx.setLineDash([7*hr,5*hr]);
+    ctx.beginPath(); pts.forEach((q,i)=> i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.stroke(); ctx.setLineDash([]);
+    const [a,b]=[pts[pts.length-2],pts[pts.length-1]]; const ang=Math.atan2(b[1]-a[1],b[0]-a[0]), L=9*hr;
+    ctx.fillStyle=c; ctx.beginPath(); ctx.moveTo(b[0],b[1]); ctx.lineTo(b[0]-L*Math.cos(ang-0.45), b[1]-L*Math.sin(ang-0.45)); ctx.lineTo(b[0]-L*Math.cos(ang+0.45), b[1]-L*Math.sin(ang+0.45)); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha=1; ctx.font=`600 ${12*vr}px "Noto Sans Thai", system-ui`; ctx.fillText(p.label, b[0]-60*hr, b[1]+(p.kind==='win'?-8:16)*vr); ctx.font=`${12*vr}px "Noto Sans Thai", system-ui`; });
+  ctx.restore();
+}
+
+function makeChart(el, key, plan, tf){
+  const C=R.charts[key]; if(!C) return null; const raw=C.tfs[tf]||[]; const step=TF_SEC[tf];
+  const data=raw.map(r=>({time:r[0]+TZ_SHIFT,open:r[1],high:r[2],low:r[3],close:r[4]}));
+  const lastT=raw.length? raw[raw.length-1][0] : 0;
+  let endT=lastT+step*6; (C.scenario||[]).forEach(p=>p.pts.forEach(q=>endT=Math.max(endT,q[0]))); (C.vlines||[]).forEach(v=>endT=Math.max(endT,v.t));
+  endT=Math.min(endT+step*3, lastT+step*(tf==='H1'?110:tf==='H4'?40:12));
+  for(let t=lastT+step;t<=endT;t+=step) data.push({time:t+TZ_SHIFT});
+  const theme=()=>({layout:{background:{type:'solid',color:css('--panel')},textColor:css('--muted'),fontFamily:'"Noto Sans Thai", system-ui'},
+    grid:{vertLines:{color:css('--grid')},horzLines:{color:css('--grid')}}, rightPriceScale:{borderColor:css('--line')}, timeScale:{borderColor:css('--line'),timeVisible:tf!=='D1',secondsVisible:false,rightOffset:2}});
+  const chart=LightweightCharts.createChart(el,{autoSize:true,crosshair:{mode:0},localization:{locale:'th-TH'},...theme()});
+  const series=chart.addCandlestickSeries({priceLineColor:css('--muted'),priceLineStyle:3,upColor:css('--up'),downColor:css('--down'),borderVisible:false,wickUpColor:css('--up'),wickDownColor:css('--down'),priceFormat:{type:'price',precision:plan?.digits??5,minMove:Math.pow(10,-(plan?.digits??5))}});
+  series.setData(data);
+  const times=data.map(d=>d.time);
+  const st={chart,series,times,step,boxes:[],levels:C.levels||[],vlines:[],scenario:C.scenario||[],bos:tf==='H1'?C.bos_level:null};
+  (C.boxes||[]).forEach(b=>st.boxes.push(b)); if(C.asia && tf==='H1') st.boxes.push({t1:C.asia.t_start,t2:C.asia.t_end,top:C.asia.top,bottom:C.asia.bottom,kind:'asia',label:'กรอบเอเชีย'});
+  (C.vlines||[]).forEach(v=>st.vlines.push(v)); (C.news||[]).filter(n=>n.tier===1||tf==='H1').forEach(n=>st.vlines.push({t:n.t,kind:n.tier===1?'news1':'news2',label:`${n.ccy} ${n.name}`.slice(0,26)}));
+  series.attachPrimitive(new Overlay(()=>st));
+  if(plan){
+    const d=plan.digits||5, lots=plan.volume? ` · ${plan.volume} lot`:'';
+    series.createPriceLine({price:plan.entry,color:css('--blue'),lineWidth:2,lineStyle:0,axisLabelVisible:true,title:''});
+    series.createPriceLine({price:plan.sl,color:css('--red'),lineWidth:2,lineStyle:0,axisLabelVisible:true,title:''});
+    if(plan.tp) series.createPriceLine({price:plan.tp,color:css('--green'),lineWidth:2,lineStyle:0,axisLabelVisible:true,title:''});
+    st.plines=[{price:plan.entry,color:'--blue',label:`${typeTh(plan.order_type||'')}${lots}`},{price:plan.sl,color:'--red',label:`SL −${money(plan.risk_money)} ${CUR}`}];
+    if(plan.tp) st.plines.push({price:plan.tp,color:'--green',label:`TP ${plan.rr_net!=null?Number(plan.rr_net).toFixed(1)+'R':''}${plan.reward_money!=null?' · +'+money(plan.reward_money)+' '+CUR:''}`});
+    st.lastT=lastT;
+  }
+  const circ=['','①','②','③','④'];
+  const snap=t=>{ let best=null; for(const r of raw){ if(r[0]<=t) best=r[0]; else break; } return best; };
+  const mk=(C.markers||[]).map(m=>({t:snap(m.t),m})).filter(o=>o.t!=null).sort((a,b)=>a.t-b.t);
+  series.setMarkers(mk.map(({t,m})=>({time:t+TZ_SHIFT,position:m.pos==='below'?'belowBar':'aboveBar',color:css('--amber'),shape:'circle',text:`${circ[m.n]||''} ${m.text}`})));
+  const tip=el.querySelector('.tip');
+  chart.subscribeCrosshairMove(param=>{ if(!param.time||!param.point){tip.style.display='none';return;}
+    const hit=mk.find(o=>o.t+TZ_SHIFT===param.time); if(!hit){tip.style.display='none';return;}
+    tip.innerHTML=`<b>${circ[hit.m.n]} ${esc(hit.m.text)}</b><br>${esc(hit.m.tip||'')}`; tip.style.display='block';
+    const left=Math.min(param.point.x+12, el.clientWidth-270); tip.style.left=Math.max(0,left)+'px'; tip.style.top=Math.max(0,param.point.y-60)+'px'; });
+  const n=raw.length, vis=tf==='H1'?60:tf==='H4'?60:80;
+  let fut=6; (C.scenario||[]).forEach(p=>p.pts.forEach(q=>fut=Math.max(fut, Math.ceil((q[0]-lastT)/step)+3)));
+  chart.timeScale().setVisibleLogicalRange({from:Math.max(0,n-vis), to:Math.min(data.length-1, n-1+fut)});
+  const obj={chart,retheme:()=>{chart.applyOptions(theme()); series.applyOptions({upColor:css('--up'),downColor:css('--down'),wickUpColor:css('--up'),wickDownColor:css('--down')});}};
+  CHARTS.push(obj); return obj;
+}
+
+function mountPlanCharts(list){
+  list.forEach((p,i)=>{
+    const box=document.getElementById('chart-'+i); if(!box) return;
+    const holders={}; let cur=null;
+    const show=tf=>{ Object.values(holders).forEach(h=>h.el.style.display='none');
+      if(!holders[tf]){ const el=document.createElement('div'); el.style.cssText='position:absolute;inset:0'; const t=document.createElement('div'); t.className='tip'; el.appendChild(t); box.appendChild(el);
+        holders[tf]={el}; holders[tf].c=makeChart(el,p._chart_key,p,tf); }
+      holders[tf].el.style.display='block'; cur=tf; };
+    box.querySelector('.tip')?.remove(); show('H1');
+    box.parentElement.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ box.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b)); show(b.dataset.tf); });
+  });
+}
+mountPlanCharts(plans.length? plans : (watch? [watch]:[]));
+window.__REPORT_OK__ = true;
+</script>
+</body>
+</html>

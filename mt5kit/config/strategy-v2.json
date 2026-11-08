@@ -1,0 +1,28 @@
+{
+  "version": "strategy-v2.0.0",
+  "_note": "ค่าทุกตัวเป็นค่าเริ่มต้นสำหรับทดสอบ ห้ามแก้ย้อนหลังตามผลลัพธ์ ถ้าแก้ต้องเปลี่ยน version",
+  "symbols": ["EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "EURJPY", "GBPJPY", "AUDJPY", "EURGBP"],
+  "bars": {"W1": 60, "D1": 300, "H4": 500, "H1": 1000},
+  "swing": {"left": 2, "right": 2},
+  "atr_period": 14,
+  "ema_d1": 50,
+  "fvg_min_atr": 0.10,
+  "displacement": {"max_bars": 3, "min_move_atr": 1.5, "min_body_ratio": 0.5, "close_outer_frac": 0.30},
+  "bos_min_atr": 0.10,
+  "sweep": {"min_pierce_atr": 0.10, "reclaim_within_bars": 2, "bos_within_bars": 6},
+  "max_signal_age_bars": 6,
+  "sessions": {
+    "asian_range": {"tz": "Europe/London", "start": "00:00", "end": "07:00"},
+    "london": {"tz": "Europe/London", "start": "07:00", "end": "11:00"},
+    "newyork": {"tz": "America/New_York", "start": "08:00", "end": "12:00"},
+    "trading_day_rollover": {"tz": "America/New_York", "time": "17:00"}
+  },
+  "sl": {"buffer_atr": 0.10, "buffer_spread_mult": 2.0, "buffer_extra_ticks": 2, "min_dist_atr": 0.8, "max_dist_atr": 3.0},
+  "min_rr_net": 1.5,
+  "cost": {"max_spread_frac_of_sl": 0.10, "max_cost_r": 0.15, "swap_nights_assumed": 2},
+  "expiry": {"hours_after_bos": 8, "daily_cutoff": {"tz": "America/New_York", "time": "17:00"}, "friday_cutoff": {"tz": "America/New_York", "time": "12:00"}},
+  "news": {"tier1_before_min": 120, "tier1_after_min": 60, "tier2_window_min": 30, "lookahead_hours": 72},
+  "score": {"threshold": 70, "weights": {"bias": 25, "setup": 30, "target_cost": 25, "macro_session": 20}},
+  "frequency": {"max_new_orders_per_day": 2},
+  "management": {"time_exit_h1_bars": 24, "time_exit_min_r": 0.5, "max_hold_trading_days": 5, "trail_after_r": 1.0, "friday_review": {"tz": "America/New_York", "time": "15:00"}, "friday_keep_min_r": 1.0}
+}
