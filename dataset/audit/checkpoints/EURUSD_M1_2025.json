@@ -1,0 +1,3250 @@
+{
+  "status": "complete",
+  "method": "monthly_stable_v2",
+  "pair": "EURUSD",
+  "symbol": "EURUSD#",
+  "timeframe": "M1",
+  "year": 2025,
+  "cutoff_server": "2026-11-06T23:57:00",
+  "requested_from": "2025-01-01T00:00:00",
+  "requested_to": "2026-01-01T00:00:00",
+  "reported_available_from": "1971-01-04T00:00:00",
+  "rows": 370940,
+  "files": [
+    {
+      "path": "EURUSD/history/2025-01/M1.csv",
+      "rows": 31170,
+      "first": "2025-01-02T08:00:00",
+      "last": "2025-01-31T23:57:00",
+      "sha256": "1465330a2432bb99aee5c5bc91fd283d1ef737cd0720c6807cf3f4f56e9590d3"
+    },
+    {
+      "path": "EURUSD/history/2025-02/M1.csv",
+      "rows": 28763,
+      "first": "2025-02-03T00:00:00",
+      "last": "2025-02-28T23:57:00",
+      "sha256": "0c062fc08be577d65d3bde8e86e5bbe5353ce80537da4ad72eb891a1c94f467e"
+    },
+    {
+      "path": "EURUSD/history/2025-03/M1.csv",
+      "rows": 30193,
+      "first": "2025-03-03T00:00:00",
+      "last": "2025-03-31T23:59:00",
+      "sha256": "a2440c40aafbf028938744e8f8afe80343ce0066369e2d141c4d95694c278787"
+    },
+    {
+      "path": "EURUSD/history/2025-04/M1.csv",
+      "rows": 31621,
+      "first": "2025-04-01T00:00:00",
+      "last": "2025-04-30T23:59:00",
+      "sha256": "e99316baec3c937b3bc41744c1041c78ad92641995a70dfc4602d86206dc0d53"
+    },
+    {
+      "path": "EURUSD/history/2025-05/M1.csv",
+      "rows": 31627,
+      "first": "2025-05-01T00:00:00",
+      "last": "2025-05-30T23:57:00",
+      "sha256": "61b3aa53b0a07fc6c9e759805afc833c5295fbeddbd6ec51424b35d87135f893"
+    },
+    {
+      "path": "EURUSD/history/2025-06/M1.csv",
+      "rows": 30183,
+      "first": "2025-06-02T00:00:00",
+      "last": "2025-06-30T23:59:00",
+      "sha256": "98f2762e98589129d1ed000d331059f40314c74f80ee83f17b56de8e814d2c2c"
+    },
+    {
+      "path": "EURUSD/history/2025-07/M1.csv",
+      "rows": 33051,
+      "first": "2025-07-01T00:00:00",
+      "last": "2025-07-31T23:59:00",
+      "sha256": "75c7ea49ec633147344b3163089294adcea5b05af9f5c4370adfa2724fd102cd"
+    },
+    {
+      "path": "EURUSD/history/2025-08/M1.csv",
+      "rows": 30194,
+      "first": "2025-08-01T00:00:00",
+      "last": "2025-08-29T23:57:00",
+      "sha256": "03d56eeca62b9c86208b8b4eabfe2ccf8e6d1f984dd951ff2a54e049706006bd"
+    },
+    {
+      "path": "EURUSD/history/2025-09/M1.csv",
+      "rows": 31624,
+      "first": "2025-09-01T00:00:00",
+      "last": "2025-09-30T23:59:00",
+      "sha256": "4fd9c52b3189fb738b89b6462930e14d67b002e39aa56b8e0ad84dbfb57efc71"
+    },
+    {
+      "path": "EURUSD/history/2025-10/M1.csv",
+      "rows": 33075,
+      "first": "2025-10-01T00:00:00",
+      "last": "2025-10-31T22:57:00",
+      "sha256": "a774717414c7d493da8ec9a97135f6ad41eb11212c6e663caf372fc673410271"
+    },
+    {
+      "path": "EURUSD/history/2025-11/M1.csv",
+      "rows": 28759,
+      "first": "2025-11-03T00:00:00",
+      "last": "2025-11-28T23:57:00",
+      "sha256": "43cb4d7f39cbb40c933e33fe1badbc8c4b4a1205390eea40733bec710383e1c9"
+    },
+    {
+      "path": "EURUSD/history/2025-12/M1.csv",
+      "rows": 30680,
+      "first": "2025-12-01T00:00:00",
+      "last": "2025-12-31T19:59:00",
+      "sha256": "d32784c3c4e34a5613956305946797db7ac56f2cc07b1224d905d140d17f17a0"
+    }
+  ],
+  "gaps": [
+    {
+      "after_server": "2024-12-31T20:00:00",
+      "before_server": "2025-01-02T08:00:00",
+      "missing_elapsed_seconds": 129540,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-03T00:30:00",
+      "before_server": "2025-01-03T00:32:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-03T23:57:00",
+      "before_server": "2025-01-06T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-06T00:00:00",
+      "before_server": "2025-01-06T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-06T00:19:00",
+      "before_server": "2025-01-06T00:21:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-09T00:12:00",
+      "before_server": "2025-01-09T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-09T00:14:00",
+      "before_server": "2025-01-09T00:16:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-09T00:31:00",
+      "before_server": "2025-01-09T00:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-09T00:43:00",
+      "before_server": "2025-01-09T00:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-10T00:03:00",
+      "before_server": "2025-01-10T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-10T23:57:00",
+      "before_server": "2025-01-13T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-13T00:03:00",
+      "before_server": "2025-01-13T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-17T00:01:00",
+      "before_server": "2025-01-17T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-17T00:03:00",
+      "before_server": "2025-01-17T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-17T23:57:00",
+      "before_server": "2025-01-20T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-20T00:22:00",
+      "before_server": "2025-01-20T00:25:00",
+      "missing_elapsed_seconds": 120,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-24T00:02:00",
+      "before_server": "2025-01-24T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-24T00:07:00",
+      "before_server": "2025-01-24T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-24T23:57:00",
+      "before_server": "2025-01-27T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-27T00:00:00",
+      "before_server": "2025-01-27T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-27T00:03:00",
+      "before_server": "2025-01-27T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-27T00:08:00",
+      "before_server": "2025-01-27T00:10:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-27T00:10:00",
+      "before_server": "2025-01-27T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-29T00:01:00",
+      "before_server": "2025-01-29T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-01-31T23:57:00",
+      "before_server": "2025-02-03T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-06T00:16:00",
+      "before_server": "2025-02-06T00:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-06T00:19:00",
+      "before_server": "2025-02-06T00:21:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-07T00:12:00",
+      "before_server": "2025-02-07T00:15:00",
+      "missing_elapsed_seconds": 120,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-07T23:57:00",
+      "before_server": "2025-02-10T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-10T23:35:00",
+      "before_server": "2025-02-10T23:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-12T00:06:00",
+      "before_server": "2025-02-12T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-12T00:10:00",
+      "before_server": "2025-02-12T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-12T00:13:00",
+      "before_server": "2025-02-12T00:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-12T00:15:00",
+      "before_server": "2025-02-12T00:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-12T00:53:00",
+      "before_server": "2025-02-12T00:55:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-14T23:57:00",
+      "before_server": "2025-02-17T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-17T00:03:00",
+      "before_server": "2025-02-17T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-17T00:16:00",
+      "before_server": "2025-02-17T00:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-17T00:26:00",
+      "before_server": "2025-02-17T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-19T00:45:00",
+      "before_server": "2025-02-19T00:47:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-20T00:03:00",
+      "before_server": "2025-02-20T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-20T00:23:00",
+      "before_server": "2025-02-20T00:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-20T00:38:00",
+      "before_server": "2025-02-20T00:40:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-20T00:40:00",
+      "before_server": "2025-02-20T00:42:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-21T23:57:00",
+      "before_server": "2025-02-24T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-25T00:33:00",
+      "before_server": "2025-02-25T00:35:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-25T00:39:00",
+      "before_server": "2025-02-25T00:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-27T00:08:00",
+      "before_server": "2025-02-27T00:10:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T00:02:00",
+      "before_server": "2025-02-28T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T00:06:00",
+      "before_server": "2025-02-28T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T00:13:00",
+      "before_server": "2025-02-28T00:16:00",
+      "missing_elapsed_seconds": 120,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T00:20:00",
+      "before_server": "2025-02-28T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T00:22:00",
+      "before_server": "2025-02-28T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T00:24:00",
+      "before_server": "2025-02-28T00:26:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T00:39:00",
+      "before_server": "2025-02-28T00:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-02-28T23:57:00",
+      "before_server": "2025-03-03T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-04T00:01:00",
+      "before_server": "2025-03-04T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-06T00:12:00",
+      "before_server": "2025-03-06T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-07T00:03:00",
+      "before_server": "2025-03-07T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-07T23:57:00",
+      "before_server": "2025-03-09T23:00:00",
+      "missing_elapsed_seconds": 169320,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-09T23:01:00",
+      "before_server": "2025-03-09T23:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-09T23:03:00",
+      "before_server": "2025-03-09T23:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-09T23:23:00",
+      "before_server": "2025-03-09T23:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-09T23:51:00",
+      "before_server": "2025-03-09T23:53:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-10T23:04:00",
+      "before_server": "2025-03-10T23:06:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-10T23:20:00",
+      "before_server": "2025-03-10T23:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-11T23:03:00",
+      "before_server": "2025-03-11T23:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-11T23:15:00",
+      "before_server": "2025-03-11T23:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-14T22:57:00",
+      "before_server": "2025-03-16T23:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-16T23:01:00",
+      "before_server": "2025-03-16T23:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-16T23:03:00",
+      "before_server": "2025-03-16T23:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-16T23:08:00",
+      "before_server": "2025-03-16T23:10:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-16T23:26:00",
+      "before_server": "2025-03-16T23:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-17T23:03:00",
+      "before_server": "2025-03-17T23:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-17T23:37:00",
+      "before_server": "2025-03-17T23:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-19T23:13:00",
+      "before_server": "2025-03-19T23:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-19T23:17:00",
+      "before_server": "2025-03-19T23:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-19T23:22:00",
+      "before_server": "2025-03-19T23:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-19T23:51:00",
+      "before_server": "2025-03-19T23:53:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-21T13:56:00",
+      "before_server": "2025-03-21T13:58:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-21T22:57:00",
+      "before_server": "2025-03-23T23:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-23T23:03:00",
+      "before_server": "2025-03-23T23:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-23T23:17:00",
+      "before_server": "2025-03-23T23:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-23T23:21:00",
+      "before_server": "2025-03-23T23:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-23T23:23:00",
+      "before_server": "2025-03-23T23:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-23T23:37:00",
+      "before_server": "2025-03-23T23:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-25T23:02:00",
+      "before_server": "2025-03-25T23:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-25T23:18:00",
+      "before_server": "2025-03-25T23:20:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-25T23:20:00",
+      "before_server": "2025-03-25T23:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-25T23:29:00",
+      "before_server": "2025-03-25T23:31:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-25T23:32:00",
+      "before_server": "2025-03-25T23:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-25T23:35:00",
+      "before_server": "2025-03-25T23:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-27T23:03:00",
+      "before_server": "2025-03-27T23:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-27T23:07:00",
+      "before_server": "2025-03-27T23:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-27T23:37:00",
+      "before_server": "2025-03-27T23:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-27T23:39:00",
+      "before_server": "2025-03-27T23:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-27T23:55:00",
+      "before_server": "2025-03-27T23:57:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-28T22:57:00",
+      "before_server": "2025-03-31T00:00:00",
+      "missing_elapsed_seconds": 176520,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-03-31T00:03:00",
+      "before_server": "2025-03-31T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-01T00:04:00",
+      "before_server": "2025-04-01T00:06:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-04T00:45:00",
+      "before_server": "2025-04-04T00:47:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-04T00:49:00",
+      "before_server": "2025-04-04T00:51:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-04T23:57:00",
+      "before_server": "2025-04-07T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-08T00:10:00",
+      "before_server": "2025-04-08T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-08T00:12:00",
+      "before_server": "2025-04-08T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-08T00:51:00",
+      "before_server": "2025-04-08T00:53:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-09T00:02:00",
+      "before_server": "2025-04-09T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-10T00:01:00",
+      "before_server": "2025-04-10T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-10T00:03:00",
+      "before_server": "2025-04-10T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-10T23:59:00",
+      "before_server": "2025-04-11T00:01:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-11T00:01:00",
+      "before_server": "2025-04-11T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-11T00:03:00",
+      "before_server": "2025-04-11T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-11T23:57:00",
+      "before_server": "2025-04-14T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-14T00:00:00",
+      "before_server": "2025-04-14T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-14T00:02:00",
+      "before_server": "2025-04-14T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-15T00:03:00",
+      "before_server": "2025-04-15T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-16T00:02:00",
+      "before_server": "2025-04-16T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-17T00:06:00",
+      "before_server": "2025-04-17T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-17T00:18:00",
+      "before_server": "2025-04-17T00:20:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-17T00:32:00",
+      "before_server": "2025-04-17T00:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-17T00:35:00",
+      "before_server": "2025-04-17T00:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-18T00:03:00",
+      "before_server": "2025-04-18T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-18T00:26:00",
+      "before_server": "2025-04-18T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-18T00:32:00",
+      "before_server": "2025-04-18T00:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-18T02:39:00",
+      "before_server": "2025-04-18T02:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-18T22:03:00",
+      "before_server": "2025-04-18T22:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-18T23:03:00",
+      "before_server": "2025-04-18T23:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-18T23:57:00",
+      "before_server": "2025-04-21T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-21T00:20:00",
+      "before_server": "2025-04-21T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-22T00:15:00",
+      "before_server": "2025-04-22T00:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-23T00:07:00",
+      "before_server": "2025-04-23T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-24T00:41:00",
+      "before_server": "2025-04-24T00:43:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-24T23:59:00",
+      "before_server": "2025-04-25T00:01:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-25T23:57:00",
+      "before_server": "2025-04-28T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:02:00",
+      "before_server": "2025-04-28T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:08:00",
+      "before_server": "2025-04-28T00:10:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:10:00",
+      "before_server": "2025-04-28T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:12:00",
+      "before_server": "2025-04-28T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:15:00",
+      "before_server": "2025-04-28T00:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:20:00",
+      "before_server": "2025-04-28T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:22:00",
+      "before_server": "2025-04-28T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:26:00",
+      "before_server": "2025-04-28T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:35:00",
+      "before_server": "2025-04-28T00:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:37:00",
+      "before_server": "2025-04-28T00:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:42:00",
+      "before_server": "2025-04-28T00:44:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T00:47:00",
+      "before_server": "2025-04-28T00:49:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T01:47:00",
+      "before_server": "2025-04-28T01:49:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T02:00:00",
+      "before_server": "2025-04-28T02:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-28T02:32:00",
+      "before_server": "2025-04-28T02:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-29T00:03:00",
+      "before_server": "2025-04-29T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-29T00:10:00",
+      "before_server": "2025-04-29T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-29T00:16:00",
+      "before_server": "2025-04-29T00:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-30T00:00:00",
+      "before_server": "2025-04-30T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-04-30T00:02:00",
+      "before_server": "2025-04-30T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-01T00:52:00",
+      "before_server": "2025-05-01T00:54:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-02T00:03:00",
+      "before_server": "2025-05-02T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-02T00:11:00",
+      "before_server": "2025-05-02T00:13:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-02T23:57:00",
+      "before_server": "2025-05-05T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-05T00:03:00",
+      "before_server": "2025-05-05T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-05T00:07:00",
+      "before_server": "2025-05-05T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-05T00:44:00",
+      "before_server": "2025-05-05T00:46:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-06T00:07:00",
+      "before_server": "2025-05-06T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-06T00:28:00",
+      "before_server": "2025-05-06T00:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-07T00:00:00",
+      "before_server": "2025-05-07T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-07T00:02:00",
+      "before_server": "2025-05-07T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-07T00:06:00",
+      "before_server": "2025-05-07T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-07T00:44:00",
+      "before_server": "2025-05-07T00:46:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-07T00:46:00",
+      "before_server": "2025-05-07T00:48:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-07T00:53:00",
+      "before_server": "2025-05-07T00:55:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-09T00:03:00",
+      "before_server": "2025-05-09T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-09T00:18:00",
+      "before_server": "2025-05-09T00:20:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-09T00:38:00",
+      "before_server": "2025-05-09T00:40:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-09T00:45:00",
+      "before_server": "2025-05-09T00:47:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-09T23:57:00",
+      "before_server": "2025-05-12T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-12T00:11:00",
+      "before_server": "2025-05-12T00:13:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-13T00:10:00",
+      "before_server": "2025-05-13T00:13:00",
+      "missing_elapsed_seconds": 120,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-14T00:02:00",
+      "before_server": "2025-05-14T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-15T00:15:00",
+      "before_server": "2025-05-15T00:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-15T00:20:00",
+      "before_server": "2025-05-15T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-15T00:23:00",
+      "before_server": "2025-05-15T00:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-15T00:26:00",
+      "before_server": "2025-05-15T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-16T00:00:00",
+      "before_server": "2025-05-16T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-16T00:12:00",
+      "before_server": "2025-05-16T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-16T00:18:00",
+      "before_server": "2025-05-16T00:20:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-16T23:57:00",
+      "before_server": "2025-05-19T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-19T00:27:00",
+      "before_server": "2025-05-19T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-22T00:02:00",
+      "before_server": "2025-05-22T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-23T00:07:00",
+      "before_server": "2025-05-23T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-23T00:31:00",
+      "before_server": "2025-05-23T00:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-23T00:43:00",
+      "before_server": "2025-05-23T00:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-23T23:57:00",
+      "before_server": "2025-05-26T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-26T00:00:00",
+      "before_server": "2025-05-26T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-26T00:03:00",
+      "before_server": "2025-05-26T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-26T00:16:00",
+      "before_server": "2025-05-26T00:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-27T00:02:00",
+      "before_server": "2025-05-27T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-27T00:14:00",
+      "before_server": "2025-05-27T00:16:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-27T00:37:00",
+      "before_server": "2025-05-27T00:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-27T00:41:00",
+      "before_server": "2025-05-27T00:43:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-28T00:02:00",
+      "before_server": "2025-05-28T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-29T00:31:00",
+      "before_server": "2025-05-29T00:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-05-30T23:57:00",
+      "before_server": "2025-06-02T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-02T00:01:00",
+      "before_server": "2025-06-02T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-02T00:14:00",
+      "before_server": "2025-06-02T00:16:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-02T00:21:00",
+      "before_server": "2025-06-02T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-02T00:32:00",
+      "before_server": "2025-06-02T00:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-03T00:56:00",
+      "before_server": "2025-06-03T00:58:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-04T00:03:00",
+      "before_server": "2025-06-04T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-05T00:01:00",
+      "before_server": "2025-06-05T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-05T00:44:00",
+      "before_server": "2025-06-05T00:46:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-06T00:12:00",
+      "before_server": "2025-06-06T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-06T00:54:00",
+      "before_server": "2025-06-06T00:56:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-06T23:57:00",
+      "before_server": "2025-06-09T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-09T00:00:00",
+      "before_server": "2025-06-09T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-09T00:32:00",
+      "before_server": "2025-06-09T00:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-10T00:13:00",
+      "before_server": "2025-06-10T00:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-10T00:17:00",
+      "before_server": "2025-06-10T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-10T00:23:00",
+      "before_server": "2025-06-10T00:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-10T00:39:00",
+      "before_server": "2025-06-10T00:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-10T00:42:00",
+      "before_server": "2025-06-10T00:44:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-12T00:05:00",
+      "before_server": "2025-06-12T00:07:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-12T00:07:00",
+      "before_server": "2025-06-12T00:10:00",
+      "missing_elapsed_seconds": 120,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-12T00:25:00",
+      "before_server": "2025-06-12T00:27:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-12T00:29:00",
+      "before_server": "2025-06-12T00:31:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-13T00:00:00",
+      "before_server": "2025-06-13T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-13T00:03:00",
+      "before_server": "2025-06-13T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-13T00:24:00",
+      "before_server": "2025-06-13T00:26:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-13T00:26:00",
+      "before_server": "2025-06-13T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-13T00:44:00",
+      "before_server": "2025-06-13T00:46:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-13T23:57:00",
+      "before_server": "2025-06-16T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-16T00:01:00",
+      "before_server": "2025-06-16T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-16T00:03:00",
+      "before_server": "2025-06-16T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-17T00:37:00",
+      "before_server": "2025-06-17T00:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-20T00:03:00",
+      "before_server": "2025-06-20T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-20T00:10:00",
+      "before_server": "2025-06-20T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-20T00:42:00",
+      "before_server": "2025-06-20T00:44:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-20T23:57:00",
+      "before_server": "2025-06-23T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-24T00:03:00",
+      "before_server": "2025-06-24T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-24T00:07:00",
+      "before_server": "2025-06-24T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-24T00:09:00",
+      "before_server": "2025-06-24T00:11:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-24T00:11:00",
+      "before_server": "2025-06-24T00:13:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-24T00:20:00",
+      "before_server": "2025-06-24T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-25T00:07:00",
+      "before_server": "2025-06-25T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-25T00:39:00",
+      "before_server": "2025-06-25T00:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-26T00:03:00",
+      "before_server": "2025-06-26T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-26T00:06:00",
+      "before_server": "2025-06-26T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-26T00:20:00",
+      "before_server": "2025-06-26T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-26T00:31:00",
+      "before_server": "2025-06-26T00:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-27T23:57:00",
+      "before_server": "2025-06-30T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-30T00:00:00",
+      "before_server": "2025-06-30T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-30T00:22:00",
+      "before_server": "2025-06-30T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-30T00:27:00",
+      "before_server": "2025-06-30T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-30T00:40:00",
+      "before_server": "2025-06-30T00:42:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-06-30T00:57:00",
+      "before_server": "2025-06-30T00:59:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-02T01:09:00",
+      "before_server": "2025-07-02T01:11:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-03T00:04:00",
+      "before_server": "2025-07-03T00:06:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-03T00:12:00",
+      "before_server": "2025-07-03T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-04T00:02:00",
+      "before_server": "2025-07-04T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-04T00:48:00",
+      "before_server": "2025-07-04T00:50:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-04T23:57:00",
+      "before_server": "2025-07-07T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-07T00:00:00",
+      "before_server": "2025-07-07T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-07T00:02:00",
+      "before_server": "2025-07-07T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-07T00:10:00",
+      "before_server": "2025-07-07T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-08T01:13:00",
+      "before_server": "2025-07-08T01:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-09T00:00:00",
+      "before_server": "2025-07-09T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-09T00:03:00",
+      "before_server": "2025-07-09T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-10T00:02:00",
+      "before_server": "2025-07-10T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-10T00:10:00",
+      "before_server": "2025-07-10T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-10T00:27:00",
+      "before_server": "2025-07-10T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-10T00:41:00",
+      "before_server": "2025-07-10T00:43:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-10T01:27:00",
+      "before_server": "2025-07-10T01:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-11T00:27:00",
+      "before_server": "2025-07-11T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-11T00:32:00",
+      "before_server": "2025-07-11T00:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-11T23:57:00",
+      "before_server": "2025-07-14T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-15T00:02:00",
+      "before_server": "2025-07-15T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-15T00:50:00",
+      "before_server": "2025-07-15T00:52:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T00:05:00",
+      "before_server": "2025-07-16T00:07:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T00:10:00",
+      "before_server": "2025-07-16T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T00:17:00",
+      "before_server": "2025-07-16T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T00:21:00",
+      "before_server": "2025-07-16T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T00:23:00",
+      "before_server": "2025-07-16T00:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T00:43:00",
+      "before_server": "2025-07-16T00:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T00:46:00",
+      "before_server": "2025-07-16T00:48:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-16T01:31:00",
+      "before_server": "2025-07-16T01:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-18T00:02:00",
+      "before_server": "2025-07-18T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-18T00:18:00",
+      "before_server": "2025-07-18T00:20:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-18T01:06:00",
+      "before_server": "2025-07-18T01:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-18T23:57:00",
+      "before_server": "2025-07-21T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-21T00:00:00",
+      "before_server": "2025-07-21T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-21T00:27:00",
+      "before_server": "2025-07-21T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-22T00:19:00",
+      "before_server": "2025-07-22T00:21:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-22T00:43:00",
+      "before_server": "2025-07-22T00:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-22T01:07:00",
+      "before_server": "2025-07-22T01:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-22T01:22:00",
+      "before_server": "2025-07-22T01:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-23T00:01:00",
+      "before_server": "2025-07-23T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-23T00:06:00",
+      "before_server": "2025-07-23T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-23T00:35:00",
+      "before_server": "2025-07-23T00:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-23T00:49:00",
+      "before_server": "2025-07-23T00:51:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-23T01:43:00",
+      "before_server": "2025-07-23T01:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-24T00:48:00",
+      "before_server": "2025-07-24T00:50:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-24T00:57:00",
+      "before_server": "2025-07-24T00:59:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-24T01:49:00",
+      "before_server": "2025-07-24T01:51:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-25T00:23:00",
+      "before_server": "2025-07-25T00:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-25T00:30:00",
+      "before_server": "2025-07-25T00:32:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-25T23:57:00",
+      "before_server": "2025-07-28T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-29T00:03:00",
+      "before_server": "2025-07-29T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-29T00:09:00",
+      "before_server": "2025-07-29T00:11:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-29T00:26:00",
+      "before_server": "2025-07-29T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-29T23:20:00",
+      "before_server": "2025-07-29T23:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T00:00:00",
+      "before_server": "2025-07-30T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T00:07:00",
+      "before_server": "2025-07-30T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T00:17:00",
+      "before_server": "2025-07-30T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T00:21:00",
+      "before_server": "2025-07-30T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T00:28:00",
+      "before_server": "2025-07-30T00:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T00:49:00",
+      "before_server": "2025-07-30T00:51:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T01:06:00",
+      "before_server": "2025-07-30T01:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T02:37:00",
+      "before_server": "2025-07-30T02:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-30T02:39:00",
+      "before_server": "2025-07-30T02:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-07-31T00:17:00",
+      "before_server": "2025-07-31T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-01T23:57:00",
+      "before_server": "2025-08-04T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-04T00:22:00",
+      "before_server": "2025-08-04T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-05T00:00:00",
+      "before_server": "2025-08-05T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-05T00:57:00",
+      "before_server": "2025-08-05T00:59:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-06T00:40:00",
+      "before_server": "2025-08-06T00:42:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-06T00:49:00",
+      "before_server": "2025-08-06T00:51:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-06T00:56:00",
+      "before_server": "2025-08-06T00:58:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-06T02:40:00",
+      "before_server": "2025-08-06T02:42:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-08T00:00:00",
+      "before_server": "2025-08-08T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-08T00:10:00",
+      "before_server": "2025-08-08T00:12:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-08T00:41:00",
+      "before_server": "2025-08-08T00:43:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-08T23:57:00",
+      "before_server": "2025-08-11T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-11T00:01:00",
+      "before_server": "2025-08-11T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-11T00:28:00",
+      "before_server": "2025-08-11T00:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-11T00:38:00",
+      "before_server": "2025-08-11T00:40:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-12T00:01:00",
+      "before_server": "2025-08-12T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-12T00:13:00",
+      "before_server": "2025-08-12T00:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-13T00:27:00",
+      "before_server": "2025-08-13T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-13T00:33:00",
+      "before_server": "2025-08-13T00:35:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-13T00:57:00",
+      "before_server": "2025-08-13T00:59:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-13T21:47:00",
+      "before_server": "2025-08-13T21:49:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-14T00:01:00",
+      "before_server": "2025-08-14T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-14T00:24:00",
+      "before_server": "2025-08-14T00:26:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-15T00:00:00",
+      "before_server": "2025-08-15T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-15T00:07:00",
+      "before_server": "2025-08-15T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-15T00:16:00",
+      "before_server": "2025-08-15T00:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-15T02:22:00",
+      "before_server": "2025-08-15T02:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-15T23:57:00",
+      "before_server": "2025-08-18T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-19T00:17:00",
+      "before_server": "2025-08-19T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-19T01:40:00",
+      "before_server": "2025-08-19T01:42:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-19T23:13:00",
+      "before_server": "2025-08-19T23:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-20T00:01:00",
+      "before_server": "2025-08-20T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-22T01:17:00",
+      "before_server": "2025-08-22T01:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-22T23:57:00",
+      "before_server": "2025-08-25T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-25T00:00:00",
+      "before_server": "2025-08-25T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-25T00:25:00",
+      "before_server": "2025-08-25T00:27:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-28T00:57:00",
+      "before_server": "2025-08-28T00:59:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-29T00:26:00",
+      "before_server": "2025-08-29T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-29T00:30:00",
+      "before_server": "2025-08-29T00:32:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-29T07:33:00",
+      "before_server": "2025-08-29T07:35:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-08-29T23:57:00",
+      "before_server": "2025-09-01T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-01T00:19:00",
+      "before_server": "2025-09-01T00:21:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-02T00:02:00",
+      "before_server": "2025-09-02T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-02T01:48:00",
+      "before_server": "2025-09-02T01:50:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-04T00:03:00",
+      "before_server": "2025-09-04T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-04T01:42:00",
+      "before_server": "2025-09-04T01:44:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-05T23:57:00",
+      "before_server": "2025-09-08T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-08T00:01:00",
+      "before_server": "2025-09-08T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-08T00:17:00",
+      "before_server": "2025-09-08T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-08T00:20:00",
+      "before_server": "2025-09-08T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-08T00:22:00",
+      "before_server": "2025-09-08T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-11T00:27:00",
+      "before_server": "2025-09-11T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-11T00:30:00",
+      "before_server": "2025-09-11T00:32:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-12T06:47:00",
+      "before_server": "2025-09-12T06:49:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-12T23:57:00",
+      "before_server": "2025-09-15T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-15T00:01:00",
+      "before_server": "2025-09-15T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-15T00:21:00",
+      "before_server": "2025-09-15T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-15T00:36:00",
+      "before_server": "2025-09-15T00:38:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-15T00:43:00",
+      "before_server": "2025-09-15T00:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-15T00:45:00",
+      "before_server": "2025-09-15T00:47:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-15T00:48:00",
+      "before_server": "2025-09-15T00:50:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-16T00:00:00",
+      "before_server": "2025-09-16T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-16T00:05:00",
+      "before_server": "2025-09-16T00:07:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-16T00:11:00",
+      "before_server": "2025-09-16T00:13:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-17T00:22:00",
+      "before_server": "2025-09-17T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-17T00:25:00",
+      "before_server": "2025-09-17T00:27:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-17T00:31:00",
+      "before_server": "2025-09-17T00:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-17T00:35:00",
+      "before_server": "2025-09-17T00:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-17T00:39:00",
+      "before_server": "2025-09-17T00:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-17T00:47:00",
+      "before_server": "2025-09-17T00:49:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-17T00:51:00",
+      "before_server": "2025-09-17T00:53:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-19T00:03:00",
+      "before_server": "2025-09-19T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-19T23:57:00",
+      "before_server": "2025-09-22T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-22T00:02:00",
+      "before_server": "2025-09-22T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-22T00:17:00",
+      "before_server": "2025-09-22T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-22T02:20:00",
+      "before_server": "2025-09-22T02:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-23T00:13:00",
+      "before_server": "2025-09-23T00:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-23T00:49:00",
+      "before_server": "2025-09-23T00:51:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-23T02:03:00",
+      "before_server": "2025-09-23T02:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-23T02:07:00",
+      "before_server": "2025-09-23T02:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-24T00:06:00",
+      "before_server": "2025-09-24T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-24T00:16:00",
+      "before_server": "2025-09-24T00:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-24T00:22:00",
+      "before_server": "2025-09-24T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-24T00:32:00",
+      "before_server": "2025-09-24T00:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-24T23:24:00",
+      "before_server": "2025-09-24T23:26:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-25T00:07:00",
+      "before_server": "2025-09-25T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-25T01:44:00",
+      "before_server": "2025-09-25T01:46:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-26T00:21:00",
+      "before_server": "2025-09-26T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-26T23:57:00",
+      "before_server": "2025-09-29T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-29T23:31:00",
+      "before_server": "2025-09-29T23:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-30T00:05:00",
+      "before_server": "2025-09-30T00:07:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-30T00:25:00",
+      "before_server": "2025-09-30T00:27:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-09-30T01:07:00",
+      "before_server": "2025-09-30T01:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-01T00:01:00",
+      "before_server": "2025-10-01T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-01T01:15:00",
+      "before_server": "2025-10-01T01:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-01T01:25:00",
+      "before_server": "2025-10-01T01:27:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-01T01:48:00",
+      "before_server": "2025-10-01T01:50:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-03T01:40:00",
+      "before_server": "2025-10-03T01:42:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-03T02:38:00",
+      "before_server": "2025-10-03T02:40:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-03T23:57:00",
+      "before_server": "2025-10-06T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-06T23:33:00",
+      "before_server": "2025-10-06T23:35:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-07T00:01:00",
+      "before_server": "2025-10-07T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-08T00:03:00",
+      "before_server": "2025-10-08T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-08T00:13:00",
+      "before_server": "2025-10-08T00:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-08T00:19:00",
+      "before_server": "2025-10-08T00:21:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-08T00:28:00",
+      "before_server": "2025-10-08T00:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-08T00:46:00",
+      "before_server": "2025-10-08T00:48:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-08T01:28:00",
+      "before_server": "2025-10-08T01:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-10T01:29:00",
+      "before_server": "2025-10-10T01:31:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-10T23:57:00",
+      "before_server": "2025-10-13T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-14T01:16:00",
+      "before_server": "2025-10-14T01:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-15T00:03:00",
+      "before_server": "2025-10-15T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-15T00:19:00",
+      "before_server": "2025-10-15T00:21:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-15T00:48:00",
+      "before_server": "2025-10-15T00:50:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-16T00:35:00",
+      "before_server": "2025-10-16T00:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-16T00:46:00",
+      "before_server": "2025-10-16T00:48:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-17T00:12:00",
+      "before_server": "2025-10-17T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-17T23:57:00",
+      "before_server": "2025-10-20T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-21T00:01:00",
+      "before_server": "2025-10-21T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-21T00:26:00",
+      "before_server": "2025-10-21T00:28:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-23T00:14:00",
+      "before_server": "2025-10-23T00:16:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-23T00:20:00",
+      "before_server": "2025-10-23T00:22:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-24T00:06:00",
+      "before_server": "2025-10-24T00:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-24T05:34:00",
+      "before_server": "2025-10-24T05:36:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-24T23:57:00",
+      "before_server": "2025-10-26T23:01:00",
+      "missing_elapsed_seconds": 169380,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-27T23:01:00",
+      "before_server": "2025-10-27T23:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-27T23:25:00",
+      "before_server": "2025-10-27T23:27:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-28T00:43:00",
+      "before_server": "2025-10-28T00:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-29T23:09:00",
+      "before_server": "2025-10-29T23:11:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-29T23:37:00",
+      "before_server": "2025-10-29T23:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-30T23:11:00",
+      "before_server": "2025-10-30T23:13:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-10-31T22:57:00",
+      "before_server": "2025-11-03T00:00:00",
+      "missing_elapsed_seconds": 176520,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-03T00:02:00",
+      "before_server": "2025-11-03T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-04T00:02:00",
+      "before_server": "2025-11-04T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-04T00:17:00",
+      "before_server": "2025-11-04T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-05T07:38:00",
+      "before_server": "2025-11-05T07:40:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-07T23:23:00",
+      "before_server": "2025-11-07T23:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-07T23:57:00",
+      "before_server": "2025-11-10T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-10T00:12:00",
+      "before_server": "2025-11-10T00:14:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-11T00:21:00",
+      "before_server": "2025-11-11T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-13T00:02:00",
+      "before_server": "2025-11-13T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-13T00:11:00",
+      "before_server": "2025-11-13T00:13:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-13T00:15:00",
+      "before_server": "2025-11-13T00:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-13T00:21:00",
+      "before_server": "2025-11-13T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-14T00:01:00",
+      "before_server": "2025-11-14T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-14T00:25:00",
+      "before_server": "2025-11-14T00:27:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-14T23:57:00",
+      "before_server": "2025-11-17T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-17T00:02:00",
+      "before_server": "2025-11-17T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-18T00:00:00",
+      "before_server": "2025-11-18T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-18T00:09:00",
+      "before_server": "2025-11-18T00:11:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-20T00:02:00",
+      "before_server": "2025-11-20T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-20T00:07:00",
+      "before_server": "2025-11-20T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-20T00:21:00",
+      "before_server": "2025-11-20T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-20T00:32:00",
+      "before_server": "2025-11-20T00:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-20T23:16:00",
+      "before_server": "2025-11-20T23:18:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-21T23:57:00",
+      "before_server": "2025-11-24T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-24T00:28:00",
+      "before_server": "2025-11-24T00:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-24T23:13:00",
+      "before_server": "2025-11-24T23:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-25T00:15:00",
+      "before_server": "2025-11-25T00:17:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-25T00:28:00",
+      "before_server": "2025-11-25T00:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-26T23:32:00",
+      "before_server": "2025-11-26T23:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-27T00:23:00",
+      "before_server": "2025-11-27T00:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-27T00:43:00",
+      "before_server": "2025-11-27T00:45:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-27T20:05:00",
+      "before_server": "2025-11-27T20:07:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-27T22:51:00",
+      "before_server": "2025-11-27T22:53:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-27T23:45:00",
+      "before_server": "2025-11-27T23:47:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-28T00:30:00",
+      "before_server": "2025-11-28T00:32:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-28T00:50:00",
+      "before_server": "2025-11-28T00:52:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-11-28T23:57:00",
+      "before_server": "2025-12-01T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-01T00:13:00",
+      "before_server": "2025-12-01T00:15:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-02T00:07:00",
+      "before_server": "2025-12-02T00:09:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-04T00:31:00",
+      "before_server": "2025-12-04T00:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-05T00:22:00",
+      "before_server": "2025-12-05T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-05T00:31:00",
+      "before_server": "2025-12-05T00:33:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-05T23:57:00",
+      "before_server": "2025-12-08T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-09T00:03:00",
+      "before_server": "2025-12-09T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-09T00:39:00",
+      "before_server": "2025-12-09T00:41:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-09T23:35:00",
+      "before_server": "2025-12-09T23:37:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-12T00:01:00",
+      "before_server": "2025-12-12T00:03:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-12T00:21:00",
+      "before_server": "2025-12-12T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-12T23:57:00",
+      "before_server": "2025-12-15T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-15T00:22:00",
+      "before_server": "2025-12-15T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-15T00:27:00",
+      "before_server": "2025-12-15T00:29:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-16T00:17:00",
+      "before_server": "2025-12-16T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-17T00:02:00",
+      "before_server": "2025-12-17T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-17T00:17:00",
+      "before_server": "2025-12-17T00:19:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-17T01:06:00",
+      "before_server": "2025-12-17T01:08:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-18T01:46:00",
+      "before_server": "2025-12-18T01:48:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-18T07:45:00",
+      "before_server": "2025-12-18T07:47:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-19T07:33:00",
+      "before_server": "2025-12-19T07:35:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-19T23:57:00",
+      "before_server": "2025-12-22T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-22T00:02:00",
+      "before_server": "2025-12-22T00:04:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-23T00:51:00",
+      "before_server": "2025-12-23T00:53:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-23T01:36:00",
+      "before_server": "2025-12-23T01:38:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-23T22:23:00",
+      "before_server": "2025-12-23T22:25:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-24T19:59:00",
+      "before_server": "2025-12-26T08:00:00",
+      "missing_elapsed_seconds": 129600,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-26T23:57:00",
+      "before_server": "2025-12-29T00:00:00",
+      "missing_elapsed_seconds": 172920,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-29T00:00:00",
+      "before_server": "2025-12-29T00:02:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-30T00:03:00",
+      "before_server": "2025-12-30T00:05:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-30T00:21:00",
+      "before_server": "2025-12-30T00:23:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-30T06:28:00",
+      "before_server": "2025-12-30T06:30:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-30T06:32:00",
+      "before_server": "2025-12-30T06:34:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-30T23:37:00",
+      "before_server": "2025-12-30T23:39:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-31T00:22:00",
+      "before_server": "2025-12-31T00:24:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-31T01:08:00",
+      "before_server": "2025-12-31T01:10:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2025-12-31T08:38:00",
+      "before_server": "2025-12-31T08:40:00",
+      "missing_elapsed_seconds": 60,
+      "classification": "unknown_includes_market_closures"
+    }
+  ],
+  "invalid_ohlc": [],
+  "last_time": "2025-12-31T19:59:00",
+  "native_interval_count": 370416,
+  "observed_interval_count": 370940,
+  "notes": "Historical gaps include weekends, holidays and absent source bars; classification unverified. Native real_volume omitted by source is blank, never invented."
+}

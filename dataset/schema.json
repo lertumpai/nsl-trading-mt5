@@ -1,0 +1,1996 @@
+{
+  "version": "1.1.0",
+  "status": "actual_export",
+  "timeframes": [
+    "M1",
+    "M5",
+    "M15"
+  ],
+  "pairs": [
+    "EURUSD",
+    "USDJPY",
+    "GBPUSD"
+  ],
+  "broker_server": "XMGlobal-MT5 9",
+  "requested_start_server": "2016-11-08T00:00:00",
+  "cutoff_server": "2026-11-06T23:57:00",
+  "history_layout": "{pair}/history/{YYYY-MM}/{TF}.csv",
+  "event_layout": "{pair}/events/{YYYY-MM-DD}/{HH-mm-ss}_{pattern}_{side}/",
+  "warmup_layout": "{pair}/warmup/{YYYY-MM}/{TF}.csv",
+  "csv": {
+    "encoding": "UTF-8",
+    "delimiter": ",",
+    "decimal": ".",
+    "header": true,
+    "newline": "CRLF",
+    "null": "empty field",
+    "boolean": "0 or 1",
+    "datetime": "ISO 8601; server times without invented offset; verified UTC times end with Z",
+    "formulas": "none"
+  },
+  "indicator_definitions": {
+    "ema_periods": [
+      9,
+      21,
+      200
+    ],
+    "ema": "EMA of close; alpha=2/(n+1); seed is SMA of first n valid chronological closes. Version changes require regeneration.",
+    "rsi": "Wilder RSI(14), seed mean gains/losses of first 14 changes; both averages zero =>50; zero losses and positive gains =>100.",
+    "atr": "Wilder ATR(14): TR=max(high-low,abs(high-prev_close),abs(low-prev_close)); initial ATR is mean of first 14 valid TRs.",
+    "warmup": "Compute on prior continuous source history, not only exported event window. Prefer full prior history; minimum 1000 completed bars for exported EMA200 features; flags remain invalid when unavailable."
+  },
+  "selection_rule_file": "config/selection_rules_v1.json",
+  "tables": {
+    "events/M1.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "timeframe",
+          "type": "enum:M1|M5|M15",
+          "role": "context",
+          "required": true,
+          "meaning": "Timeframe of this row."
+        },
+        {
+          "name": "bar_index",
+          "type": "int",
+          "role": "context",
+          "required": true,
+          "meaning": "Latest fully closed bar is 0; earlier bars are negative. Rows are oldest to newest."
+        },
+        {
+          "name": "open_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Original broker chart time; ISO 8601 without an invented UTC offset."
+        },
+        {
+          "name": "close_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Exclusive bar boundary: open time plus timeframe duration. Not last tick time."
+        },
+        {
+          "name": "open_time_utc",
+          "type": "datetime_utc",
+          "role": "context",
+          "required": false,
+          "meaning": "UTC conversion only when the historical broker offset is verified."
+        },
+        {
+          "name": "open",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC open in quote price units."
+        },
+        {
+          "name": "high",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC high in quote price units."
+        },
+        {
+          "name": "low",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC low in quote price units."
+        },
+        {
+          "name": "close",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC close in quote price units."
+        },
+        {
+          "name": "tick_volume",
+          "type": "int",
+          "role": "input",
+          "required": true,
+          "meaning": "Broker tick volume; not centralized FX traded volume."
+        },
+        {
+          "name": "real_volume",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native real_volume when present. Preserve native zero; consult event availability flag."
+        },
+        {
+          "name": "bar_spread_points",
+          "type": "int",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native MqlRates spread field in points. Not a full intrabar spread path or guaranteed fill spread."
+        },
+        {
+          "name": "source_m1_count",
+          "type": "int",
+          "role": "audit",
+          "required": false,
+          "meaning": "For aggregated bars: count of source M1 rows. Missing where native aggregation cannot be independently verified."
+        },
+        {
+          "name": "gap_before_seconds",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "max(0, open_time minus prior open_time minus timeframe seconds). Includes scheduled closures."
+        },
+        {
+          "name": "gap_class",
+          "type": "enum:none|scheduled_close|unexplained|unknown",
+          "role": "audit",
+          "required": true,
+          "meaning": "Scheduled classification only with verified trading-session calendar."
+        },
+        {
+          "name": "feature_valid",
+          "type": "bool",
+          "role": "audit",
+          "required": true,
+          "meaning": "1 only when the required feature history and quality conditions are satisfied."
+        },
+        {
+          "name": "body_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "abs(close-open), in price units."
+        },
+        {
+          "name": "upper_wick_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "high-max(open,close), in price units."
+        },
+        {
+          "name": "lower_wick_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "min(open,close)-low, in price units."
+        },
+        {
+          "name": "body_to_range",
+          "type": "float",
+          "role": "input",
+          "required": false,
+          "meaning": "abs(close-open)/(high-low); blank for zero-range bars."
+        },
+        {
+          "name": "return_1bar",
+          "type": "float",
+          "role": "input",
+          "required": false,
+          "meaning": "close/prior_close-1; blank if unavailable. Gaps are retained and flagged."
+        },
+        {
+          "name": "atr_14_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal ATR(14) in price units, definition fixed in schema configuration."
+        },
+        {
+          "name": "range_atr_14",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "(high-low)/atr_14_price; blank when ATR missing or zero."
+        },
+        {
+          "name": "ema_9_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(9) of close; never initialize afresh at each event window."
+        },
+        {
+          "name": "ema_21_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(21) of close."
+        },
+        {
+          "name": "ema_200_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(200) of close."
+        },
+        {
+          "name": "rsi_14",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal Wilder RSI(14) of close."
+        },
+        {
+          "name": "tick_volume_ratio_20",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Current tick_volume / mean of preceding 20 completed bars, excluding current from denominator."
+        }
+      ],
+      "optional": false
+    },
+    "events/M5.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "timeframe",
+          "type": "enum:M1|M5|M15",
+          "role": "context",
+          "required": true,
+          "meaning": "Timeframe of this row."
+        },
+        {
+          "name": "bar_index",
+          "type": "int",
+          "role": "context",
+          "required": true,
+          "meaning": "Latest fully closed bar is 0; earlier bars are negative. Rows are oldest to newest."
+        },
+        {
+          "name": "open_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Original broker chart time; ISO 8601 without an invented UTC offset."
+        },
+        {
+          "name": "close_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Exclusive bar boundary: open time plus timeframe duration. Not last tick time."
+        },
+        {
+          "name": "open_time_utc",
+          "type": "datetime_utc",
+          "role": "context",
+          "required": false,
+          "meaning": "UTC conversion only when the historical broker offset is verified."
+        },
+        {
+          "name": "open",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC open in quote price units."
+        },
+        {
+          "name": "high",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC high in quote price units."
+        },
+        {
+          "name": "low",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC low in quote price units."
+        },
+        {
+          "name": "close",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC close in quote price units."
+        },
+        {
+          "name": "tick_volume",
+          "type": "int",
+          "role": "input",
+          "required": true,
+          "meaning": "Broker tick volume; not centralized FX traded volume."
+        },
+        {
+          "name": "real_volume",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native real_volume when present. Preserve native zero; consult event availability flag."
+        },
+        {
+          "name": "bar_spread_points",
+          "type": "int",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native MqlRates spread field in points. Not a full intrabar spread path or guaranteed fill spread."
+        },
+        {
+          "name": "source_m1_count",
+          "type": "int",
+          "role": "audit",
+          "required": false,
+          "meaning": "For aggregated bars: count of source M1 rows. Missing where native aggregation cannot be independently verified."
+        },
+        {
+          "name": "gap_before_seconds",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "max(0, open_time minus prior open_time minus timeframe seconds). Includes scheduled closures."
+        },
+        {
+          "name": "gap_class",
+          "type": "enum:none|scheduled_close|unexplained|unknown",
+          "role": "audit",
+          "required": true,
+          "meaning": "Scheduled classification only with verified trading-session calendar."
+        },
+        {
+          "name": "feature_valid",
+          "type": "bool",
+          "role": "audit",
+          "required": true,
+          "meaning": "1 only when the required feature history and quality conditions are satisfied."
+        },
+        {
+          "name": "body_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "abs(close-open), in price units."
+        },
+        {
+          "name": "upper_wick_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "high-max(open,close), in price units."
+        },
+        {
+          "name": "lower_wick_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "min(open,close)-low, in price units."
+        },
+        {
+          "name": "body_to_range",
+          "type": "float",
+          "role": "input",
+          "required": false,
+          "meaning": "abs(close-open)/(high-low); blank for zero-range bars."
+        },
+        {
+          "name": "return_1bar",
+          "type": "float",
+          "role": "input",
+          "required": false,
+          "meaning": "close/prior_close-1; blank if unavailable. Gaps are retained and flagged."
+        },
+        {
+          "name": "atr_14_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal ATR(14) in price units, definition fixed in schema configuration."
+        },
+        {
+          "name": "range_atr_14",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "(high-low)/atr_14_price; blank when ATR missing or zero."
+        },
+        {
+          "name": "ema_9_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(9) of close; never initialize afresh at each event window."
+        },
+        {
+          "name": "ema_21_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(21) of close."
+        },
+        {
+          "name": "ema_200_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(200) of close."
+        },
+        {
+          "name": "rsi_14",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal Wilder RSI(14) of close."
+        },
+        {
+          "name": "tick_volume_ratio_20",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Current tick_volume / mean of preceding 20 completed bars, excluding current from denominator."
+        }
+      ],
+      "optional": false
+    },
+    "events/M15.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "timeframe",
+          "type": "enum:M1|M5|M15",
+          "role": "context",
+          "required": true,
+          "meaning": "Timeframe of this row."
+        },
+        {
+          "name": "bar_index",
+          "type": "int",
+          "role": "context",
+          "required": true,
+          "meaning": "Latest fully closed bar is 0; earlier bars are negative. Rows are oldest to newest."
+        },
+        {
+          "name": "open_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Original broker chart time; ISO 8601 without an invented UTC offset."
+        },
+        {
+          "name": "close_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Exclusive bar boundary: open time plus timeframe duration. Not last tick time."
+        },
+        {
+          "name": "open_time_utc",
+          "type": "datetime_utc",
+          "role": "context",
+          "required": false,
+          "meaning": "UTC conversion only when the historical broker offset is verified."
+        },
+        {
+          "name": "open",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC open in quote price units."
+        },
+        {
+          "name": "high",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC high in quote price units."
+        },
+        {
+          "name": "low",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC low in quote price units."
+        },
+        {
+          "name": "close",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC close in quote price units."
+        },
+        {
+          "name": "tick_volume",
+          "type": "int",
+          "role": "input",
+          "required": true,
+          "meaning": "Broker tick volume; not centralized FX traded volume."
+        },
+        {
+          "name": "real_volume",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native real_volume when present. Preserve native zero; consult event availability flag."
+        },
+        {
+          "name": "bar_spread_points",
+          "type": "int",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native MqlRates spread field in points. Not a full intrabar spread path or guaranteed fill spread."
+        },
+        {
+          "name": "source_m1_count",
+          "type": "int",
+          "role": "audit",
+          "required": false,
+          "meaning": "For aggregated bars: count of source M1 rows. Missing where native aggregation cannot be independently verified."
+        },
+        {
+          "name": "gap_before_seconds",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "max(0, open_time minus prior open_time minus timeframe seconds). Includes scheduled closures."
+        },
+        {
+          "name": "gap_class",
+          "type": "enum:none|scheduled_close|unexplained|unknown",
+          "role": "audit",
+          "required": true,
+          "meaning": "Scheduled classification only with verified trading-session calendar."
+        },
+        {
+          "name": "feature_valid",
+          "type": "bool",
+          "role": "audit",
+          "required": true,
+          "meaning": "1 only when the required feature history and quality conditions are satisfied."
+        },
+        {
+          "name": "body_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "abs(close-open), in price units."
+        },
+        {
+          "name": "upper_wick_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "high-max(open,close), in price units."
+        },
+        {
+          "name": "lower_wick_price",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "min(open,close)-low, in price units."
+        },
+        {
+          "name": "body_to_range",
+          "type": "float",
+          "role": "input",
+          "required": false,
+          "meaning": "abs(close-open)/(high-low); blank for zero-range bars."
+        },
+        {
+          "name": "return_1bar",
+          "type": "float",
+          "role": "input",
+          "required": false,
+          "meaning": "close/prior_close-1; blank if unavailable. Gaps are retained and flagged."
+        },
+        {
+          "name": "atr_14_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal ATR(14) in price units, definition fixed in schema configuration."
+        },
+        {
+          "name": "range_atr_14",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "(high-low)/atr_14_price; blank when ATR missing or zero."
+        },
+        {
+          "name": "ema_9_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(9) of close; never initialize afresh at each event window."
+        },
+        {
+          "name": "ema_21_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(21) of close."
+        },
+        {
+          "name": "ema_200_price",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal EMA(200) of close."
+        },
+        {
+          "name": "rsi_14",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Causal Wilder RSI(14) of close."
+        },
+        {
+          "name": "tick_volume_ratio_20",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Current tick_volume / mean of preceding 20 completed bars, excluding current from denominator."
+        }
+      ],
+      "optional": false
+    },
+    "events/event.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "schema_version",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Dataset contract version."
+        },
+        {
+          "name": "pair",
+          "type": "enum:EURUSD|USDJPY|GBPUSD",
+          "role": "context",
+          "required": true,
+          "meaning": "Normalized folder pair."
+        },
+        {
+          "name": "source_symbol",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "Exact broker symbol, including suffix, e.g. EURUSD#."
+        },
+        {
+          "name": "broker_server",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "Broker server name. No account number or credentials."
+        },
+        {
+          "name": "decision_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Information cutoff shared by every timeframe and all pre-entry fields."
+        },
+        {
+          "name": "decision_time_utc",
+          "type": "datetime_utc",
+          "role": "context",
+          "required": false,
+          "meaning": "Verified UTC equivalent, otherwise blank."
+        },
+        {
+          "name": "server_utc_offset_minutes",
+          "type": "int",
+          "role": "context",
+          "required": false,
+          "meaning": "Historical offset at this event, not the current computer offset."
+        },
+        {
+          "name": "time_mapping_source",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Evidence/version for historical time conversion or unverified."
+        },
+        {
+          "name": "extracted_at_utc",
+          "type": "datetime_utc",
+          "role": "audit",
+          "required": true,
+          "meaning": "Actual export timestamp in UTC."
+        },
+        {
+          "name": "price_basis",
+          "type": "enum:bid|ask|last|unknown",
+          "role": "context",
+          "required": true,
+          "meaning": "Verified source basis of OHLC."
+        },
+        {
+          "name": "digits",
+          "type": "int",
+          "role": "context",
+          "required": true,
+          "meaning": "Broker display precision at the event if verified."
+        },
+        {
+          "name": "point_size",
+          "type": "float",
+          "role": "context",
+          "required": true,
+          "meaning": "Price units per broker point, from verified symbol metadata."
+        },
+        {
+          "name": "pip_size",
+          "type": "float",
+          "role": "context",
+          "required": true,
+          "meaning": "Price units per pip. Default convention 0.0001 for EURUSD/GBPUSD, 0.01 for USDJPY; verify."
+        },
+        {
+          "name": "real_volume_status",
+          "type": "enum:available|not_provided|unverified",
+          "role": "audit",
+          "required": true,
+          "meaning": "Interpret native real_volume zero using broker availability."
+        },
+        {
+          "name": "quote_bid_at_decision",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Last observed Bid tick at or before the decision, never a future quote."
+        },
+        {
+          "name": "quote_ask_at_decision",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Last observed Ask tick at or before the decision."
+        },
+        {
+          "name": "quote_time_server",
+          "type": "datetime",
+          "role": "audit",
+          "required": false,
+          "meaning": "Time of the preceding quote, for quote staleness checks."
+        },
+        {
+          "name": "selection_rule_version",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Immutable setup/selection configuration version."
+        },
+        {
+          "name": "feature_rule_version",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Immutable feature calculation configuration version."
+        },
+        {
+          "name": "selection_mode",
+          "type": "enum:causal_rule|asof_blind_manual|retrospective_manual",
+          "role": "audit",
+          "required": true,
+          "meaning": "Retrospective manual examples are separated from causal training/evaluation."
+        },
+        {
+          "name": "selection_population_id",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Scan/control sampling population identifier, linked to a stored extraction configuration."
+        },
+        {
+          "name": "sampling_probability",
+          "type": "float",
+          "role": "audit",
+          "required": false,
+          "meaning": "Inclusion probability in (0,1] for sampled controls; 1 for an exhaustive deterministic rule scan. Unknown stays blank."
+        },
+        {
+          "name": "pattern_label",
+          "type": "enum:trend_pullback|breakout_retest|sweep_reclaim|range_rejection|no_setup|unclear",
+          "role": "target",
+          "required": true,
+          "meaning": "Price-action class assigned without seeing future performance."
+        },
+        {
+          "name": "side_label",
+          "type": "enum:buy|sell|no_trade|unlabeled",
+          "role": "target",
+          "required": true,
+          "meaning": "Intended decision label, not a default model input."
+        },
+        {
+          "name": "review_status",
+          "type": "enum:unreviewed|accepted|rejected|unclear",
+          "role": "audit",
+          "required": true,
+          "meaning": "Review quality, independent of win or loss."
+        },
+        {
+          "name": "selection_reason",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Concrete visible structure/trigger, not future profitability."
+        },
+        {
+          "name": "reviewer_id",
+          "type": "string",
+          "role": "audit",
+          "required": false,
+          "meaning": "Reviewer identifier or rule engine version."
+        },
+        {
+          "name": "overlap_group_id",
+          "type": "string",
+          "role": "split_control",
+          "required": true,
+          "meaning": "Group nearby/overlapping events. Not sufficient by itself to ensure time-purged splits."
+        },
+        {
+          "name": "split",
+          "type": "enum:unassigned|train|validation|test|excluded",
+          "role": "split_control",
+          "required": true,
+          "meaning": "Assigned globally by time across pairs after collecting windows and label horizons."
+        },
+        {
+          "name": "quality_status",
+          "type": "enum:valid|insufficient_history|missing_data|time_unverified|needs_review",
+          "role": "audit",
+          "required": true,
+          "meaning": "Data eligibility for the intended training task."
+        },
+        {
+          "name": "quality_notes",
+          "type": "string",
+          "role": "audit",
+          "required": false,
+          "meaning": "Specific missing data, ambiguity or exclusions."
+        },
+        {
+          "name": "news_context_status",
+          "type": "enum:verified|unavailable|not_collected",
+          "role": "audit",
+          "required": true,
+          "meaning": "Do not infer absence of news from missing historical calendar data."
+        },
+        {
+          "name": "minutes_to_next_scheduled_high_impact_event",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Only historical scheduled information known at decision time; never released actual/surprise data."
+        }
+      ],
+      "optional": false
+    },
+    "events/plan.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "plan_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "One primary entry/exit policy per event in v1."
+        },
+        {
+          "name": "entry_rule_version",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Versioned executable entry rule or draft_manual."
+        },
+        {
+          "name": "exit_rule_version",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Versioned exit rule including priority and time stop."
+        },
+        {
+          "name": "plan_status",
+          "type": "enum:complete|incomplete|no_trade",
+          "role": "audit",
+          "required": true,
+          "meaning": "A complete trade has explicit executable entry, SL, TP and time/cancel rules."
+        },
+        {
+          "name": "side",
+          "type": "enum:buy|sell|no_trade",
+          "role": "target",
+          "required": true,
+          "meaning": "Planned side for supervised training."
+        },
+        {
+          "name": "entry_order_type",
+          "type": "enum:market_next_tick|stop|limit|none",
+          "role": "target",
+          "required": true,
+          "meaning": "Market orders use first eligible executable quote after decision; never guaranteed signal close fills."
+        },
+        {
+          "name": "trigger_time_server",
+          "type": "datetime",
+          "role": "target",
+          "required": false,
+          "meaning": "Time at which entry trigger became observable, no later than decision."
+        },
+        {
+          "name": "entry_reference_price",
+          "type": "float",
+          "role": "target",
+          "required": false,
+          "meaning": "Known decision-time order level/reference; next market fill remains unknown."
+        },
+        {
+          "name": "entry_price_basis",
+          "type": "enum:ask|bid|none",
+          "role": "audit",
+          "required": true,
+          "meaning": "Buy opens at Ask; sell opens at Bid in quote-based simulation."
+        },
+        {
+          "name": "entry_condition",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "Precise observable trigger, linked to known level IDs."
+        },
+        {
+          "name": "entry_expiry_server",
+          "type": "datetime",
+          "role": "target",
+          "required": false,
+          "meaning": "Unfilled entry becomes canceled after this time."
+        },
+        {
+          "name": "cancel_condition",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "Pre-entry invalidation rule, including structure failure and data/quote constraints."
+        },
+        {
+          "name": "max_spread_points",
+          "type": "float",
+          "role": "target",
+          "required": false,
+          "meaning": "Decision/order-time spread constraint, versioned before evaluation."
+        },
+        {
+          "name": "stop_loss_price",
+          "type": "float",
+          "role": "target",
+          "required": false,
+          "meaning": "Initial executable stop level; must be valid for planned side."
+        },
+        {
+          "name": "stop_basis_level_id",
+          "type": "string",
+          "role": "target",
+          "required": false,
+          "meaning": "Confirmed structure level that fixes invalidation, if used."
+        },
+        {
+          "name": "stop_buffer_points",
+          "type": "float",
+          "role": "target",
+          "required": false,
+          "meaning": "Explicit buffer in broker points, fixed from pre-entry policy."
+        },
+        {
+          "name": "take_profit_price",
+          "type": "float",
+          "role": "target",
+          "required": false,
+          "meaning": "Primary pre-entry target; no future swing-extreme chosen after the fact."
+        },
+        {
+          "name": "target_basis_level_id",
+          "type": "string",
+          "role": "target",
+          "required": false,
+          "meaning": "Previously known opposing structure level, if used."
+        },
+        {
+          "name": "target_policy",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "Exact target method. Any fixed distance/ATR multiplier is specified here."
+        },
+        {
+          "name": "max_hold_seconds",
+          "type": "int",
+          "role": "target",
+          "required": true,
+          "meaning": "Time stop measured from actual fill."
+        },
+        {
+          "name": "early_exit_condition",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "Observable early invalidation or none."
+        },
+        {
+          "name": "trailing_policy",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "none in v1 unless a fully specified rule is registered."
+        },
+        {
+          "name": "breakeven_policy",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "none in v1 unless a fully specified rule is registered."
+        },
+        {
+          "name": "estimated_commission_pips_roundtrip",
+          "type": "float",
+          "role": "audit",
+          "required": false,
+          "meaning": "Known broker commission estimate converted to pips, not assumed zero."
+        },
+        {
+          "name": "slippage_assumption_points",
+          "type": "float",
+          "role": "audit",
+          "required": false,
+          "meaning": "Scenario assumption, not historical observed slippage."
+        },
+        {
+          "name": "execution_delay_ms",
+          "type": "int",
+          "role": "audit",
+          "required": false,
+          "meaning": "Explicit backtest delay assumption."
+        }
+      ],
+      "optional": false
+    },
+    "events/levels.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "level_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique within event; includes latest/previous confirmed swings, signal extremes, observed pullback extremes and derived targets. Referenced by plan.csv."
+        },
+        {
+          "name": "timeframe",
+          "type": "enum:M1|M5|M15|D1",
+          "role": "context",
+          "required": true,
+          "meaning": "Origin timeframe. D1 is allowed only for known previous-day levels."
+        },
+        {
+          "name": "level_type",
+          "type": "enum:swing_high|swing_low|signal_high|signal_low|pullback_high|pullback_low|breakout_zone|range_midpoint",
+          "role": "input_optional",
+          "required": true,
+          "meaning": "Price-action structure known by cutoff."
+        },
+        {
+          "name": "price_low",
+          "type": "float",
+          "role": "input_optional",
+          "required": true,
+          "meaning": "Lower edge of price level/zone."
+        },
+        {
+          "name": "price_high",
+          "type": "float",
+          "role": "input_optional",
+          "required": true,
+          "meaning": "Upper edge; equals price_low for a point level."
+        },
+        {
+          "name": "origin_time_server",
+          "type": "datetime",
+          "role": "audit",
+          "required": true,
+          "meaning": "Origin bar or start of underlying structure."
+        },
+        {
+          "name": "known_at_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Earliest time at which confirmation was possible. Must be <= decision."
+        },
+        {
+          "name": "detection_rule_version",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Exact swing/zone algorithm version."
+        },
+        {
+          "name": "left_bars",
+          "type": "int",
+          "role": "audit",
+          "required": false,
+          "meaning": "Swing parameter, if applicable."
+        },
+        {
+          "name": "right_confirmation_bars",
+          "type": "int",
+          "role": "audit",
+          "required": false,
+          "meaning": "Right-hand confirming bars already closed by known_at; never use them earlier."
+        },
+        {
+          "name": "touch_count_asof",
+          "type": "int",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Number of contacts known by cutoff."
+        },
+        {
+          "name": "status_asof",
+          "type": "enum:active|broken|reclaimed",
+          "role": "input_optional",
+          "required": true,
+          "meaning": "Level state using only observations by cutoff."
+        }
+      ],
+      "optional": false
+    },
+    "events/outcome.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "plan_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Matches the versioned primary plan."
+        },
+        {
+          "name": "outcome_source",
+          "type": "enum:simulated_real_ticks|simulated_bars|actual_deals|not_evaluated",
+          "role": "audit",
+          "required": true,
+          "meaning": "Do not describe simulated fills as real trades."
+        },
+        {
+          "name": "label_status",
+          "type": "enum:complete|unfilled|canceled|ambiguous|censored|missing_ticks|not_evaluated",
+          "role": "audit",
+          "required": true,
+          "meaning": "No forced win/loss when path or horizon is unresolved."
+        },
+        {
+          "name": "entry_fill_time_server",
+          "type": "datetime",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Minute-bar boundary proxy for the simulated execution interval; not an observed exact tick timestamp. See execution_time_resolution and interval_end fields."
+        },
+        {
+          "name": "entry_fill_price",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Executable fill including modeled slippage when applicable."
+        },
+        {
+          "name": "exit_time_server",
+          "type": "datetime",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Minute-bar boundary proxy for the simulated execution interval; not an observed exact tick timestamp. See execution_time_resolution and interval_end fields."
+        },
+        {
+          "name": "exit_fill_price",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Buy liquidates on Bid; sell on Ask, subject to execution model."
+        },
+        {
+          "name": "exit_reason",
+          "type": "enum:sl|tp|time_stop|invalidation|unfilled|canceled|unknown",
+          "role": "future_label",
+          "required": true,
+          "meaning": "Terminal event under the registered exit policy."
+        },
+        {
+          "name": "holding_seconds",
+          "type": "int",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Elapsed seconds between simulated minute-bar boundary proxies; approximate, not an observed tick holding duration."
+        },
+        {
+          "name": "initial_risk_pips",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "abs(entry_fill_price-initial_stop_loss_price)/pip_size, fixed at fill."
+        },
+        {
+          "name": "gross_pnl_pips",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "side_sign*(exit_fill_price-entry_fill_price)/pip_size. Bid/Ask spread and fill slippage already embedded."
+        },
+        {
+          "name": "commission_pips_roundtrip",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Additional round-trip commission in pips; blank if not established."
+        },
+        {
+          "name": "financing_cost_pips",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Additional financing cost in pips; positive costs reduce net, negative credits increase net."
+        },
+        {
+          "name": "net_pnl_pips",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "gross_pnl_pips-commission_pips_roundtrip-financing_cost_pips. Do not subtract spread/slippage a second time."
+        },
+        {
+          "name": "net_r",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "net_pnl_pips/initial_risk_pips; blank if costs or risk missing."
+        },
+        {
+          "name": "mfe_pips",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Maximum nonnegative favorable executable liquidation excursion from fill until exit."
+        },
+        {
+          "name": "mae_pips",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Maximum nonnegative adverse executable liquidation excursion from fill until exit."
+        },
+        {
+          "name": "mfe_r",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "mfe_pips/initial_risk_pips."
+        },
+        {
+          "name": "mae_r",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "mae_pips/initial_risk_pips."
+        },
+        {
+          "name": "same_bar_sl_tp",
+          "type": "bool",
+          "role": "audit",
+          "required": false,
+          "meaning": "1 if M1 bar data alone permits both SL and TP; tick order required to resolve."
+        },
+        {
+          "name": "real_tick_coverage_ratio",
+          "type": "float",
+          "role": "audit",
+          "required": false,
+          "meaning": "Measured coverage of required tradable minutes by real ticks, with denominator defined in config."
+        },
+        {
+          "name": "label_end_time_server",
+          "type": "datetime",
+          "role": "split_control",
+          "required": false,
+          "meaning": "End of observed outcome or censoring horizon, used for purging."
+        },
+        {
+          "name": "evaluation_rule_version",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Exact simulator/execution and label implementation version."
+        },
+        {
+          "name": "gross_r",
+          "type": "float",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Gross executable-price P&L / initial risk. No commission or measured slippage deduction."
+        },
+        {
+          "name": "execution_model",
+          "type": "string",
+          "role": "audit",
+          "required": false,
+          "meaning": "Explicit bar simulation assumptions; not actual trades."
+        },
+        {
+          "name": "commission_status",
+          "type": "enum:unknown",
+          "role": "audit",
+          "required": false,
+          "meaning": "Historical round-trip commission has not been established."
+        },
+        {
+          "name": "slippage_status",
+          "type": "enum:not_measured",
+          "role": "audit",
+          "required": false,
+          "meaning": "Actual slippage was not collected."
+        },
+        {
+          "name": "ticks_status",
+          "type": "enum:not_requested",
+          "role": "audit",
+          "required": false,
+          "meaning": "Real tick history was not requested for this collection."
+        },
+        {
+          "name": "execution_time_resolution",
+          "type": "enum:minute_bar_interval_proxy",
+          "role": "audit",
+          "required": false,
+          "meaning": "Fill/exit time is a minute interval boundary proxy, not an observed exact tick."
+        },
+        {
+          "name": "entry_interval_end_server",
+          "type": "datetime",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Exclusive end of the minute within which the simulated entry happened."
+        },
+        {
+          "name": "exit_interval_end_server",
+          "type": "datetime",
+          "role": "future_label",
+          "required": false,
+          "meaning": "Exclusive end of exit interval, or the boundary used for a time stop."
+        },
+        {
+          "name": "entry_exit_same_bar_ambiguous",
+          "type": "bool",
+          "role": "audit",
+          "required": false,
+          "meaning": "Entry and possible exit share a candle and order cannot be resolved."
+        }
+      ],
+      "optional": false
+    },
+    "events/ticks.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "time_msc_raw",
+          "type": "int64",
+          "role": "audit",
+          "required": true,
+          "meaning": "Native MT5 tick time_msc preserved without reinterpretation."
+        },
+        {
+          "name": "time_server",
+          "type": "datetime",
+          "role": "audit",
+          "required": false,
+          "meaning": "Tick chart-server time after verified source-time mapping; blank while mapping unresolved."
+        },
+        {
+          "name": "time_utc_msc",
+          "type": "int64",
+          "role": "audit",
+          "required": false,
+          "meaning": "Verified UTC timestamp only if mapping established."
+        },
+        {
+          "name": "sequence",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "Original order within an equal-millisecond timestamp."
+        },
+        {
+          "name": "bid",
+          "type": "float",
+          "role": "audit",
+          "required": true,
+          "meaning": "Broker observed Bid."
+        },
+        {
+          "name": "ask",
+          "type": "float",
+          "role": "audit",
+          "required": true,
+          "meaning": "Broker observed Ask."
+        },
+        {
+          "name": "last",
+          "type": "float",
+          "role": "audit",
+          "required": false,
+          "meaning": "Native Last, if meaningful for source."
+        },
+        {
+          "name": "flags",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "Native MT5 tick flags."
+        },
+        {
+          "name": "spread_points",
+          "type": "float",
+          "role": "audit",
+          "required": true,
+          "meaning": "(ask-bid)/point_size when both quotes valid."
+        },
+        {
+          "name": "phase",
+          "type": "enum:pre_decision|post_decision",
+          "role": "split_control",
+          "required": true,
+          "meaning": "Post-decision ticks never enter decision-time features."
+        },
+        {
+          "name": "source",
+          "type": "enum:broker_real|synthetic",
+          "role": "audit",
+          "required": true,
+          "meaning": "Synthetic observations never presented as broker real ticks."
+        }
+      ],
+      "optional": true
+    },
+    "history/M1.csv": {
+      "fields": [
+        {
+          "name": "source_symbol",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "source_symbol"
+        },
+        {
+          "name": "pair",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "pair"
+        },
+        {
+          "name": "timeframe",
+          "type": "enum:M1|M5|M15",
+          "role": "context",
+          "required": true,
+          "meaning": "Timeframe of this row."
+        },
+        {
+          "name": "open_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Original broker chart time; ISO 8601 without an invented UTC offset."
+        },
+        {
+          "name": "close_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Exclusive bar boundary: open time plus timeframe duration. Not last tick time."
+        },
+        {
+          "name": "open",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC open in quote price units."
+        },
+        {
+          "name": "high",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC high in quote price units."
+        },
+        {
+          "name": "low",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC low in quote price units."
+        },
+        {
+          "name": "close",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC close in quote price units."
+        },
+        {
+          "name": "tick_volume",
+          "type": "int",
+          "role": "input",
+          "required": true,
+          "meaning": "Broker tick volume; not centralized FX traded volume."
+        },
+        {
+          "name": "real_volume",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native real_volume when present. Preserve native zero; consult event availability flag."
+        },
+        {
+          "name": "bar_spread_points",
+          "type": "int",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native MqlRates spread field in points. Not a full intrabar spread path or guaranteed fill spread."
+        },
+        {
+          "name": "gap_before_seconds",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "max(0, open_time minus prior open_time minus timeframe seconds). Includes scheduled closures."
+        },
+        {
+          "name": "gap_class",
+          "type": "enum:none|scheduled_close|unexplained|unknown",
+          "role": "audit",
+          "required": true,
+          "meaning": "Scheduled classification only with verified trading-session calendar."
+        }
+      ]
+    },
+    "history/M5.csv": {
+      "fields": [
+        {
+          "name": "source_symbol",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "source_symbol"
+        },
+        {
+          "name": "pair",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "pair"
+        },
+        {
+          "name": "timeframe",
+          "type": "enum:M1|M5|M15",
+          "role": "context",
+          "required": true,
+          "meaning": "Timeframe of this row."
+        },
+        {
+          "name": "open_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Original broker chart time; ISO 8601 without an invented UTC offset."
+        },
+        {
+          "name": "close_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Exclusive bar boundary: open time plus timeframe duration. Not last tick time."
+        },
+        {
+          "name": "open",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC open in quote price units."
+        },
+        {
+          "name": "high",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC high in quote price units."
+        },
+        {
+          "name": "low",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC low in quote price units."
+        },
+        {
+          "name": "close",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC close in quote price units."
+        },
+        {
+          "name": "tick_volume",
+          "type": "int",
+          "role": "input",
+          "required": true,
+          "meaning": "Broker tick volume; not centralized FX traded volume."
+        },
+        {
+          "name": "real_volume",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native real_volume when present. Preserve native zero; consult event availability flag."
+        },
+        {
+          "name": "bar_spread_points",
+          "type": "int",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native MqlRates spread field in points. Not a full intrabar spread path or guaranteed fill spread."
+        },
+        {
+          "name": "gap_before_seconds",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "max(0, open_time minus prior open_time minus timeframe seconds). Includes scheduled closures."
+        },
+        {
+          "name": "gap_class",
+          "type": "enum:none|scheduled_close|unexplained|unknown",
+          "role": "audit",
+          "required": true,
+          "meaning": "Scheduled classification only with verified trading-session calendar."
+        }
+      ]
+    },
+    "history/M15.csv": {
+      "fields": [
+        {
+          "name": "source_symbol",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "source_symbol"
+        },
+        {
+          "name": "pair",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "pair"
+        },
+        {
+          "name": "timeframe",
+          "type": "enum:M1|M5|M15",
+          "role": "context",
+          "required": true,
+          "meaning": "Timeframe of this row."
+        },
+        {
+          "name": "open_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Original broker chart time; ISO 8601 without an invented UTC offset."
+        },
+        {
+          "name": "close_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Exclusive bar boundary: open time plus timeframe duration. Not last tick time."
+        },
+        {
+          "name": "open",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC open in quote price units."
+        },
+        {
+          "name": "high",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC high in quote price units."
+        },
+        {
+          "name": "low",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC low in quote price units."
+        },
+        {
+          "name": "close",
+          "type": "float",
+          "role": "input",
+          "required": true,
+          "meaning": "Original OHLC close in quote price units."
+        },
+        {
+          "name": "tick_volume",
+          "type": "int",
+          "role": "input",
+          "required": true,
+          "meaning": "Broker tick volume; not centralized FX traded volume."
+        },
+        {
+          "name": "real_volume",
+          "type": "float",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native real_volume when present. Preserve native zero; consult event availability flag."
+        },
+        {
+          "name": "bar_spread_points",
+          "type": "int",
+          "role": "input_optional",
+          "required": false,
+          "meaning": "Native MqlRates spread field in points. Not a full intrabar spread path or guaranteed fill spread."
+        },
+        {
+          "name": "gap_before_seconds",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "max(0, open_time minus prior open_time minus timeframe seconds). Includes scheduled closures."
+        },
+        {
+          "name": "gap_class",
+          "type": "enum:none|scheduled_close|unexplained|unknown",
+          "role": "audit",
+          "required": true,
+          "meaning": "Scheduled classification only with verified trading-session calendar."
+        }
+      ]
+    },
+    "manifest.csv": {
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "role": "join_key",
+          "required": true,
+          "meaning": "Unique across broker, source symbol, decision time and setup sequence."
+        },
+        {
+          "name": "pair",
+          "type": "enum:EURUSD|USDJPY|GBPUSD",
+          "role": "context",
+          "required": true,
+          "meaning": "Normalized folder pair."
+        },
+        {
+          "name": "source_symbol",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "Exact broker symbol, including suffix, e.g. EURUSD#."
+        },
+        {
+          "name": "broker_server",
+          "type": "string",
+          "role": "context",
+          "required": true,
+          "meaning": "Broker server name. No account number or credentials."
+        },
+        {
+          "name": "decision_time_server",
+          "type": "datetime",
+          "role": "context",
+          "required": true,
+          "meaning": "Information cutoff shared by every timeframe and all pre-entry fields."
+        },
+        {
+          "name": "overlap_group_id",
+          "type": "string",
+          "role": "split_control",
+          "required": true,
+          "meaning": "Group nearby/overlapping events. Not sufficient by itself to ensure time-purged splits."
+        },
+        {
+          "name": "split",
+          "type": "enum:unassigned|train|validation|test|excluded",
+          "role": "split_control",
+          "required": true,
+          "meaning": "Assigned globally by time across pairs after collecting windows and label horizons."
+        },
+        {
+          "name": "quality_status",
+          "type": "enum:valid|insufficient_history|missing_data|time_unverified|needs_review",
+          "role": "audit",
+          "required": true,
+          "meaning": "Data eligibility for the intended training task."
+        },
+        {
+          "name": "relative_event_path",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Path relative to dataset root."
+        },
+        {
+          "name": "input_start_server",
+          "type": "datetime",
+          "role": "split_control",
+          "required": true,
+          "meaning": "Earliest input bar open across all timeframes."
+        },
+        {
+          "name": "input_end_server",
+          "type": "datetime",
+          "role": "split_control",
+          "required": true,
+          "meaning": "Latest fully closed input bar boundary, <= decision."
+        },
+        {
+          "name": "label_end_server",
+          "type": "datetime",
+          "role": "split_control",
+          "required": false,
+          "meaning": "Final outcome horizon used for temporal purging."
+        },
+        {
+          "name": "m1_rows",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "Actual exported M1 input row count."
+        },
+        {
+          "name": "m5_rows",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "Actual exported M5 input row count."
+        },
+        {
+          "name": "m15_rows",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "Actual exported M15 input row count."
+        },
+        {
+          "name": "unexplained_gap_count",
+          "type": "int",
+          "role": "audit",
+          "required": true,
+          "meaning": "Unexplained gaps across event inputs."
+        },
+        {
+          "name": "real_ticks_status",
+          "type": "enum:complete|partial|unavailable|not_requested",
+          "role": "audit",
+          "required": true,
+          "meaning": "Observed tick availability, not an assumption."
+        },
+        {
+          "name": "event_content_sha256",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "Hash of deterministically ordered event CSV filenames and bytes, excluding root manifest."
+        },
+        {
+          "name": "pattern_label",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "pattern_label copied from the event metadata/plan/outcome; not a default model input."
+        },
+        {
+          "name": "side_label",
+          "type": "string",
+          "role": "target",
+          "required": true,
+          "meaning": "side_label copied from the event metadata/plan/outcome; not a default model input."
+        },
+        {
+          "name": "plan_status",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "plan_status copied from the event metadata/plan/outcome; not a default model input."
+        },
+        {
+          "name": "outcome_label_status",
+          "type": "string",
+          "role": "audit",
+          "required": true,
+          "meaning": "outcome_label_status copied from the event metadata/plan/outcome; not a default model input."
+        }
+      ]
+    }
+  },
+  "time_mapping_status": "unverified broker chart time, UTC fields blank",
+  "real_ticks_collected": false,
+  "source_notes": "Native MT5 bars preserved. real_volume is blank because the history MCP response does not expose it. Per-bar spread is not the actual entry/exit quote path.",
+  "model_input_default": "Only approved causal numeric columns in events/M1.csv, M5.csv and M15.csv. Plan/side/pattern are targets; outcome values are future labels.",
+  "quality_gate": "Event windows exclude native OHLC/tick-volume discrepancies relative to observed M1 aggregation. Raw history keeps original values."
+}

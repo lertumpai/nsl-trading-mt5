@@ -1,0 +1,22 @@
+[
+  {
+    "pair": "EURUSD",
+    "timeframe": "M5",
+    "native_rows": 752473,
+    "no_observed_m1_rows": 0,
+    "ohlc_mismatches": 0,
+    "tick_volume_mismatches": 18806,
+    "consistent_rows": 733667,
+    "price_tolerance": 5e-06
+  },
+  {
+    "pair": "EURUSD",
+    "timeframe": "M15",
+    "native_rows": 250843,
+    "no_observed_m1_rows": 0,
+    "ohlc_mismatches": 0,
+    "tick_volume_mismatches": 6229,
+    "consistent_rows": 244614,
+    "price_tolerance": 5e-06
+  }
+]

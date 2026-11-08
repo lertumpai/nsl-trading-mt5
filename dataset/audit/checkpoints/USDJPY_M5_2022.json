@@ -1,0 +1,430 @@
+{
+  "status": "complete",
+  "method": "monthly_stable_v2",
+  "pair": "USDJPY",
+  "symbol": "USDJPY#",
+  "timeframe": "M5",
+  "year": 2022,
+  "cutoff_server": "2026-11-06T23:57:00",
+  "requested_from": "2022-01-01T00:00:00",
+  "requested_to": "2023-01-01T00:00:00",
+  "reported_available_from": "1971-01-04T00:00:00",
+  "rows": 74590,
+  "files": [
+    {
+      "path": "USDJPY/history/2022-01/M5.csv",
+      "rows": 6048,
+      "first": "2022-01-03T00:00:00",
+      "last": "2022-01-31T23:55:00",
+      "sha256": "1756ca7561a8cd5213a3fa7a0a570087b0a2700c7995291ec0290aa7a0262270"
+    },
+    {
+      "path": "USDJPY/history/2022-02/M5.csv",
+      "rows": 5760,
+      "first": "2022-02-01T00:00:00",
+      "last": "2022-02-28T23:55:00",
+      "sha256": "41a1334b9652a45becb57b88259f0602b3cf802b699372c2b78aad6c94145a2e"
+    },
+    {
+      "path": "USDJPY/history/2022-03/M5.csv",
+      "rows": 6624,
+      "first": "2022-03-01T00:00:00",
+      "last": "2022-03-31T23:55:00",
+      "sha256": "dcf5ac7e12baa8a41d3df4afc271b0ce3f212cc0bb0e49354c0b165623d71c15"
+    },
+    {
+      "path": "USDJPY/history/2022-04/M5.csv",
+      "rows": 6048,
+      "first": "2022-04-01T00:00:00",
+      "last": "2022-04-29T23:55:00",
+      "sha256": "84c2f3ac7d771e3654a6b6ae749f5609f907012f4c2a2b12ba529c58904ba233"
+    },
+    {
+      "path": "USDJPY/history/2022-05/M5.csv",
+      "rows": 6336,
+      "first": "2022-05-02T00:00:00",
+      "last": "2022-05-31T23:55:00",
+      "sha256": "e39c48dfb5c25b6175fda7ebb802a04d9cbc126424eafbe84b3e81d588563199"
+    },
+    {
+      "path": "USDJPY/history/2022-06/M5.csv",
+      "rows": 6334,
+      "first": "2022-06-01T00:00:00",
+      "last": "2022-06-30T23:55:00",
+      "sha256": "e82cfcd1fe9a5abf5be37213ecc84a9aaf3131087bddda07940efc0b1539470d"
+    },
+    {
+      "path": "USDJPY/history/2022-07/M5.csv",
+      "rows": 6048,
+      "first": "2022-07-01T00:00:00",
+      "last": "2022-07-29T23:55:00",
+      "sha256": "e4ef6d7098f23f32fc7eb1a61b76008b613bbb8d881bc4ef48be5b307b6436b6"
+    },
+    {
+      "path": "USDJPY/history/2022-08/M5.csv",
+      "rows": 6624,
+      "first": "2022-08-01T00:00:00",
+      "last": "2022-08-31T23:55:00",
+      "sha256": "851e31be3c477847b4230b0986bec7b3b9e7a8a0a8cab0aba61fe165356f1576"
+    },
+    {
+      "path": "USDJPY/history/2022-09/M5.csv",
+      "rows": 6336,
+      "first": "2022-09-01T00:00:00",
+      "last": "2022-09-30T23:55:00",
+      "sha256": "87af680dfb2945fa1c2cc3ab146a41e4ef8e28546349d407f18238bd27d60296"
+    },
+    {
+      "path": "USDJPY/history/2022-10/M5.csv",
+      "rows": 6060,
+      "first": "2022-10-03T00:00:00",
+      "last": "2022-10-31T23:55:00",
+      "sha256": "48ea3baf10c46404386e9ee8e15d6aa9933abc863303611b2ee953c0ed8c3514"
+    },
+    {
+      "path": "USDJPY/history/2022-11/M5.csv",
+      "rows": 6324,
+      "first": "2022-11-01T00:00:00",
+      "last": "2022-11-30T23:55:00",
+      "sha256": "41b2e9c232e6aefa04fc3e84fd86182d325c4da010ec63770a37dbfcfd6426f0"
+    },
+    {
+      "path": "USDJPY/history/2022-12/M5.csv",
+      "rows": 6048,
+      "first": "2022-12-01T00:00:00",
+      "last": "2022-12-30T23:55:00",
+      "sha256": "3a40741a67289743a6897aa9eefa800a8568115f1fc40592368b3301c84f0e3c"
+    }
+  ],
+  "gaps": [
+    {
+      "after_server": "2021-12-31T18:50:00",
+      "before_server": "2022-01-03T00:00:00",
+      "missing_elapsed_seconds": 191100,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-01-07T23:55:00",
+      "before_server": "2022-01-10T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-01-14T23:55:00",
+      "before_server": "2022-01-17T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-01-21T23:55:00",
+      "before_server": "2022-01-24T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-01-28T23:55:00",
+      "before_server": "2022-01-31T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-02-04T23:55:00",
+      "before_server": "2022-02-07T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-02-11T23:55:00",
+      "before_server": "2022-02-14T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-02-18T23:55:00",
+      "before_server": "2022-02-21T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-02-25T23:55:00",
+      "before_server": "2022-02-28T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-03-04T23:55:00",
+      "before_server": "2022-03-07T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-03-11T23:55:00",
+      "before_server": "2022-03-13T23:00:00",
+      "missing_elapsed_seconds": 169200,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-03-18T22:55:00",
+      "before_server": "2022-03-20T23:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-03-25T22:55:00",
+      "before_server": "2022-03-28T00:00:00",
+      "missing_elapsed_seconds": 176400,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-04-01T23:55:00",
+      "before_server": "2022-04-04T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-04-08T23:55:00",
+      "before_server": "2022-04-11T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-04-15T23:55:00",
+      "before_server": "2022-04-18T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-04-22T23:55:00",
+      "before_server": "2022-04-25T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-04-29T23:55:00",
+      "before_server": "2022-05-02T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-05-06T23:55:00",
+      "before_server": "2022-05-09T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-05-13T23:55:00",
+      "before_server": "2022-05-16T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-05-20T23:55:00",
+      "before_server": "2022-05-23T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-05-27T23:55:00",
+      "before_server": "2022-05-30T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-06-03T23:55:00",
+      "before_server": "2022-06-06T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-06-10T23:55:00",
+      "before_server": "2022-06-13T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-06-17T23:55:00",
+      "before_server": "2022-06-20T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-06-24T23:55:00",
+      "before_server": "2022-06-27T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-06-27T00:05:00",
+      "before_server": "2022-06-27T00:15:00",
+      "missing_elapsed_seconds": 300,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-06-27T00:20:00",
+      "before_server": "2022-06-27T00:30:00",
+      "missing_elapsed_seconds": 300,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-07-01T23:55:00",
+      "before_server": "2022-07-04T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-07-08T23:55:00",
+      "before_server": "2022-07-11T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-07-15T23:55:00",
+      "before_server": "2022-07-18T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-07-22T23:55:00",
+      "before_server": "2022-07-25T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-07-29T23:55:00",
+      "before_server": "2022-08-01T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-08-05T23:55:00",
+      "before_server": "2022-08-08T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-08-12T23:55:00",
+      "before_server": "2022-08-15T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-08-19T23:55:00",
+      "before_server": "2022-08-22T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-08-26T23:55:00",
+      "before_server": "2022-08-29T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-09-02T23:55:00",
+      "before_server": "2022-09-05T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-09-09T23:55:00",
+      "before_server": "2022-09-12T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-09-16T23:55:00",
+      "before_server": "2022-09-19T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-09-23T23:55:00",
+      "before_server": "2022-09-26T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-09-30T23:55:00",
+      "before_server": "2022-10-03T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-10-07T23:55:00",
+      "before_server": "2022-10-10T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-10-14T23:55:00",
+      "before_server": "2022-10-17T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-10-21T23:55:00",
+      "before_server": "2022-10-24T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-10-28T23:55:00",
+      "before_server": "2022-10-30T23:00:00",
+      "missing_elapsed_seconds": 169200,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-11-04T22:55:00",
+      "before_server": "2022-11-07T00:00:00",
+      "missing_elapsed_seconds": 176400,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-11-11T23:55:00",
+      "before_server": "2022-11-14T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-11-18T23:55:00",
+      "before_server": "2022-11-21T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-11-25T23:55:00",
+      "before_server": "2022-11-28T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-12-02T23:55:00",
+      "before_server": "2022-12-05T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-12-09T23:55:00",
+      "before_server": "2022-12-12T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-12-16T23:55:00",
+      "before_server": "2022-12-19T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2022-12-23T23:55:00",
+      "before_server": "2022-12-27T00:00:00",
+      "missing_elapsed_seconds": 259200,
+      "classification": "unknown_includes_market_closures"
+    }
+  ],
+  "invalid_ohlc": [],
+  "last_time": "2022-12-30T23:55:00",
+  "native_interval_count": 74536,
+  "observed_interval_count": 74590,
+  "notes": "Historical gaps include weekends, holidays and absent source bars; classification unverified. Native real_volume omitted by source is blank, never invented."
+}

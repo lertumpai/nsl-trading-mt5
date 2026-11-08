@@ -1,0 +1,90 @@
+{
+  "status": "complete",
+  "method": "monthly_stable_v2",
+  "pair": "EURUSD",
+  "symbol": "EURUSD#",
+  "timeframe": "M5",
+  "year": 2016,
+  "cutoff_server": "2026-11-06T23:57:00",
+  "requested_from": "2016-11-08T00:00:00",
+  "requested_to": "2017-01-01T00:00:00",
+  "reported_available_from": "1971-01-04T00:00:00",
+  "rows": 11124,
+  "files": [
+    {
+      "path": "EURUSD/history/2016-11/M5.csv",
+      "rows": 4896,
+      "first": "2016-11-08T00:00:00",
+      "last": "2016-11-30T23:55:00",
+      "sha256": "960999022fe594c23f2e9f31317133e0146c4ae88e6dcf7fb7bc95b658c750e8"
+    },
+    {
+      "path": "EURUSD/history/2016-12/M5.csv",
+      "rows": 6228,
+      "first": "2016-12-01T00:00:00",
+      "last": "2016-12-30T23:55:00",
+      "sha256": "17d683389fe6c377787187c628625c353041dc53b4458d5d1ea4789882198643"
+    }
+  ],
+  "gaps": [
+    {
+      "after_server": "2016-11-11T23:55:00",
+      "before_server": "2016-11-14T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-11-18T23:55:00",
+      "before_server": "2016-11-21T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-11-25T23:55:00",
+      "before_server": "2016-11-28T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-12-02T23:55:00",
+      "before_server": "2016-12-05T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-12-09T23:55:00",
+      "before_server": "2016-12-12T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-12-16T23:55:00",
+      "before_server": "2016-12-19T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-12-23T23:55:00",
+      "before_server": "2016-12-26T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-12-26T00:00:00",
+      "before_server": "2016-12-26T09:00:00",
+      "missing_elapsed_seconds": 32100,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2016-12-26T19:25:00",
+      "before_server": "2016-12-26T19:35:00",
+      "missing_elapsed_seconds": 300,
+      "classification": "unknown_includes_market_closures"
+    }
+  ],
+  "invalid_ohlc": [],
+  "last_time": "2016-12-30T23:55:00",
+  "native_interval_count": 11114,
+  "observed_interval_count": 11123,
+  "notes": "Historical gaps include weekends, holidays and absent source bars; classification unverified. Native real_volume omitted by source is blank, never invented."
+}

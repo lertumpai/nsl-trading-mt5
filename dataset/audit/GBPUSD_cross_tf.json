@@ -1,0 +1,22 @@
+[
+  {
+    "pair": "GBPUSD",
+    "timeframe": "M5",
+    "native_rows": 725902,
+    "no_observed_m1_rows": 0,
+    "ohlc_mismatches": 0,
+    "tick_volume_mismatches": 14763,
+    "consistent_rows": 711139,
+    "price_tolerance": 5e-06
+  },
+  {
+    "pair": "GBPUSD",
+    "timeframe": "M15",
+    "native_rows": 243609,
+    "no_observed_m1_rows": 0,
+    "ohlc_mismatches": 0,
+    "tick_volume_mismatches": 4895,
+    "consistent_rows": 238714,
+    "price_tolerance": 5e-06
+  }
+]

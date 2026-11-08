@@ -1,0 +1,48 @@
+{
+  "version": "price_action_v1.0",
+  "requested_start_server": "2016-11-08T00:00:00",
+  "window_rows": {
+    "M1": 240,
+    "M5": 288,
+    "M15": 480
+  },
+  "input_cutoff": "Completed candles only; all context and levels are as-of decision time.",
+  "swing": {
+    "left": 2,
+    "right_closed_confirmation": 2,
+    "strict_extrema": true,
+    "reject_five_bar_window_with_gap": true
+  },
+  "warmup_bars": 1000,
+  "m1_recent_contiguous_bars": 24,
+  "quality_gate": "Every exported input window must have valid warmed-up features and agree with observed M1 aggregation for native higher timeframes. Maximum elapsed window spans: M1=3 calendar days, M5=5 days, M15=14 days.",
+  "min_signal_body_to_range": 0.55,
+  "signal_range_atr_min": 0.8,
+  "signal_range_atr_max": 2.5,
+  "level_buffer_atr_m1": 0.1,
+  "minimum_buffer_points": 1,
+  "signal_entry": "Stop order above signal high (buy) or below signal low (sell), plus buffer. Buy level also includes the observed bar-spread proxy; validity needs actual quotes.",
+  "entry_expiry_seconds": 180,
+  "max_hold_seconds": 600,
+  "spread_filter": "Native bar spread <= max(10 points, 0.4 * M1 ATR14 in points). This is a historical proxy, not an actual quote spread.",
+  "target": "Nearest already-confirmed opposing M5/M15 swing beyond entry; range rejection uses the known range midpoint. No future extrema or RR threshold.",
+  "cooldown_seconds_per_pattern_side": 900,
+  "control_sampling_probability": 0.0005,
+  "deduplication": "One signal per confirmed setup anchor and side, plus 15-minute cooldown. Keep rejection counts; no outcome-based filtering.",
+  "control_sampling": "Deterministic SHA256 pseudo-random sampling of eligible times without any setup; independent of future outcomes.",
+  "patterns": {
+    "trend_pullback": "M15 and M5 each have higher last two confirmed highs and lows (or lower both for sell). Last 3 completed M5 bars contain a counter-direction candle and retrace to within [-0.1,+0.3] M5 ATR of the known M5 swing low/high. M1 closes beyond prior M1 high/low in the trend direction.",
+    "breakout_retest": "M5 closed across a previously confirmed swing plus 0.1 M5 ATR, with body/range >=0.6 and range/ATR >=1. After the breakout close and within 15 minutes, M1 retests the fixed level, penetrates no more than 0.25 M1 ATR and closes back beyond prior M1 high/low.",
+    "sweep_reclaim": "Previous M1 close is inside a confirmed M5 boundary. Current M1 exceeds it by 0.15 ATR, reclaims by 0.1 ATR and confirms beyond the previous M1 high/low; rejection wick >=0.25 of range. Level crossing does not prove actual liquidity or stops.",
+    "range_rejection": "Latest two M15 highs differ by <=0.3 M15 ATR and latest two lows by <=0.3 ATR; width >=2 ATR. M1 touches a boundary within 0.15 M15 ATR, closes inside by 0.05 M15 ATR, and confirms beyond prior M1 high/low."
+  },
+  "review": "Machine-selected candidates, not human-reviewed examples. No future profit/outcome selection.",
+  "execution_model": "Conservative M1-OHLC simulation with per-bar spread held constant. No measured slippage, latency or historical commission. Unresolvable order of intrabar touches is ambiguous; incomplete horizons censored.",
+  "split": {
+    "train_end_exclusive": "2024-01-01T00:00:00",
+    "validation_end_exclusive": "2025-01-01T00:00:00",
+    "test_start": "2025-01-01T00:00:00",
+    "embargo_days": 7,
+    "purge": "Exclude any full input-to-outcome interval crossing a split boundary; group across all pairs."
+  }
+}

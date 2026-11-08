@@ -1,0 +1,448 @@
+{
+  "status": "complete",
+  "method": "monthly_stable_v2",
+  "pair": "USDJPY",
+  "symbol": "USDJPY#",
+  "timeframe": "M15",
+  "year": 2017,
+  "cutoff_server": "2026-11-06T23:57:00",
+  "requested_from": "2017-01-01T00:00:00",
+  "requested_to": "2018-01-01T00:00:00",
+  "reported_available_from": "1971-01-04T00:00:00",
+  "rows": 24789,
+  "files": [
+    {
+      "path": "USDJPY/history/2017-01/M15.csv",
+      "rows": 2077,
+      "first": "2017-01-02T00:00:00",
+      "last": "2017-01-31T23:45:00",
+      "sha256": "91bbe5622267b2064d6ee33afd70a5bf93630a3a90aa654dc44d26e2dc02daec"
+    },
+    {
+      "path": "USDJPY/history/2017-02/M15.csv",
+      "rows": 1920,
+      "first": "2017-02-01T00:00:00",
+      "last": "2017-02-28T23:45:00",
+      "sha256": "b1c75f58aa6688cacdf2b1feee2a994b0fcfb151e3d3f3f590fc6f8db4459c19"
+    },
+    {
+      "path": "USDJPY/history/2017-03/M15.csv",
+      "rows": 2202,
+      "first": "2017-03-01T00:00:00",
+      "last": "2017-03-31T23:45:00",
+      "sha256": "8b0832e0a920eedc984d50820814c257010be9ee2cb9116a46e65db0dabcd1fd"
+    },
+    {
+      "path": "USDJPY/history/2017-04/M15.csv",
+      "rows": 1920,
+      "first": "2017-04-03T00:00:00",
+      "last": "2017-04-28T23:45:00",
+      "sha256": "68ede9309664062f136fcc45b1f6e0bc676e9641bc19fd7d5f306dde367e317f"
+    },
+    {
+      "path": "USDJPY/history/2017-05/M15.csv",
+      "rows": 2208,
+      "first": "2017-05-01T00:00:00",
+      "last": "2017-05-31T23:45:00",
+      "sha256": "d787c84ece5b9517e147ca68e329031cbd62d1adab14a595c8605c0a1c98042a"
+    },
+    {
+      "path": "USDJPY/history/2017-06/M15.csv",
+      "rows": 2112,
+      "first": "2017-06-01T00:00:00",
+      "last": "2017-06-30T23:45:00",
+      "sha256": "3f063db7e75990a23b48a603a8a8c5e12197e5c6d14a430e6cf1cc7eb2783eed"
+    },
+    {
+      "path": "USDJPY/history/2017-07/M15.csv",
+      "rows": 2016,
+      "first": "2017-07-03T00:00:00",
+      "last": "2017-07-31T23:45:00",
+      "sha256": "005c5e2ad18b704166e1b81466a0521f8bb43a2dc0e800b8866b389d9da33849"
+    },
+    {
+      "path": "USDJPY/history/2017-08/M15.csv",
+      "rows": 2208,
+      "first": "2017-08-01T00:00:00",
+      "last": "2017-08-31T23:45:00",
+      "sha256": "639a361954b3e301921e4b6e6866068781041f3d927cd138a20362f3be11e1ea"
+    },
+    {
+      "path": "USDJPY/history/2017-09/M15.csv",
+      "rows": 2016,
+      "first": "2017-09-01T00:00:00",
+      "last": "2017-09-29T23:45:00",
+      "sha256": "7a668efd5c4fe232f0e7e66d43c9650b0b0c4e239062e3e11fb09c1337524d32"
+    },
+    {
+      "path": "USDJPY/history/2017-10/M15.csv",
+      "rows": 2117,
+      "first": "2017-10-02T00:00:00",
+      "last": "2017-10-31T23:45:00",
+      "sha256": "74005e080eaef734814cae8b7a32371a671095357828f09e468688aee79c7736"
+    },
+    {
+      "path": "USDJPY/history/2017-11/M15.csv",
+      "rows": 2108,
+      "first": "2017-11-01T00:00:00",
+      "last": "2017-11-30T23:45:00",
+      "sha256": "d0851eec7b832a1fad4e480a0da773db955ad3858f49ff424e7847867cacc57f"
+    },
+    {
+      "path": "USDJPY/history/2017-12/M15.csv",
+      "rows": 1885,
+      "first": "2017-12-01T00:00:00",
+      "last": "2017-12-29T23:45:00",
+      "sha256": "9c0241cacd3662d10382e6ae20479faa5d40b62548815d4aa3f580f15b632bad"
+    }
+  ],
+  "gaps": [
+    {
+      "after_server": "2016-12-30T23:45:00",
+      "before_server": "2017-01-02T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-01-02T00:00:00",
+      "before_server": "2017-01-02T09:00:00",
+      "missing_elapsed_seconds": 31500,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-01-06T23:45:00",
+      "before_server": "2017-01-09T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-01-13T23:45:00",
+      "before_server": "2017-01-16T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-01-20T23:45:00",
+      "before_server": "2017-01-23T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-01-27T23:45:00",
+      "before_server": "2017-01-30T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-02-03T23:45:00",
+      "before_server": "2017-02-06T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-02-10T23:45:00",
+      "before_server": "2017-02-13T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-02-17T23:45:00",
+      "before_server": "2017-02-20T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-02-24T23:45:00",
+      "before_server": "2017-02-27T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-03-03T23:45:00",
+      "before_server": "2017-03-06T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-03-10T23:45:00",
+      "before_server": "2017-03-12T00:00:00",
+      "missing_elapsed_seconds": 86400,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-03-12T00:00:00",
+      "before_server": "2017-03-13T00:00:00",
+      "missing_elapsed_seconds": 85500,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-03-17T22:45:00",
+      "before_server": "2017-03-19T00:00:00",
+      "missing_elapsed_seconds": 90000,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-03-19T00:00:00",
+      "before_server": "2017-03-20T00:00:00",
+      "missing_elapsed_seconds": 85500,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-03-24T22:45:00",
+      "before_server": "2017-03-27T00:00:00",
+      "missing_elapsed_seconds": 176400,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-03-31T23:45:00",
+      "before_server": "2017-04-03T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-04-07T23:45:00",
+      "before_server": "2017-04-10T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-04-14T23:45:00",
+      "before_server": "2017-04-17T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-04-21T23:45:00",
+      "before_server": "2017-04-24T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-04-28T23:45:00",
+      "before_server": "2017-05-01T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-05-05T23:45:00",
+      "before_server": "2017-05-08T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-05-12T23:45:00",
+      "before_server": "2017-05-15T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-05-19T23:45:00",
+      "before_server": "2017-05-22T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-05-26T23:45:00",
+      "before_server": "2017-05-29T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-06-02T23:45:00",
+      "before_server": "2017-06-05T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-06-09T23:45:00",
+      "before_server": "2017-06-12T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-06-16T23:45:00",
+      "before_server": "2017-06-19T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-06-23T23:45:00",
+      "before_server": "2017-06-26T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-06-30T23:45:00",
+      "before_server": "2017-07-03T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-07-07T23:45:00",
+      "before_server": "2017-07-10T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-07-14T23:45:00",
+      "before_server": "2017-07-17T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-07-21T23:45:00",
+      "before_server": "2017-07-24T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-07-28T23:45:00",
+      "before_server": "2017-07-31T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-08-04T23:45:00",
+      "before_server": "2017-08-07T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-08-11T23:45:00",
+      "before_server": "2017-08-14T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-08-18T23:45:00",
+      "before_server": "2017-08-21T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-08-25T23:45:00",
+      "before_server": "2017-08-28T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-09-01T23:45:00",
+      "before_server": "2017-09-04T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-09-08T23:45:00",
+      "before_server": "2017-09-11T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-09-15T23:45:00",
+      "before_server": "2017-09-18T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-09-22T23:45:00",
+      "before_server": "2017-09-25T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-09-29T23:45:00",
+      "before_server": "2017-10-02T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-10-06T23:45:00",
+      "before_server": "2017-10-09T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-10-13T23:45:00",
+      "before_server": "2017-10-16T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-10-20T23:45:00",
+      "before_server": "2017-10-23T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-10-27T23:45:00",
+      "before_server": "2017-10-29T00:00:00",
+      "missing_elapsed_seconds": 86400,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-10-29T00:00:00",
+      "before_server": "2017-10-29T23:00:00",
+      "missing_elapsed_seconds": 81900,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-11-03T22:45:00",
+      "before_server": "2017-11-06T00:00:00",
+      "missing_elapsed_seconds": 176400,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-11-10T23:45:00",
+      "before_server": "2017-11-13T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-11-17T23:45:00",
+      "before_server": "2017-11-20T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-11-24T23:45:00",
+      "before_server": "2017-11-27T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-12-01T23:45:00",
+      "before_server": "2017-12-04T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-12-08T23:45:00",
+      "before_server": "2017-12-11T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-12-15T23:45:00",
+      "before_server": "2017-12-18T00:00:00",
+      "missing_elapsed_seconds": 172800,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-12-22T23:45:00",
+      "before_server": "2017-12-26T00:00:00",
+      "missing_elapsed_seconds": 259200,
+      "classification": "unknown_includes_market_closures"
+    },
+    {
+      "after_server": "2017-12-26T00:00:00",
+      "before_server": "2017-12-26T09:00:00",
+      "missing_elapsed_seconds": 31500,
+      "classification": "unknown_includes_market_closures"
+    }
+  ],
+  "invalid_ohlc": [],
+  "last_time": "2017-12-29T23:45:00",
+  "native_interval_count": 24732,
+  "observed_interval_count": 24789,
+  "notes": "Historical gaps include weekends, holidays and absent source bars; classification unverified. Native real_volume omitted by source is blank, never invented."
+}

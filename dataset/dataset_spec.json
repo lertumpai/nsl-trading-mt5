@@ -1,0 +1,27 @@
+{
+  "version": "1.1.0",
+  "status": "collection_and_event_export_complete_with_documented_source_gaps",
+  "pairs": [
+    "EURUSD",
+    "USDJPY",
+    "GBPUSD"
+  ],
+  "timeframes": [
+    "M1",
+    "M5",
+    "M15"
+  ],
+  "requested_start_server": "2016-11-08T00:00:00",
+  "cutoff_server": "2026-11-06T23:57:00",
+  "schema": "schema.json",
+  "rules": "config/selection_rules_v1.json",
+  "history_manifest": "history_manifest.csv",
+  "event_manifest": "manifest.csv",
+  "verification": "audit/verification_report.json",
+  "readme": "README.md",
+  "review": "REVIEW_REPORT.md",
+  "handoff": "AI_HANDOFF.md",
+  "no_ea_created": true,
+  "no_trades_sent": true,
+  "models_trained": false
+}
