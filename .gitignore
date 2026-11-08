@@ -1,0 +1,15 @@
+# Secrets: MCP connection settings contain the Bearer token
+.mcp.json
+.codex/config.toml
+mcp.txt
+.env
+
+# Run output and trade ledger (account data)
+runs/
+ledger/
+
+# macOS / Python
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
