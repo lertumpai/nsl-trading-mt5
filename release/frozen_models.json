@@ -1,0 +1,3197 @@
+{
+  "version": "nsl_pa_filter_v1",
+  "feature_names": [
+    "M1_body_signed_atr",
+    "M1_range_atr",
+    "M1_close_ema21_atr",
+    "M1_ema9_ema21_atr",
+    "M1_rsi_centered",
+    "M1_volume_ratio",
+    "M5_body_signed_atr",
+    "M5_range_atr",
+    "M5_close_ema21_atr",
+    "M5_ema9_ema21_atr",
+    "M5_rsi_centered",
+    "M5_volume_ratio",
+    "M15_body_signed_atr",
+    "M15_range_atr",
+    "M15_close_ema21_atr",
+    "M15_ema9_ema21_atr",
+    "M15_rsi_centered",
+    "M15_volume_ratio",
+    "spread_atr"
+  ],
+  "cost_assumption_pips": 1.0,
+  "manifest_sha256": "5eb69d5c2da2f0923e240c4c0b3caa80ebf12000147fff24bccdbda5ab716968",
+  "snapshot_sha256": "f9b92ffb3a85464cf1686d79b785585d01f294876299bbfc8ad82e3a2d40c649",
+  "runtime": {
+    "python": "3.14.4",
+    "numpy": "2.4.5",
+    "pandas": "3.0.3"
+  },
+  "models": {
+    "EURUSD": {
+      "mean": [
+        -0.008743730005973161,
+        1.3105488094056048,
+        -0.054589867293387044,
+        -0.02404475974398554,
+        -0.007452801395417076,
+        1.0829336839957193,
+        -0.010908150816998637,
+        0.9442434392749195,
+        -0.0024998584468930007,
+        0.012766619545956955,
+        0.0006677143590134816,
+        1.0094733701511647,
+        -0.002616247875472448,
+        0.9706087290314457,
+        0.024559608780977165,
+        0.010666992356962534,
+        0.004698554859481275,
+        1.115274964060435,
+        0.5874260394107084
+      ],
+      "scale": [
+        1.0976802348386483,
+        0.36848867800809626,
+        1.1821966888226774,
+        0.539500799780033,
+        0.16964323867890496,
+        0.4556879926394882,
+        0.6266134036027479,
+        0.39713460469612777,
+        0.9873533960931544,
+        0.6010359926982507,
+        0.17605606718799416,
+        0.4774929527828133,
+        0.5534913983111319,
+        0.44901053321211426,
+        1.3265740934097692,
+        0.7583277534581693,
+        0.24094075979005564,
+        0.6271305181509707,
+        0.41673716894672924
+      ],
+      "coefficients": [
+        -1.0182870427193649,
+        -0.03361874999223754,
+        0.06504863994704971,
+        0.0042808498417375275,
+        0.0419309035483857,
+        -0.0010920678306787304,
+        -0.07411930441195103,
+        -0.02725795670342221,
+        -0.01012540363760618,
+        0.055223788159885025,
+        -0.0034312872250966907,
+        -0.013065302399266085,
+        -0.03960765973718253,
+        -0.07274370531282821,
+        0.09039603673001419,
+        0.018399015388887205,
+        -0.016263756881981513,
+        -0.010142869640552794,
+        -0.06627286995635465,
+        -0.6219927209772134
+      ],
+      "penalty": 0.01,
+      "threshold": 0.45,
+      "train_complete_fills": 4673,
+      "train_positive_rate": 0.2826877808688209,
+      "validation_grid": [
+        {
+          "penalty": 0.01,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 1,
+            "overlap_skipped": 0,
+            "statuses": {
+              "complete": 1
+            },
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.0438661132002125,
+              "mean_r": -0.0438661132002125,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.0438661132002125
+            },
+            "assumed_cost_complete": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.1169763018672955,
+              "mean_r": -0.1169763018672955,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.1169763018672955
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.1169763018672955,
+              "mean_r": -0.1169763018672955,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.1169763018672955
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 1,
+            "overlap_skipped": 0,
+            "statuses": {
+              "complete": 1
+            },
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.0438661132002125,
+              "mean_r": -0.0438661132002125,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.0438661132002125
+            },
+            "assumed_cost_complete": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.1169763018672955,
+              "mean_r": -0.1169763018672955,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.1169763018672955
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.1169763018672955,
+              "mean_r": -0.1169763018672955,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.1169763018672955
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 1,
+            "overlap_skipped": 0,
+            "statuses": {
+              "complete": 1
+            },
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.0438661132002125,
+              "mean_r": -0.0438661132002125,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.0438661132002125
+            },
+            "assumed_cost_complete": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.1169763018672955,
+              "mean_r": -0.1169763018672955,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.1169763018672955
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -0.1169763018672955,
+              "mean_r": -0.1169763018672955,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.1169763018672955
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        }
+      ],
+      "split_counts": {
+        "test": {
+          "ambiguous": 55,
+          "canceled": 211,
+          "censored": 2,
+          "complete": 1440,
+          "not_evaluated": 376,
+          "unfilled": 267
+        },
+        "train": {
+          "ambiguous": 240,
+          "canceled": 360,
+          "censored": 8,
+          "complete": 4673,
+          "not_evaluated": 1151,
+          "unfilled": 1110
+        },
+        "validation": {
+          "ambiguous": 20,
+          "canceled": 170,
+          "censored": 0,
+          "complete": 623,
+          "not_evaluated": 189,
+          "unfilled": 87
+        }
+      },
+      "evaluation": {},
+      "baseline": {}
+    },
+    "GBPUSD": {
+      "mean": [
+        0.03341906583493355,
+        1.3312963573675813,
+        0.0207423592868618,
+        0.00018123098082737567,
+        0.003595560183420341,
+        1.0759869359262446,
+        0.0020355492614005147,
+        0.9498464633156761,
+        -0.004676525034752117,
+        -0.000828591331646405,
+        -0.00021543434234722617,
+        1.026826320142296,
+        0.0020406846634831036,
+        0.9827199602994011,
+        0.005348416238711219,
+        0.0038670405647093452,
+        0.0013788006546130024,
+        1.1264516356951833,
+        0.4241205252249891
+      ],
+      "scale": [
+        1.1135743428943814,
+        0.37577047735748004,
+        1.1790143771540094,
+        0.5304012655154674,
+        0.16898882286659533,
+        0.45939368972146194,
+        0.6326515477212283,
+        0.4052982737699711,
+        0.9993843708189062,
+        0.6121208869908712,
+        0.17835197421934068,
+        0.447921159583329,
+        0.5548466104364047,
+        0.4498639699681084,
+        1.3356078575629549,
+        0.7562942322775555,
+        0.24171771927213634,
+        0.5557555325672319,
+        0.294963140154334
+      ],
+      "coefficients": [
+        -0.6515855135007527,
+        0.13284567827237312,
+        0.0011514297113535525,
+        -0.05308421635922053,
+        0.06362786443046563,
+        -0.0915264542837902,
+        0.015886648094711055,
+        0.049526447608664134,
+        -0.07723929308450446,
+        0.04348361406996349,
+        0.02248183258094698,
+        -0.05958251606285084,
+        0.04961379824790032,
+        0.00715718731346605,
+        -0.011059250317790172,
+        0.034806731384414785,
+        -0.049525450147056616,
+        -0.038284111993036156,
+        0.0007892906058243541,
+        -0.4778933502041171
+      ],
+      "penalty": 0.01,
+      "threshold": 0.45,
+      "train_complete_fills": 4199,
+      "train_positive_rate": 0.35151226482495834,
+      "validation_grid": [
+        {
+          "penalty": 0.01,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 9,
+            "overlap_skipped": 0,
+            "statuses": {
+              "complete": 6,
+              "unfilled": 2,
+              "ambiguous": 1
+            },
+            "unresolved": 1,
+            "gross_complete": {
+              "trades": 6,
+              "win_rate": 0.6666666666666666,
+              "sum_r": 1.0685499039639574,
+              "mean_r": 0.17809165066065957,
+              "profit_factor": 1.8947714655975472,
+              "max_drawdown_r": 1.194215445002325
+            },
+            "assumed_cost_complete": {
+              "trades": 6,
+              "win_rate": 0.6666666666666666,
+              "sum_r": 0.5337270766185646,
+              "mean_r": 0.08895451276976075,
+              "profit_factor": 1.4147237768889864,
+              "max_drawdown_r": 1.2869459297035504
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 7,
+              "win_rate": 0.5714285714285714,
+              "sum_r": -0.5199979645882365,
+              "mean_r": -0.07428542351260523,
+              "profit_factor": 0.7778423490312288,
+              "max_drawdown_r": 2.3406709709103515
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        }
+      ],
+      "split_counts": {
+        "test": {
+          "ambiguous": 44,
+          "canceled": 382,
+          "censored": 0,
+          "complete": 790,
+          "not_evaluated": 385,
+          "unfilled": 104
+        },
+        "train": {
+          "ambiguous": 253,
+          "canceled": 679,
+          "censored": 5,
+          "complete": 4199,
+          "not_evaluated": 1115,
+          "unfilled": 878
+        },
+        "validation": {
+          "ambiguous": 11,
+          "canceled": 138,
+          "censored": 0,
+          "complete": 233,
+          "not_evaluated": 191,
+          "unfilled": 35
+        }
+      },
+      "evaluation": {},
+      "baseline": {}
+    },
+    "USDJPY": {
+      "mean": [
+        0.03217430395471558,
+        1.3110834892364596,
+        0.036175497572986534,
+        0.0050210386877977175,
+        0.005574847353222703,
+        1.082249874466799,
+        0.008043266615985591,
+        0.9167010195881402,
+        0.035517381632832454,
+        0.025813630453869082,
+        0.008088812770144062,
+        0.9779058467463235,
+        0.0014030532215919477,
+        0.946065465744636,
+        0.060274591482917916,
+        0.039810017049636374,
+        0.013504833452318123,
+        1.0537646556279086,
+        0.5528065559048085
+      ],
+      "scale": [
+        1.09125070463971,
+        0.368227793802792,
+        1.1823164916724354,
+        0.530823366843719,
+        0.17115297619409445,
+        0.4699197678214959,
+        0.5979502831668554,
+        0.40450671143742367,
+        0.9928236452586013,
+        0.6156707882034103,
+        0.1802894040969502,
+        0.4558791867842822,
+        0.521279484019221,
+        0.39932865249449795,
+        1.34439632300817,
+        0.7717738111170644,
+        0.24692904510832722,
+        0.5422419979971045,
+        0.3710117387683114
+      ],
+      "coefficients": [
+        -0.947007879920226,
+        -0.03491171312130714,
+        -0.0368744558633043,
+        0.012044117601050742,
+        -0.07447616466991495,
+        0.0625514499181004,
+        0.05447487607658295,
+        -0.04502200369611635,
+        -0.02865480947834089,
+        -0.02956558298116121,
+        -0.03491361283060243,
+        0.036109203888796015,
+        0.023377917428800576,
+        -0.006342752627990988,
+        0.019129726487051257,
+        -0.02070731321878393,
+        0.12312453762508645,
+        -0.08175619985915732,
+        0.04147292635139457,
+        -0.5853783512478765
+      ],
+      "penalty": 0.01,
+      "threshold": 0.45,
+      "train_complete_fills": 4387,
+      "train_positive_rate": 0.2951903350809209,
+      "validation_grid": [
+        {
+          "penalty": 0.01,
+          "threshold": 0.45,
+          "objective": -11.584592600733025,
+          "evaluation": {
+            "accepted": 58,
+            "overlap_skipped": 1,
+            "statuses": {
+              "complete": 40,
+              "unfilled": 8,
+              "ambiguous": 7,
+              "canceled": 3
+            },
+            "unresolved": 7,
+            "gross_complete": {
+              "trades": 40,
+              "win_rate": 0.475,
+              "sum_r": -5.286008825101129,
+              "mean_r": -0.1321502206275282,
+              "profit_factor": 0.5254511229164751,
+              "max_drawdown_r": 6.135537157049414
+            },
+            "assumed_cost_complete": {
+              "trades": 40,
+              "win_rate": 0.425,
+              "sum_r": -7.529691254605663,
+              "mean_r": -0.1882422813651416,
+              "profit_factor": 0.3953254630046036,
+              "max_drawdown_r": 8.109802692254725
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 47,
+              "win_rate": 0.3617021276595745,
+              "sum_r": -14.962404333165312,
+              "mean_r": -0.3183490283652194,
+              "profit_factor": 0.24756012459824567,
+              "max_drawdown_r": 14.96240433316531
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 7,
+            "overlap_skipped": 0,
+            "statuses": {
+              "complete": 3,
+              "ambiguous": 2,
+              "unfilled": 2
+            },
+            "unresolved": 2,
+            "gross_complete": {
+              "trades": 3,
+              "win_rate": 0.0,
+              "sum_r": -0.6604082483540561,
+              "mean_r": -0.22013608278468536,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.6604082483540561
+            },
+            "assumed_cost_complete": {
+              "trades": 3,
+              "win_rate": 0.0,
+              "sum_r": -0.766148946657811,
+              "mean_r": -0.2553829822192703,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 0.766148946657811
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 5,
+              "win_rate": 0.0,
+              "sum_r": -2.819263528258961,
+              "mean_r": -0.5638527056517921,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 2.819263528258961
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 1,
+            "overlap_skipped": 0,
+            "statuses": {
+              "ambiguous": 1
+            },
+            "unresolved": 1,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 1,
+              "win_rate": 0.0,
+              "sum_r": -1.0154786201619794,
+              "mean_r": -1.0154786201619794,
+              "profit_factor": 0.0,
+              "max_drawdown_r": 1.0154786201619794
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.01,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 12,
+            "overlap_skipped": 0,
+            "statuses": {
+              "complete": 7,
+              "ambiguous": 3,
+              "unfilled": 2
+            },
+            "unresolved": 3,
+            "gross_complete": {
+              "trades": 7,
+              "win_rate": 0.8571428571428571,
+              "sum_r": 0.986384050502809,
+              "mean_r": 0.140912007214687,
+              "profit_factor": 4.120259086549445,
+              "max_drawdown_r": 0.3161224831472591
+            },
+            "assumed_cost_complete": {
+              "trades": 7,
+              "win_rate": 0.7142857142857143,
+              "sum_r": 0.5810428215740182,
+              "mean_r": 0.08300611736771689,
+              "profit_factor": 2.4445275234640897,
+              "max_drawdown_r": 0.35665100662769017
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 10,
+              "win_rate": 0.5,
+              "sum_r": -2.5423224009945877,
+              "mean_r": -0.2542322400994588,
+              "profit_factor": 0.27889703977781544,
+              "max_drawdown_r": 3.116948806271775
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 2,
+            "overlap_skipped": 0,
+            "statuses": {
+              "complete": 1,
+              "ambiguous": 1
+            },
+            "unresolved": 1,
+            "gross_complete": {
+              "trades": 1,
+              "win_rate": 1.0,
+              "sum_r": 0.1649793454117333,
+              "mean_r": 0.1649793454117333,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 1,
+              "win_rate": 1.0,
+              "sum_r": 0.1369211451833912,
+              "mean_r": 0.1369211451833912,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 2,
+              "win_rate": 0.5,
+              "sum_r": -0.8785574749785883,
+              "mean_r": -0.43927873748929414,
+              "profit_factor": 0.13483409937429394,
+              "max_drawdown_r": 1.0154786201619794
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 0.1,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.45,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.5,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.55,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.6,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.65,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.7,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.75,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.8,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        },
+        {
+          "penalty": 1.0,
+          "threshold": 0.85,
+          "objective": -1000000000.0,
+          "evaluation": {
+            "accepted": 0,
+            "overlap_skipped": 0,
+            "statuses": {},
+            "unresolved": 0,
+            "gross_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "assumed_cost_complete": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            },
+            "unresolved_minus_1r_stress": {
+              "trades": 0,
+              "win_rate": null,
+              "sum_r": 0.0,
+              "mean_r": null,
+              "profit_factor": null,
+              "max_drawdown_r": 0.0
+            }
+          }
+        }
+      ],
+      "split_counts": {
+        "test": {
+          "ambiguous": 80,
+          "canceled": 357,
+          "censored": 0,
+          "complete": 1227,
+          "not_evaluated": 385,
+          "unfilled": 216
+        },
+        "train": {
+          "ambiguous": 252,
+          "canceled": 395,
+          "censored": 7,
+          "complete": 4387,
+          "not_evaluated": 1106,
+          "unfilled": 1038
+        },
+        "validation": {
+          "ambiguous": 39,
+          "canceled": 232,
+          "censored": 0,
+          "complete": 565,
+          "not_evaluated": 187,
+          "unfilled": 80
+        }
+      },
+      "evaluation": {},
+      "baseline": {}
+    }
+  }
+}

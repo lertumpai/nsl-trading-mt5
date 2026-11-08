@@ -1,0 +1,13 @@
+{
+  "ex5_sha256": "855500b74eddbe471378491761881bc7912300a6edcdf65f92bf6644db12fb73",
+  "symbol": "USDJPY#",
+  "model": "M1 OHLC",
+  "from_date": "2016-11-08",
+  "to_date_exclusive": "2024-01-01",
+  "risk_percent": 0.25,
+  "initial_deposit_usd": 10000,
+  "leverage": 100,
+  "enable_orders": true,
+  "live_account_allowed": false,
+  "execution_delay_ms": 0
+}

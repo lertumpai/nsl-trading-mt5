@@ -1,0 +1,10 @@
+; created on 2026.11.08 15:38:26 as a version of 'NSL_ShotTrader.ex5' set
+; this file contains input parameters for NSL_ShotTrader.ex5
+; to use it in the strategy tester, click Load Version in the context menu of the Inputs tab
+;
+RiskPercent=0.25||0.25||0.025000||2.500000||N
+EnableOrders=true||false||0||true||N
+MagicNumber=2601108||2601108||1||26011080||N
+ThresholdOverride=-1||-1.0||-0.100000||-10.000000||N
+AllowLiveAccount=false||false||0||true||N
+MaxQuoteAgeSeconds=10||10||1||100||N
