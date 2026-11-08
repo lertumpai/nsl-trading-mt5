@@ -595,10 +595,12 @@ sources[]: url, published_at, used_for
 limitations[]
 ```
 
-## 15. โครงสร้างสกิล (รูปแบบ Claude Code)
+## 15. โครงสร้างสกิล (มาตรฐาน Agent Skills ใช้ได้กับทุก agent)
 
 ```text
-.claude/
+AGENTS.md                          # คำแนะนำโปรเจกต์สำหรับทุก agent (CLAUDE.md, GEMINI.md = symlink มาที่นี่)
+scripts/link-agents.sh             # สร้าง symlink: .claude/skills, .gemini/skills, .cursor/skills, .github/skills → .agents/skills
+.agents/
   skills/
     mt5-swing-analyze/
       SKILL.md                     # สั้น ไม่เกิน ~150 บรรทัด: ถามโหมดก่อน, ลำดับงาน, กฎห้าม, ไฟล์ที่ต้องอ่านเมื่อไร
@@ -611,8 +613,8 @@ limitations[]
       SKILL.md                     # ทำงานต่อจากโหมดวางออเดอร์เลย หรือเมื่อผู้ใช้อ้าง Plan ID
       references/
         execution-contract.md      # ข้อ 11.3, 12 (execute), 13
-  agents/                          # ไม่บังคับ
-    macro-news.md                  # Subagent สรุปข่าว/Macro รายสกุลเงิน วันละครั้ง
+    mt5-macro-news/
+      SKILL.md                     # สรุปข่าว/Macro รายสกุลเงิน วันละครั้ง (agent ที่มี subagent ให้มอบงานนี้ให้ subagent)
 mt5kit/                            # โค้ด Python ที่ทั้งสองสกิลใช้ร่วมกัน
   config/
     strategy-v2.json               # พารามิเตอร์ทั้งหมด (ATR multiple, เวลา session, เกณฑ์คะแนน)
@@ -649,7 +651,8 @@ description: สแกน 10 คู่ Forex ด้วย D1/H4/H1 ผ่าน 
 ---
 ```
 
-- ถ้าใช้ Codex ด้วย ให้ลิงก์โฟลเดอร์สกิลเดียวกันไปยังตำแหน่งสกิลของ Codex ไม่ต้องเขียนซ้ำ
+- สกิลตัวจริงมีที่เดียวคือ `.agents/skills/` (Codex อ่านได้เอง) ส่วน Claude Code และ agent อื่นใช้ symlink จาก `scripts/link-agents.sh` ไม่ต้องเขียนซ้ำ
+- `mt5kit` อ่านค่าเชื่อมต่อ MCP จาก env, `.mcp.json` หรือ `.codex/config.toml`
 - กฎตัวเลขมีที่เดียวคือ `strategy-v2.json` ไฟล์ Markdown อธิบายความหมายแต่ไม่คัดลอกตัวเลข เพื่อไม่ให้ค่าไม่ตรงกัน
 - เอกสาร `plan.md` นี้เก็บเหตุผลการออกแบบ ไม่ต้องโหลดทุกครั้งที่ใช้สกิล
 
