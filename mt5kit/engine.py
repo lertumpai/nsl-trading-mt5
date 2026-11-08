@@ -61,6 +61,37 @@ def resolve_symbols(wanted: list[str], available: list[str], profile: dict) -> d
     return out
 
 
+def fill_tick_values(symbols: dict, acct_ccy: str, limitations: list):
+    """MT5 อาจคืน tick_value = 0 ตอนตลาดปิด → คำนวณจาก contract size และราคาคู่ที่เกี่ยวข้อง (ค่าประมาณ)"""
+    def px(base, quote):
+        for name, s in symbols.items():
+            if s.base == base and s.quote == quote and s.bid:
+                return s.bid
+        return None
+    fixed = []
+    for name, s in symbols.items():
+        if s.tick_value or not s.contract_size:
+            continue
+        ts = s.tick_size or s.point
+        if not ts:
+            continue
+        q = s.quote
+        if q == acct_ccy:
+            tv = ts * s.contract_size
+        elif px(acct_ccy, q):
+            tv = ts * s.contract_size / px(acct_ccy, q)
+        elif px(q, acct_ccy):
+            tv = ts * s.contract_size * px(q, acct_ccy)
+        else:
+            continue
+        s.tick_size = ts
+        s.tick_value = s.tick_value_loss = tv
+        s.missing = [f for f in s.missing if f not in ("tick_value", "tick_size")]
+        fixed.append(name)
+    if fixed:
+        limitations.append("MT5 คืน tick_value = 0 (ตลาดปิด) — คำนวณเงินต่อ lot จาก contract size และราคาคู่อ้างอิงแทน (ค่าประมาณ): " + ", ".join(sorted(fixed)))
+
+
 def _round(sym, p, mode="nearest"):
     return rk.round_price(sym, p, mode)
 
@@ -221,7 +252,9 @@ def manage_existing(positions, orders, ledger: Ledger, contexts: dict, symbols: 
     def owner_of(ticket, magic, comment):
         if str(ticket) in owned:
             return "skill", owned[str(ticket)]
-        if magic is not None and magic == ex_cfg.get("magic") and str(comment).startswith(ex_cfg.get("comment_prefix", "nsl")):
+        # MT5 MCP ไม่รองรับ magic → ยอมรับ comment ขึ้นต้นด้วย prefix ของสกิล (ร่วมกับ ledger)
+        prefix = ex_cfg.get("comment_prefix", "nsl") + " "
+        if str(comment).startswith(prefix) and (magic in (None, 0) or magic == ex_cfg.get("magic")):
             return "skill", None
         return "other", None
 
@@ -390,6 +423,7 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
                 got = ad.parse_symbols(extra, clock)
                 if name in got:
                     symbols[name] = got[name]
+    fill_tick_values(symbols, acct.currency, limitations)
     ex = rk.portfolio_exposure(positions, orders, symbols)
 
     ledger = Ledger(root)

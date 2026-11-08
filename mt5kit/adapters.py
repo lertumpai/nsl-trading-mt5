@@ -131,7 +131,9 @@ class Account:
 
 def parse_account(payload: Any) -> Account:
     d = payload
-    if isinstance(d, dict) and len(d) == 1 and isinstance(next(iter(d.values())), dict):
+    if isinstance(d, dict) and isinstance(d.get("account"), dict):
+        d = d["account"]          # รูปแบบของ MetaTrader 5 MCP: {"account": {...}, "terminal": {...}}
+    elif isinstance(d, dict) and len(d) == 1 and isinstance(next(iter(d.values())), dict):
         d = next(iter(d.values()))
     if not isinstance(d, dict):
         raise AdapterError("อ่านข้อมูลบัญชีไม่ได้")

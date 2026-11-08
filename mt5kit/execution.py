@@ -125,7 +125,7 @@ def prepare_actions(root: Path, source, run_id: str, plan_ids: list[str], author
                 continue
             n += 1
             prefix = profile["execution"].get("comment_prefix", "nsl")
-            exp_server = clock.to_server(datetime.fromtimestamp(plan["expiry_utc"], UTC)).strftime("%Y.%m.%d %H:%M")
+            exp_server = clock.to_server(datetime.fromtimestamp(plan["expiry_utc"], UTC)).strftime(mp.get("time_format", "%Y-%m-%dT%H:%M:%S"))
             ot_map = mp.get("order_types", {})
             params = {"symbol": plan["symbol"], "order_type": ot_map.get(plan["order_type"], plan["order_type"]), "volume": vol,
                       "price": plan["entry"], "sl": plan["sl"], "tp": plan["tp"], "expiry_server": exp_server,
@@ -150,7 +150,7 @@ def prepare_actions(root: Path, source, run_id: str, plan_ids: list[str], author
                     tpl = mp["trade_templates"]["CANCEL_PENDING"]
                     act = {"action_id": f"{run_id}-A{n}", "run_id": run_id, "type": "CANCEL_PENDING", "plan_id": m.get("plan_id"),
                            "params": {"ticket": m["ticket"], "symbol": m["symbol"]}, "tool": tpl["tool"],
-                           "args": _fill(tpl["args"], {"ticket": m["ticket"]}), "status": "PREPARED", "reason": m["reason"]}
+                           "args": _fill(tpl["args"], {"ticket": int(m["ticket"]) if str(m["ticket"]).isdigit() else m["ticket"], "symbol": m["symbol"]}), "status": "PREPARED", "reason": m["reason"]}
                     out["actions"].insert(0, act)  # ยกเลิกก่อนสร้างใหม่
                     ledger.add_action({**act, "authorization": authorization, "created_at": now})
         ledger.save()

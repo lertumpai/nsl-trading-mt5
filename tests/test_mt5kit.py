@@ -230,7 +230,7 @@ class TestEndToEnd(unittest.TestCase):
         p = rep["plans"][0]
         pos = {"positions": [], "orders": [{"ticket": 777001, "symbol": p["symbol"], "type": "ORDER_TYPE_SELL_LIMIT" if p["side"] == "short" else "ORDER_TYPE_BUY_LIMIT",
                                              "volume": a["args"]["volume"], "price_open": p["entry"], "sl": p["sl"], "tp": p["tp"],
-                                             "time_expiration": a["args"]["expiration"], "magic": prof["execution"]["magic"], "comment": a["args"]["comment"]}]}
+                                             "time_expiration": a["args"]["expiration_time"], "magic": prof["execution"]["magic"], "comment": a["args"]["comment"]}]}
         (self.fx / "positions.json").write_text(json.dumps(pos))
         try:
             ex = reconcile(root, FixtureSource(self.fx), rep["run_id"])

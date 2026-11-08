@@ -5,6 +5,7 @@ probe             เรียก tools/list + เครื่องมืออ
 record --out DIR  บันทึกข้อมูลดิบทั้งชุดเป็น fixture สำหรับทดสอบตอนตลาดปิด
 macro-template    สร้างไฟล์ Macro ของวันนี้ให้โมเดลกรอก
 cot               ดึง COT (cache 3 วัน)
+import-snapshot F แตกไฟล์ snapshot รวม (ดึงผ่านเบราว์เซอร์) เป็น fixture ใน runs/live-*
 scan              วิเคราะห์ 10 คู่ → runs/<id>/report.json + report.html + สรุปสั้น (JSON)
 render --run ID   รวม narrative.json แล้วสร้าง report.html ใหม่
 prepare-actions   ตรวจซ้ำและสร้างรายการคำสั่งให้โมเดลเรียกเครื่องมือ MCP เอง
@@ -179,6 +180,25 @@ def cmd_cot(args, root):
     return 0
 
 
+def cmd_import_snapshot(args, root):
+    """แตกไฟล์ snapshot รวม (จากเบราว์เซอร์/MCP) เป็นโฟลเดอร์ fixture แล้วพร้อมใช้กับ scan --fixtures"""
+    src = Path(args.file)
+    data = json.loads(src.read_text(encoding="utf-8"))
+    stamp = (data.get("_meta", {}).get("captured_utc") or datetime.now(UTC).isoformat())[:16].replace(":", "").replace("-", "")
+    out = root / "runs" / f"live-{stamp}"
+    out.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for k, v in data.items():
+        if k.startswith("_"):
+            continue
+        (out / f"{k}.json").write_text(json.dumps(v, ensure_ascii=False), encoding="utf-8")
+        n += 1
+    (out / "_meta.json").write_text(json.dumps(data.get("_meta", {}), ensure_ascii=False), encoding="utf-8")
+    _print({"fixtures": str(out), "files": n, "captured_utc": data.get("_meta", {}).get("captured_utc"),
+            "next": f"python3 -m mt5kit scan --fixtures {out} --mode plan_only"})
+    return 0
+
+
 def cmd_scan(args, root):
     from .engine import compact_summary, run_scan
     from .render import render
@@ -242,6 +262,7 @@ def main(argv=None) -> int:
     p = sub.add_parser("record"); p.add_argument("--out", required=True)
     sub.add_parser("macro-template")
     sub.add_parser("cot")
+    p = sub.add_parser("import-snapshot"); p.add_argument("file")
     p = sub.add_parser("scan")
     p.add_argument("--mode", choices=["plan_only", "analyze_and_place"], default="plan_only")
     p.add_argument("--slot", choices=["auto", "london", "newyork", "manage"], default="auto")
@@ -258,7 +279,7 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     root = find_project_root()
     fn = {"status": cmd_status, "probe": cmd_probe, "record": cmd_record, "macro-template": cmd_macro_template, "cot": cmd_cot,
-          "scan": cmd_scan, "render": cmd_render, "prepare-actions": cmd_prepare, "record-result": cmd_record_result,
+          "scan": cmd_scan, "import-snapshot": cmd_import_snapshot, "render": cmd_render, "prepare-actions": cmd_prepare, "record-result": cmd_record_result,
           "reconcile": cmd_reconcile}[args.cmd]
     try:
         return fn(args, root)

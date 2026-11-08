@@ -64,17 +64,49 @@ class LiveSource:
 
     def bars(self, symbol: str, tf: str, count: int):
         tfv = self.map.get("timeframes", {}).get(tf, tf)
-        return self.call("history", f"bars_{symbol}_{tf}", symbol=symbol, tf=tfv, count=count)
+        fmt = self.map.get("time_format", "%Y-%m-%dT%H:%M:%S")
+        sec = {"M15": 900, "H1": 3600, "H4": 14400, "D1": 86400, "W1": 604800}[tf]
+        now = datetime.utcnow() + timedelta(hours=3)          # เผื่อเวลาเซิร์ฟเวอร์ (UTC+2/+3)
+        start = now - timedelta(seconds=count * sec * 1.45 + 3 * 86400)   # เผื่อวันหยุดสุดสัปดาห์
+        end = now + timedelta(days=1)
+        return self.call("history", f"bars_{symbol}_{tf}", symbol=symbol, tf=tfv, count=count,
+                         **{"from": start.strftime(fmt), "to": end.strftime(fmt)})
 
     def time_info(self):
         return self.call("time")
 
     def calendar(self, t_from: datetime, t_to: datetime):
-        fmt = self.map.get("calendar_time_format", "%Y.%m.%d %H:%M")
-        return self.call("calendar", **{"from": t_from.strftime(fmt), "to": t_to.strftime(fmt)})
+        """ค่าในปฏิทิน + ชื่อ/สกุลเงิน/ความสำคัญของ event (MT5 MCP แยกสองเครื่องมือ) → รวมเป็นรายการเดียว"""
+        fmt = self.map.get("calendar_time_format", "%Y-%m-%dT%H:%M:%S")
+        vals = self.client.call_tool(self.map["read"]["calendar"]["tool"],
+                                     _fill(self.map["read"]["calendar"]["args"], {"from": t_from.strftime(fmt), "to": t_to.strftime(fmt)}))
+        ev_spec = self.map["read"].get("calendar_events")
+        if not ev_spec:
+            self.raw["calendar"] = vals
+            return vals
+        evmap = {}
+        for ccy in ("USD", "EUR", "GBP", "JPY", "AUD", "NZD", "CAD"):
+            try:
+                ev = self.client.call_tool(ev_spec["tool"], _fill(ev_spec["args"], {"ccy": ccy}))
+            except Exception:  # noqa: BLE001
+                continue
+            for e in (ev.get("events", []) if isinstance(ev, dict) else []):
+                evmap[str(e.get("id"))] = (ccy, e.get("name", ""), e.get("importance", ""))
+        rows = []
+        for v in (vals.get("values", []) if isinstance(vals, dict) else []):
+            m = evmap.get(str(v.get("event_id")))
+            if not m:
+                continue
+            rows.append({"time": v.get("time"), "currency": m[0], "event": m[1], "importance": m[2],
+                         "forecast": v.get("forecast_value") if v.get("forecast_value") is not None else "",
+                         "previous": v.get("prev_value") if v.get("prev_value") is not None else "",
+                         "actual": v.get("actual_value") if v.get("actual_value") is not None else ""})
+        self.raw["calendar"] = rows
+        return rows
 
     def history_orders(self, t_from: datetime, t_to: datetime):
-        return self.call("history_orders", **{"from": t_from.strftime("%Y.%m.%d %H:%M"), "to": t_to.strftime("%Y.%m.%d %H:%M")})
+        fmt = self.map.get("time_format", "%Y-%m-%dT%H:%M:%S")
+        return self.call("history_orders", **{"from": t_from.strftime(fmt), "to": t_to.strftime(fmt)})
 
     def save_raw(self, out_dir: Path):
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -92,7 +124,9 @@ class FixtureSource:
     def _load(self, name: str):
         p = self.dir / f"{name}.json"
         if not p.exists():
-            raise FileNotFoundError(f"fixture ไม่มีไฟล์ {p.name}")
+            p = self.dir / f"{name.replace('#', '%23')}.json"   # ชื่อไฟล์ที่เข้ารหัส # ไว้
+        if not p.exists():
+            raise FileNotFoundError(f"fixture ไม่มีไฟล์ {name}.json")
         return json.loads(p.read_text(encoding="utf-8"))
 
     def account(self):
