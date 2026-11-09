@@ -101,7 +101,8 @@ def cmd_probe(args, root):
              ("history", {"symbol": sym, "tf": mp["timeframes"]["H1"], "count": 50})]
     for logical, vals in tests:
         try:
-            data = src.call(logical, **vals)
+            # History needs a datetime range; use the same path as the live scan.
+            data = src.bars(sym, "H1", 50) if logical == "history" else src.call(logical, **vals)
             (out_dir / f"raw_{logical}.json").write_text(json.dumps(data, ensure_ascii=False, indent=1)[:200000], encoding="utf-8")
             parsed = "ok"
             try:

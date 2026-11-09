@@ -175,7 +175,7 @@ def server_now_from_time_info(payload) -> Any:
         return None
     if isinstance(payload, dict):
         lk = {str(k).lower(): v for k, v in payload.items()}
-        for key in ("server_time", "trade_server_time", "time_trade_server", "timetradeserver", "server", "time_current", "timecurrent"):
+        for key in ("server_time", "trade_server_time", "trade_server_last_known_time", "time_trade_server", "timetradeserver", "server", "time_current", "timecurrent"):
             if key in lk and lk[key]:
                 return lk[key]
         for v in payload.values():

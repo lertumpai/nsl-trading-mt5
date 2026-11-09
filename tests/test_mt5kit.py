@@ -56,6 +56,16 @@ class TestStructure(unittest.TestCase):
 
 
 class TestTime(unittest.TestCase):
+    def test_native_mcp_server_time(self):
+        from mt5kit.datasource import server_now_from_time_info
+        payload = {"utc_time": "2026-11-09T02:08:08Z",
+                   "trade_server_last_known_time": "2026-11-09T04:08:08"}
+        server_now = server_now_from_time_info(payload)
+        clock = ServerClock.from_profile({"mode": "auto"}, server_now,
+                                         datetime(2026, 11, 9, 2, 8, 8, tzinfo=UTC))
+        self.assertEqual(clock.to_utc(datetime(2026, 11, 9, 4, 8, 8)),
+                         datetime(2026, 11, 9, 2, 8, 8, tzinfo=UTC))
+
     def test_ny_close_dst(self):
         c = ServerClock("ny_close")
         self.assertEqual(c.to_utc(datetime(2026, 7, 1, 0, 0)).isoformat(), "2026-06-30T21:00:00+00:00")

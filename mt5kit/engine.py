@@ -89,7 +89,7 @@ def fill_tick_values(symbols: dict, acct_ccy: str, limitations: list):
         s.missing = [f for f in s.missing if f not in ("tick_value", "tick_size")]
         fixed.append(name)
     if fixed:
-        limitations.append("MT5 คืน tick_value = 0 (ตลาดปิด) — คำนวณเงินต่อ lot จาก contract size และราคาคู่อ้างอิงแทน (ค่าประมาณ): " + ", ".join(sorted(fixed)))
+        limitations.append("MT5 คืน tick_value = 0 — คำนวณเงินต่อ lot จาก contract size และราคาคู่อ้างอิงแทน (ค่าประมาณ): " + ", ".join(sorted(fixed)))
 
 
 def _round(sym, p, mode="nearest"):
