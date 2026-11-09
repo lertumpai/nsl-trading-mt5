@@ -84,6 +84,58 @@ class TestTime(unittest.TestCase):
         self.assertEqual(parse_server_time(86400), datetime(1970, 1, 2))
 
 
+class TestGold(unittest.TestCase):
+    def symbol(self):
+        return ad.parse_symbol({"symbol": "GOLD#", "currency_base": "USD", "currency_profit": "USD",
+                                "digits": 2, "point": 0.01, "tick_size": 0.01, "tick_value": 1.0,
+                                "contract_size": 100, "volume_min": 0.01, "volume_step": 0.01,
+                                "volume_max": 50, "bid": 2500, "ask": 2500.20}, ServerClock())
+
+    def test_broker_alias_and_ambiguous_symbols(self):
+        from mt5kit.engine import load_strategy, resolve_symbols
+        aliases = load_strategy()["symbol_aliases"]
+        result = resolve_symbols(["XAUUSD"], ["GOLD#"], {"symbol_suffix": "#"}, aliases)
+        self.assertEqual(result["XAUUSD"]["name"], "GOLD#")
+        ambiguous = resolve_symbols(["XAUUSD"], ["GOLD.a", "GOLD.b"], {}, aliases)
+        self.assertFalse(ambiguous["XAUUSD"]["ok"])
+        canonical = resolve_symbols(["XAUUSD"], ["XAUUSD#", "GOLD#"], {"symbol_suffix": "#"}, aliases)
+        self.assertEqual(canonical["XAUUSD"]["name"], "XAUUSD#")
+
+    def test_gold_contract_and_currency_exposure(self):
+        sym = self.symbol()
+        self.assertEqual((sym.base, sym.quote), ("XAU", "USD"))
+        self.assertEqual(sym.missing, [])
+        self.assertEqual(rk.money_per_lot(sym, 2.0), 200.0)
+        exposure = rk.Exposure()
+        exposure.add_ccy(sym.base, sym.quote, "long", 25.0)
+        self.assertEqual(exposure.by_ccy["XAU"], {"long": 25.0, "short": 0.0})
+        self.assertEqual(exposure.by_ccy["USD"], {"long": 0.0, "short": 25.0})
+
+    def test_gold_shares_usd_currency_risk_cap(self):
+        from mt5kit.engine import load_strategy
+        acct = ad.Account("1", "s", "USD", 10000, 10000, 0, 10000, None, 100, "hedging", "demo")
+        profile = json.loads((ROOT / "mt5kit/config/account-profile.example.json").read_text())
+        exposure = rk.Exposure(total=50.0)
+        exposure.add_ccy("EUR", "USD", "long", 25.0)
+        exposure.add_ccy("GBP", "USD", "long", 25.0)
+        sized = rk.size_position(acct, self.symbol(), "long", 2500, 2490, exposure,
+                                 profile, 1.0, load_strategy())
+        self.assertFalse(sized.ok)
+        self.assertIn("เพดานความเสี่ยง", sized.reason)
+
+    def test_usd_news_blocks_gold_but_eur_news_does_not(self):
+        from mt5kit import news
+        from mt5kit.engine import load_strategy
+        cfg = load_strategy()["news"]
+        usd = ad.NewsEvent(10000, "USD", "high", "CPI m/m", tier=1)
+        eur = ad.NewsEvent(10000, "EUR", "high", "CPI m/m", tier=1)
+        for name in ("XAUUSD", "GOLD#"):
+            currencies = news.pair_currencies(name, "USD", "USD")
+            self.assertEqual(currencies, ("XAU", "USD"))
+            self.assertIs(news.blocked_now(10000, [usd], currencies, cfg), usd)
+            self.assertIsNone(news.blocked_now(10000, [eur], currencies, cfg))
+
+
 class TestRisk(unittest.TestCase):
     def sym(self):
         return ad.SymbolInfo("EURUSD", "EUR", "USD", "USD", 5, 1e-5, 1e-5, 1.0, 1.0, 100000, 0.01, 50, 0.01, 0, 0, 0,
@@ -175,7 +227,10 @@ class TestEndToEnd(unittest.TestCase):
         from mt5kit.render import render
         run_dir, rep = run_scan(self.root, FixtureSource(self.fx), "plan_only", "london", DEMO_NOW)
         self.assertEqual(rep["mode"], "plan_only")
-        self.assertEqual(len(rep["scan"]), 10)
+        self.assertEqual(len(rep["scan"]), 11)
+        self.assertIn("XAUUSD", {row["symbol"] for row in rep["scan"]})
+        gold = next(row for row in rep["scan"] if row["symbol"] == "XAUUSD")
+        self.assertFalse(gold["reason"].startswith(("BLOCKED", "Symbol")), gold["reason"])
         self.assertGreaterEqual(len(rep["plans"]), 1)
         p = rep["plans"][0]
         self.assertTrue(all(c["ok"] for c in p["checks"]))

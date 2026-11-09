@@ -1,7 +1,8 @@
 {
-  "version": "strategy-v2.0.0",
+  "version": "strategy-v2.1.0",
   "_note": "ค่าทุกตัวเป็นค่าเริ่มต้นสำหรับทดสอบ ห้ามแก้ย้อนหลังตามผลลัพธ์ ถ้าแก้ต้องเปลี่ยน version",
-  "symbols": ["EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "EURJPY", "GBPJPY", "AUDJPY", "EURGBP"],
+  "symbols": ["EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "EURJPY", "GBPJPY", "AUDJPY", "EURGBP", "XAUUSD"],
+  "symbol_aliases": {"XAUUSD": ["GOLD"]},
   "bars": {"W1": 60, "D1": 300, "H4": 500, "H1": 1000},
   "swing": {"left": 2, "right": 2},
   "atr_period": 14,

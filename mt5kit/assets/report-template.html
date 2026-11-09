@@ -384,7 +384,7 @@ $('#app').innerHTML = hero() +
   `<section><h2>แผนที่เลือก <span class="count">${plans.length} แผน</span></h2>${plans.length? plans.map((p,i)=>planCard(p,i)).join('<div style="height:12px"></div>') :
      '<div class="card empty">รอบนี้ยังไม่มีจุดเข้าที่ผ่านทุกกฎ — ดูส่วน “รอจุดไหน” ด้านล่างว่าแต่ละคู่กำลังรออะไร</div>'}</section>` +
   execBlock() + watchBlock() + eduBlock(!plans.length) +
-  `<section><h2>สแกน 10 คู่เงิน</h2>${scanTable()}</section><section>${macroBlock()}${limits()}</section>`;
+  `<section><h2>สแกน ${R.scan.length} สินทรัพย์</h2>${scanTable()}</section><section>${macroBlock()}${limits()}</section>`;
 $('#foot').textContent = 'สร้างอัตโนมัติจากข้อมูล MT5 โดย mt5kit · ตัวเลขทั้งหมดมาจากโค้ด ไม่ได้พิมพ์โดยโมเดล';
 document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{ navigator.clipboard?.writeText(b.dataset.copy).then(()=>{b.textContent='คัดลอกแล้ว ✓'; setTimeout(()=>b.textContent=b.dataset.copy,1600);}); });
 

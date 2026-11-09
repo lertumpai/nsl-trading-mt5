@@ -39,7 +39,7 @@ def load_profile(root: Path) -> tuple[dict, bool]:
     return load_json(PKG / "config" / "account-profile.example.json"), False
 
 
-def resolve_symbols(wanted: list[str], available: list[str], profile: dict) -> dict:
+def resolve_symbols(wanted: list[str], available: list[str], profile: dict, aliases: dict | None = None) -> dict:
     """จับคู่ชื่อมาตรฐานกับชื่อจริงของโบรกเกอร์ ห้ามเดาเมื่อมีหลายตัวเลือก"""
     out = {}
     ov = profile.get("symbol_overrides", {})
@@ -48,10 +48,12 @@ def resolve_symbols(wanted: list[str], available: list[str], profile: dict) -> d
         if w in ov:
             out[w] = {"name": ov[w], "ok": ov[w] in available or not available, "why": "override"}
             continue
-        if w + sfx in available:
-            out[w] = {"name": w + sfx, "ok": True, "why": "suffix"}
+        names = [w, *(aliases or {}).get(w, [])]
+        preferred = next((name + sfx for name in names if name + sfx in available), None)
+        if preferred:
+            out[w] = {"name": preferred, "ok": True, "why": "suffix"}
             continue
-        cands = [a for a in available if a.upper().startswith(w)]
+        cands = [a for a in available if any(a.upper().startswith(name.upper()) for name in names)]
         if len(cands) == 1:
             out[w] = {"name": cands[0], "ok": True, "why": "unique"}
         elif w in cands:
@@ -413,7 +415,7 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
 
     sym_payload = source.symbols()
     symbols = ad.parse_symbols(sym_payload, clock)
-    resolved = resolve_symbols(cfg["symbols"], list(symbols.keys()), profile)
+    resolved = resolve_symbols(cfg["symbols"], list(symbols.keys()), profile, cfg.get("symbol_aliases"))
     need = {r["name"] for r in resolved.values() if r["ok"]} | {p.symbol for p in positions} | {o.symbol for o in orders}
     for name in need:
         s = symbols.get(name)

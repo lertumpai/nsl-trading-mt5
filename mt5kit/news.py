@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .adapters import NewsEvent
+from .adapters import NewsEvent, instrument_currencies
 
 CONFIG = Path(__file__).parent / "config" / "news-tier1.json"
 
@@ -31,8 +31,7 @@ def classify(events: list[NewsEvent], tier1: dict | None = None) -> list[NewsEve
 
 
 def pair_currencies(symbol: str, base: str | None = None, quote: str | None = None) -> tuple[str, str]:
-    s = symbol.upper()
-    return (base or s[:3]), (quote or s[3:6])
+    return instrument_currencies(symbol, base, quote)
 
 
 def events_for(events: list[NewsEvent], ccys: tuple[str, str], tier: int | None = None) -> list[NewsEvent]:

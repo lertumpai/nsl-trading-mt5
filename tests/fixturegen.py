@@ -14,7 +14,7 @@ NY = ZoneInfo("America/New_York")
 PAIRS = {
     "EURUSD": (1.08, 5, 1.0), "GBPUSD": (1.27, 5, 1.0), "AUDUSD": (0.66, 5, 1.0), "NZDUSD": (0.60, 5, 1.0),
     "USDJPY": (150.0, 3, None), "USDCAD": (1.37, 5, None), "EURJPY": (162.0, 3, None), "GBPJPY": (190.0, 3, None),
-    "AUDJPY": (99.0, 3, None), "EURGBP": (0.85, 5, None),
+    "AUDJPY": (99.0, 3, None), "EURGBP": (0.85, 5, None), "XAUUSD": (2500.0, 2, 1.0),
 }
 
 
@@ -93,7 +93,7 @@ def symbol_rec(name: str, bid: float) -> dict:
             tv = 100000 * point * 1.27
     spread = 8 * point if digits == 5 else 12 * point
     return {"name": name, "digits": digits, "point": point, "trade_tick_size": point, "trade_tick_value": round(tv, 6),
-            "trade_tick_value_loss": round(tv, 6), "trade_contract_size": 100000, "volume_min": 0.01, "volume_max": 50,
+            "trade_tick_value_loss": round(tv, 6), "trade_contract_size": 100 if name == "XAUUSD" else 100000, "volume_min": 0.01, "volume_max": 50,
             "volume_step": 0.01, "volume_limit": 0, "trade_stops_level": 0, "trade_freeze_level": 0,
             "bid": round(bid, digits), "ask": round(bid + spread, digits), "currency_base": name[:3], "currency_profit": quote,
             "swap_long": -6.5, "swap_short": 1.2, "swap_mode": "SYMBOL_SWAP_MODE_POINTS", "trade_mode": "SYMBOL_TRADE_MODE_FULL",

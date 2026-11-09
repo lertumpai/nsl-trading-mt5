@@ -6,7 +6,7 @@ record --out DIR  บันทึกข้อมูลดิบทั้งช�
 macro-template    สร้างไฟล์ Macro ของวันนี้ให้โมเดลกรอก
 cot               ดึง COT (cache 3 วัน)
 import-snapshot F แตกไฟล์ snapshot รวม (ดึงผ่านเบราว์เซอร์) เป็น fixture ใน runs/live-*
-scan              วิเคราะห์ 10 คู่ → runs/<id>/report.json + report.html + สรุปสั้น (JSON)
+scan              วิเคราะห์สินทรัพย์ตามกลยุทธ์ → runs/<id>/report.json + report.html + สรุปสั้น (JSON)
 render --run ID   รวม narrative.json แล้วสร้าง report.html ใหม่
 prepare-actions   ตรวจซ้ำและสร้างรายการคำสั่งให้โมเดลเรียกเครื่องมือ MCP เอง
 record-result     บันทึกผลตอบกลับของเครื่องมือ trade_* ทีละ Action
@@ -138,7 +138,7 @@ def cmd_record(args, root):
     src = LiveSource()
     src.time_info(); src.account(); src.positions()
     syms = ad.parse_symbols(src.symbols(), ServerClock())
-    res = resolve_symbols(cfg["symbols"], list(syms), profile)
+    res = resolve_symbols(cfg["symbols"], list(syms), profile, cfg.get("symbol_aliases"))
     for std, r in res.items():
         if not r["ok"]:
             continue
@@ -168,7 +168,7 @@ def cmd_macro_template(args, root):
     p.parent.mkdir(parents=True, exist_ok=True)
     if not p.exists():
         tpl = {"date": day, "_how": "pairs.<คู่>.long/short = support | neutral | conflict (conflict = ห้ามเทรดทิศนั้นวันนี้) ใส่ conflict เฉพาะเมื่อขัดแย้งชัดเจน",
-               "currencies": {c: "" for c in ("USD", "EUR", "GBP", "JPY", "AUD", "NZD", "CAD")},
+               "currencies": {c: "" for c in ("USD", "EUR", "GBP", "JPY", "AUD", "NZD", "CAD", "XAU")},
                "pairs": {s: {"long": "neutral", "short": "neutral"} for s in cfg["symbols"]}, "sources": []}
         p.write_text(json.dumps(tpl, ensure_ascii=False, indent=1), encoding="utf-8")
     _print({"macro_file": str(p), "exists": True})

@@ -309,6 +309,15 @@ class SymbolInfo:
 REQUIRED_SYMBOL = ("point", "tick_size", "tick_value", "contract_size", "vol_min", "vol_step", "bid", "ask")
 
 
+def instrument_currencies(symbol: str, base: str | None = None, quote: str | None = None) -> tuple[str, str]:
+    """Normalize USD gold CFDs whose broker base currency may be USD, not XAU."""
+    name = symbol.upper()
+    gold = name.startswith("XAUUSD") or name == "GOLD" or name.startswith(("GOLD#", "GOLD."))
+    if gold and (quote is None or str(quote).upper() == "USD"):
+        return "XAU", "USD"
+    return str(base or name[:3]).upper(), str(quote or name[3:6]).upper()
+
+
 def parse_symbol(rec: dict, clock: ServerClock) -> SymbolInfo:
     k = _lower_keys(rec)
     name = str(_pick(k, "name", "symbol"))
@@ -317,8 +326,8 @@ def parse_symbol(rec: dict, clock: ServerClock) -> SymbolInfo:
     tick_size = _num(_pick(k, "trade_tick_size", "tick_size", "ticksize"), None) or point
     tv = _num(_pick(k, "trade_tick_value", "tick_value", "tickvalue"))
     tvl = _num(_pick(k, "trade_tick_value_loss", "tick_value_loss"), None) or tv
-    base = str(_pick(k, "currency_base", "base_currency", "base", default=name[:3]))
-    quote = str(_pick(k, "currency_profit", "currency_quote", "quote_currency", "profit_currency", default=name[3:6]))
+    base, quote = instrument_currencies(name, _pick(k, "currency_base", "base_currency", "base"),
+                                       _pick(k, "currency_profit", "currency_quote", "quote_currency", "profit_currency"))
     s = SymbolInfo(
         name=name, base=base.upper(), quote=quote.upper(), profit_ccy=quote.upper(),
         digits=digits, point=point or 0.0, tick_size=tick_size or 0.0,
