@@ -292,6 +292,25 @@ class TestEndToEnd(unittest.TestCase):
         self.assertTrue(gold.name.endswith("-xauusd"))
         self.assertTrue(euro.name.endswith("-eurusd"))
 
+    def test_blocked_asset_still_has_structure_for_its_chart(self):
+        from unittest.mock import patch
+        from mt5kit.engine import load_strategy
+        from mt5kit.setups import Context
+        from mt5kit.watch import watch_for, chart_watch
+        source = FixtureSource(self.fx)
+        cfg = load_strategy()
+        bars = {tf: ad.parse_bars(source.bars("XAUUSD", tf, cfg["bars"][tf]), ServerClock())
+                for tf in ("W1", "D1", "H4", "H1")}
+        context = Context("XAUUSD", ("XAU", "USD"), bars["W1"], bars["D1"], bars["H4"], bars["H1"], cfg, [])
+        with patch("mt5kit.watch.st.bias", return_value="up"), patch("mt5kit.watch.st.d1_state", return_value="opposite"):
+            watch = watch_for(context, DEMO_NOW, cfg, [], {}, 2)
+        self.assertFalse(watch["side_ok"])
+        self.assertTrue(watch["levels"])
+        self.assertTrue(all(level["kind"] == "structure" for level in watch["levels"]))
+        self.assertIsNone(watch["trigger"])
+        self.assertIsNone(watch["target"])
+        self.assertTrue(chart_watch(context, watch, DEMO_NOW, [])["tfs"]["H1"])
+
     def test_invalid_single_symbol_is_rejected_before_reading_mt5(self):
         from mt5kit.engine import run_scan
 

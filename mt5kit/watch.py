@@ -60,11 +60,12 @@ def watch_for(ctx: Context, now: float, cfg: dict, events: list, macro_pair: dic
         out["news_note"] = f"ข่าว Tier 1 ถัดไป: {nxt[1].currency} {nxt[1].name} {fmt_local(nxt[1].t, tz)} น. (งด Pending ตั้งแต่ {fmt_local(nxt[0], tz)} น.)"
     sw_h = st.confirmed(ctx.h4_sw, h4i, "high")[-2:]
     sw_l = st.confirmed(ctx.h4_sw, h4i, "low")[-2:]
-    if h4b == "neutral":
+    if h4b == "neutral" or not side_ok:
         for s in sw_h:
             out["levels"].append({"name": "Swing High H4", "price": s.price, "kind": "structure"})
         for s in sw_l:
             out["levels"].append({"name": "Swing Low H4", "price": s.price, "kind": "structure"})
+    if h4b == "neutral":
         if len(sw_h) == 2 and len(sw_l) == 2:
             out["wait"].append({"label": "โครงสร้าง H4", "text":
                 f"H4 ยังไม่มีทิศทาง: Swing High ล่าสุด {F(sw_h[0].price)} → {F(sw_h[1].price)}, Swing Low {F(sw_l[0].price)} → {F(sw_l[1].price)} "
