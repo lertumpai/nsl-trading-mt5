@@ -120,6 +120,9 @@ class FixtureSource:
 
     def __init__(self, folder: Path):
         self.dir = Path(folder)
+        # มีไฟล์ _snapshot = ข้อมูลจริงที่ดึงจาก MT5 แล้วบันทึกไว้ (ไม่ใช่ข้อมูลจำลอง)
+        if (self.dir / "_snapshot").exists():
+            self.kind = "snapshot"
 
     def _load(self, name: str):
         p = self.dir / f"{name}.json"

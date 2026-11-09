@@ -28,8 +28,12 @@ class Ledger:
 
     def save(self):
         tmp = self.path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(self.data, ensure_ascii=False, indent=1), encoding="utf-8")
-        os.replace(tmp, self.path)
+        text = json.dumps(self.data, ensure_ascii=False, indent=1)
+        try:
+            tmp.write_text(text, encoding="utf-8")
+            os.replace(tmp, self.path)
+        except PermissionError:   # โฟลเดอร์ที่ห้ามลบไฟล์ → เขียนตรง
+            self.path.write_text(text, encoding="utf-8")
 
     # ----- lock -----
     @contextmanager
@@ -50,6 +54,8 @@ class Ledger:
                 lp.unlink()
             except FileNotFoundError:
                 pass
+            except PermissionError:   # โฟลเดอร์ที่ห้ามลบไฟล์ → ปลดล็อกด้วยการเขียนทับแทน
+                lp.write_text(json.dumps({"owner": None, "t": 0, "released": True}))
 
     # ----- equity tracking -----
     def track_equity(self, day_key: str, week_key: str, equity: float, now: float) -> dict:

@@ -153,7 +153,8 @@ function hero(){
   const st = R.plans.length ? (R.mode==='plan_only' ? 'b-amber':'b-blue') : (R.gates.length ? 'b-red':'b-gray');
   const chips = [m, `<span class="chip">${esc(slot)}</span>`, `<span class="chip">ข้อมูล ณ <b class="num">${th(R.generated_at)}</b> น.</span>`,
     `<span class="chip">โควตาวันนี้ <b class="num">${R.risk.orders_today}/${R.risk.quota}</b></span>`, `<span class="chip">${esc(R.strategy_version)}</span>`];
-  if(R.source!=='live') chips.push('<span class="chip warn">ข้อมูลจาก Fixture — ไม่ใช่ราคาสด</span>');
+  if(R.source==='snapshot') chips.push('<span class="chip warn">ข้อมูลจริงจาก MT5 (ภาพนิ่ง ณ ราคาปิดล่าสุด) — ไม่ใช่ราคาสด</span>');
+  else if(R.source!=='live') chips.push('<span class="chip warn">ข้อมูลจาก Fixture — ไม่ใช่ราคาสด</span>');
   (R.gates||[]).forEach(g=>chips.push(`<span class="chip bad">${esc(g)}</span>`));
   (R.warnings||[]).forEach(g=>chips.push(`<span class="chip warn">${esc(g)}</span>`));
   const nar = R.narrative && R.narrative.overview ? `<p style="margin:10px 0 0;max-width:820px">${esc(R.narrative.overview)}</p>` : '';
