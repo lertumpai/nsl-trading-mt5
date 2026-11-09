@@ -284,7 +284,7 @@ function limits(){
 // ---------- เฝ้าดูรายคู่ (ตอนยังไม่มีจุดเข้า) ----------
 function watchCard(w, i){
   const d=w.digits||5, P=v=>v==null?'-':Number(v).toFixed(d);
-  const sideB = w.side==='long'?'<span class="badge b-green">รอฝั่ง Long</span>': w.side==='short'?'<span class="badge b-red">รอฝั่ง Short</span>':'<span class="badge b-gray">ยังไม่มีฝั่ง</span>';
+  const sideB = !w.side_ok?'<span class="badge b-gray">ทิศทางยังไม่ผ่านกฎ</span>': w.side==='long'?'<span class="badge b-green">รอฝั่ง Long</span>': w.side==='short'?'<span class="badge b-red">รอฝั่ง Short</span>':'<span class="badge b-gray">ยังไม่มีฝั่ง</span>';
   const stB = w.progress>=2?'b-blue': w.progress===1?'b-amber':'b-gray';
   const firstTodo = (w.steps||[]).findIndex(s=>!s.ok);
   const steps=(w.steps||[]).map((s,k)=>`<div class="step ${s.ok?'ok':k===firstTodo?'next':'todo'}" title="${esc(s.detail)}"><b>${s.n}. ${esc(s.label)}</b>${esc(s.detail).slice(0,70)}${s.detail.length>70?'…':''}</div>`).join('');
@@ -320,10 +320,12 @@ function watchCard(w, i){
 
 function watchBlock(){
   const W=R.watch||[]; if(!W.length) return '';
-  const active=W.filter(w=>w.side_ok), idle=W.filter(w=>!w.side_ok);
+  const focused=R.selected_symbol;
+  const active=W.filter(w=>w.side_ok || w.symbol===focused), idle=W.filter(w=>!w.side_ok && w.symbol!==focused);
   const idleRows = idle.length? `<div class="card tablewrap" style="margin-top:12px"><table><thead><tr><th>คู่</th><th>ทำไมยังไม่มีอะไรให้รอ</th></tr></thead><tbody>
      ${idle.map(w=>`<tr><td><b>${esc(w.symbol)}</b></td><td class="small">${esc((w.wait[0]||{}).text||w.status)}</td></tr>`).join('')}</tbody></table></div>`:'';
-  return `<section><h2>รอจุดไหน — เฝ้าดูรายคู่ <span class="count">${active.length} คู่มีทิศทาง</span></h2>
+  const heading=focused?`วิเคราะห์รายตัว — ${esc(focused)}`:`รอจุดไหน — เฝ้าดูรายคู่ <span class="count">${active.length} คู่มีทิศทาง</span>`;
+  return `<section><h2>${heading}</h2>
     <div class="small" style="margin-bottom:10px">ยังไม่มีจุดเข้าไม่ได้แปลว่าไม่มีอะไรทำ ส่วนนี้บอกว่าแต่ละคู่ผ่านขั้นไหนแล้ว (✓) ขั้นถัดไปคืออะไร (→) และราคาตรงไหนที่ต้องจับตา เรียงจากคู่ที่ใกล้จุดเข้าที่สุด</div>
     ${active.map((w,i)=>watchCard(w,i)).join('<div style="height:12px"></div>')}${idleRows}</section>`;
 }

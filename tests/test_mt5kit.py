@@ -243,6 +243,96 @@ class TestEndToEnd(unittest.TestCase):
         self.assertNotIn("Bearer", h)
         self.assertNotIn("51234567", h)  # เลขบัญชีเต็มต้องไม่อยู่ใน HTML
 
+    def test_single_symbol_keeps_account_risk_and_ignores_other_management(self):
+        from mt5kit.engine import run_scan
+        from mt5kit.render import render
+
+        class FocusSource(FixtureSource):
+            requested = []
+
+            def bars(self, symbol, tf, count):
+                self.requested.append((symbol, tf))
+                return super().bars(symbol, tf, count)
+
+            def positions(self):
+                return {"positions": [{"ticket": 881001, "symbol": "EURUSD", "type": "POSITION_TYPE_BUY",
+                                       "volume": 0.01, "price_open": 1.1, "price_current": 1.1,
+                                       "sl": 0.0, "tp": 1.2, "comment": "nsl existing"}],
+                        "orders": [{"ticket": 881002, "symbol": "GBPUSD", "type": "ORDER_TYPE_BUY_LIMIT",
+                                    "volume": 0.01, "price_open": 1.1, "sl": 1.0, "tp": 1.2,
+                                    "comment": "nsl existing"}]}
+
+        root = self.tmp / "single_risk"; root.mkdir(exist_ok=True)
+        source = FocusSource(self.fx)
+        run_dir, rep = run_scan(root, source, "plan_only", "london", DEMO_NOW, symbol="GOLD#")
+        self.assertEqual(rep["selected_symbol"], "XAUUSD")
+        self.assertEqual([row["symbol"] for row in rep["scan"]], ["XAUUSD"])
+        self.assertEqual({symbol for symbol, tf in source.requested}, {"XAUUSD"})
+        self.assertEqual({tf for symbol, tf in source.requested}, {"W1", "D1", "H4", "H1"})
+        self.assertGreater(rep["risk"]["reserved_before"], 0)
+        self.assertEqual(len(rep["risk"]["unknown"]), 1)
+        self.assertTrue(any("คำนวณความเสี่ยงไม่ได้" in gate for gate in rep["gates"]))
+        self.assertEqual(rep["plans"], [])
+        self.assertEqual(len(rep["management"]), 2)
+        self.assertTrue(all(row["action"] == "REPORT_ONLY" for row in rep["management"]))
+        self.assertTrue(all(event["ccy"] == "USD" for event in rep["news"]))
+        self.assertTrue(all(plan["std_symbol"] == "XAUUSD" for plan in rep["plans"]))
+        self.assertIn("watch:XAUUSD", rep["charts"])
+        self.assertTrue(rep["charts"]["watch:XAUUSD"]["tfs"]["H1"])
+        html, issues = render(run_dir)
+        self.assertEqual(issues, [])
+        self.assertIn('"selected_symbol": "XAUUSD"', html.read_text())
+
+    def test_single_reports_have_different_paths_at_same_time(self):
+        from mt5kit.engine import run_scan
+        root = self.tmp / "single_paths"; root.mkdir(exist_ok=True)
+        gold, _ = run_scan(root, FixtureSource(self.fx), "plan_only", "london", DEMO_NOW, symbol="xauusd")
+        euro, _ = run_scan(root, FixtureSource(self.fx), "plan_only", "london", DEMO_NOW, symbol="EURUSD")
+        self.assertNotEqual(gold, euro)
+        self.assertTrue(gold.name.endswith("-xauusd"))
+        self.assertTrue(euro.name.endswith("-eurusd"))
+
+    def test_invalid_single_symbol_is_rejected_before_reading_mt5(self):
+        from mt5kit.engine import run_scan
+
+        class NoReads:
+            def __getattr__(self, name):
+                raise AssertionError("Unexpected MT5 read: " + name)
+
+        for symbol in ("BTCUSD", "", "../XAUUSD"):
+            with self.subTest(symbol=symbol), self.assertRaises(ValueError):
+                run_scan(self.tmp / "invalid", NoReads(), symbol=symbol)
+
+    def test_analyze_command_generates_single_plan_only_report(self):
+        import io
+        from contextlib import redirect_stdout
+        from unittest.mock import patch
+        from mt5kit.cli import main
+        root = self.tmp / "single_cli"; root.mkdir(exist_ok=True)
+        profile = json.loads((ROOT / "mt5kit/config/account-profile.example.json").read_text())
+        profile["execution"]["enabled"] = True
+        (root / "account-profile.json").write_text(json.dumps(profile))
+        from mt5kit.engine import load_strategy
+        day = trading_day_key(DEMO_NOW, load_strategy()["sessions"]["trading_day_rollover"])
+        macro_dir = root / "runs" / "macro"; macro_dir.mkdir(parents=True, exist_ok=True)
+        (macro_dir / (day + ".json")).write_text(json.dumps({
+            "currencies": {"XAU": "Gold", "USD": "Fed", "EUR": "ECB"},
+            "pairs": {"XAUUSD": {"long": "neutral", "short": "neutral"}, "EURUSD": {"long": "neutral", "short": "neutral"}}
+        }))
+        output = io.StringIO()
+        with patch("mt5kit.cli.find_project_root", return_value=root), redirect_stdout(output):
+            code = main(["analyze", "XAUUSD", "--fixtures", str(self.fx), "--now",
+                         datetime.fromtimestamp(DEMO_NOW, UTC).isoformat()])
+        result = json.loads(output.getvalue())
+        self.assertEqual(code, 0)
+        self.assertEqual(result["mode"], "plan_only")
+        self.assertEqual(result["selected_symbol"], "XAUUSD")
+        self.assertEqual(len(result["scan"]), 1)
+        self.assertTrue(Path(result["report_html"]).is_file())
+        report = json.loads(Path(result["report_html"]).with_name("report.json").read_text())
+        self.assertEqual(set(report["macro"]["currencies"]), {"XAU", "USD"})
+        self.assertEqual(set(report["macro"]["pairs"]), {"XAUUSD"})
+
     def test_watch_explains_every_pair_without_plan(self):
         from mt5kit.engine import run_scan
         from mt5kit.render import render

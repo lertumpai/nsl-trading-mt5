@@ -63,7 +63,7 @@ def resolve_symbols(wanted: list[str], available: list[str], profile: dict, alia
     return out
 
 
-def fill_tick_values(symbols: dict, acct_ccy: str, limitations: list):
+def fill_tick_values(symbols: dict, acct_ccy: str, limitations: list, required_symbols: set | None = None):
     """MT5 อาจคืน tick_value = 0 ตอนตลาดปิด → คำนวณจาก contract size และราคาคู่ที่เกี่ยวข้อง (ค่าประมาณ)"""
     def px(base, quote):
         for name, s in symbols.items():
@@ -72,6 +72,8 @@ def fill_tick_values(symbols: dict, acct_ccy: str, limitations: list):
         return None
     fixed = []
     for name, s in symbols.items():
+        if required_symbols is not None and name not in required_symbols:
+            continue
         if s.tick_value or not s.contract_size:
             continue
         ts = s.tick_size or s.point
@@ -393,8 +395,22 @@ def chart_for(ctx: Context, plan: dict | None, now: float, events: list) -> dict
     return out
 
 
-def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", now_utc: float | None = None) -> tuple[Path, dict]:
+def select_symbol(symbol: str, cfg: dict) -> str:
+    """Accept a configured standard symbol or alias; never extend the strategy universe."""
+    requested = symbol.strip().upper().removesuffix("#")
+    aliases = cfg.get("symbol_aliases", {})
+    matches = [std for std in cfg["symbols"]
+               if requested in [std.upper(), *(name.upper() for name in aliases.get(std, []))]]
+    if len(matches) != 1:
+        raise ValueError("เลือกสินทรัพย์ไม่ถูกต้อง ใช้: " + ", ".join(cfg["symbols"]))
+    return matches[0]
+
+
+def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", now_utc: float | None = None,
+             symbol: str | None = None) -> tuple[Path, dict]:
     cfg = load_strategy()
+    selected = select_symbol(symbol, cfg) if symbol is not None else None
+    wanted = [selected] if selected else cfg["symbols"]
     profile, profile_real = load_profile(root)
     limitations, warnings = [], []
     if not profile_real:
@@ -415,7 +431,7 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
 
     sym_payload = source.symbols()
     symbols = ad.parse_symbols(sym_payload, clock)
-    resolved = resolve_symbols(cfg["symbols"], list(symbols.keys()), profile, cfg.get("symbol_aliases"))
+    resolved = resolve_symbols(wanted, list(symbols.keys()), profile, cfg.get("symbol_aliases"))
     need = {r["name"] for r in resolved.values() if r["ok"]} | {p.symbol for p in positions} | {o.symbol for o in orders}
     for name in need:
         s = symbols.get(name)
@@ -425,7 +441,7 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
                 got = ad.parse_symbols(extra, clock)
                 if name in got:
                     symbols[name] = got[name]
-    fill_tick_values(symbols, acct.currency, limitations)
+    fill_tick_values(symbols, acct.currency, limitations, need if selected else None)
     ex = rk.portfolio_exposure(positions, orders, symbols)
 
     ledger = Ledger(root)
@@ -516,6 +532,12 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
         scan_rows.append(row)
 
     management = manage_existing(positions, orders, ledger, contexts, symbols, now, cfg, profile)
+    if selected:
+        selected_broker = resolved[selected]["name"]
+        for item in management:
+            if item["symbol"] != selected_broker:
+                item.update(action="REPORT_ONLY", reason="อยู่นอกสินทรัพย์ที่เลือก — นับความเสี่ยง แต่ไม่ประเมินการจัดการในรอบนี้")
+                item.pop("new_sl", None)
 
     # เลือกแผน
     allow_new = not gates
@@ -561,6 +583,8 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
         warnings.append("เปลี่ยนเป็นโหมดแผนอย่างเดียว: " + ("; ".join(gates) if gates else "execution.enabled = false ใน Profile"))
 
     run_id = datetime.fromtimestamp(now, UTC).strftime("%Y%m%d-%H%M") + f"-{slot}"
+    if selected:
+        run_id = datetime.fromtimestamp(now, UTC).strftime("%Y%m%d-%H%M%S") + f"-{slot}-{selected.lower()}"
     run_dir = root / "runs" / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     reserved_after = ex.total  # run_ex เป็นอ็อบเจ็กต์เดียวกัน → รวมแผนที่เลือกแล้ว
@@ -577,8 +601,18 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
         ledger.put_plan({**{k: v for k, v in p.items() if k not in ("checks",)}, "run_id": run_id, "created_at": now, "tickets": []})
     ledger.save()
 
+    focus_ccys = newsmod.pair_currencies(selected) if selected else None
+    report_macro, report_cot = macro, cot
+    if selected and macro:
+        report_macro = {**macro, "currencies": {k: v for k, v in macro.get("currencies", {}).items() if k in focus_ccys},
+                        "pairs": {selected: macro.get("pairs", {}).get(selected, {"long": "neutral", "short": "neutral"})}}
+    if selected and cot.get("available"):
+        report_cot = {**cot, "by_ccy": {k: v for k, v in cot.get("by_ccy", {}).items() if k in focus_ccys}}
+        if not report_cot["by_ccy"]:
+            report_cot = {"available": False, "note": "ไม่มีข้อมูล COT ของสินทรัพย์ที่เลือก"}
     report = {
         "run_id": run_id, "slot": slot, "mode": eff_mode, "mode_requested": mode,
+        "selected_symbol": selected,
         "strategy_version": cfg["version"], "generated_at": now, "generated_iso": iso(now),
         "report_tz": profile.get("report_timezone", "Asia/Bangkok"), "source": source.kind,
         "decision": decision, "gates": gates, "warnings": warnings, "limitations": limitations,
@@ -598,8 +632,9 @@ def run_scan(root: Path, source, mode: str = "plan_only", slot: str = "auto", no
         "others": [{k: p[k] for k in ("plan_id", "symbol", "side", "setup", "status", "entry", "sl", "tp", "rr_net", "score")} |
                    {"fails": [c["name"] for c in p["checks"] if not c["ok"]]} for p in candidates if p["status"] != "PROPOSED"],
         "news": [{"t": e.t, "ccy": e.currency, "tier": e.tier, "name": e.name, "forecast": e.forecast, "previous": e.previous, "actual": e.actual}
-                 for e in events if e.tier in (1, 2) and now - 3600 <= e.t <= now + 36 * 3600],
-        "macro": macro, "cot": cot,
+                 for e in events if e.tier in (1, 2) and now - 3600 <= e.t <= now + 36 * 3600
+                 and (focus_ccys is None or e.currency in focus_ccys)],
+        "macro": report_macro, "cot": report_cot,
         "charts": {p["plan_id"]: chart_for(contexts[p["std_symbol"]], p, now, events) for p in chosen},
         "narrative": {}, "actions": [], "execution": None,
     }
@@ -638,6 +673,7 @@ def compact_summary(report: dict, run_dir: Path) -> dict:
     tz = report["report_tz"]
     return {
         "run_id": report["run_id"], "mode": report["mode"], "decision": report["decision"],
+        "selected_symbol": report.get("selected_symbol"),
         "gates": report["gates"], "warnings": report["warnings"], "limitations": report["limitations"],
         "account": {k: report["account"][k] for k in ("currency", "balance", "equity", "trade_mode", "mode")},
         "risk": {"reserved_before": round(report["risk"]["reserved_before"], 2), "reserved_after": round(report["risk"]["reserved_after"], 2),

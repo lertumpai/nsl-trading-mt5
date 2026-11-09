@@ -50,6 +50,8 @@ COT ดึงสัปดาห์ละครั้งพอ: `python3 -m mt5ki
 python3 -m mt5kit scan --mode <plan_only|analyze_and_place>
 ```
 
+ถ้าผู้ใช้เลือกสินทรัพย์เดียว ให้เพิ่ม `--symbol XAUUSD` (หรือชื่อที่เลือก) รายงานจะแสดงเฉพาะตัวนั้น แต่ความเสี่ยงยังรวมทั้งบัญชี สำหรับคำขอรายตัวพร้อมรายงานอย่างเดียว ใช้สกิล `mt5-symbol-analyze` และคำสั่ง `python3 -m mt5kit analyze XAUUSD`
+
 ผลลัพธ์มี `decision`, `plans`, `management`, `scan`, `gates`, `warnings`, `run_id`, `narrative_file`, `report_html`
 ถ้าได้ `error` ให้รายงานผู้ใช้ตามจริงและหยุด (เช่น เชื่อม MCP ไม่ได้) ห้ามเดาข้อมูล
 ถ้า `mode` ในผลเปลี่ยนเป็น `plan_only` ทั้งที่ขอวางเลย ให้บอกเหตุผลจาก `warnings`

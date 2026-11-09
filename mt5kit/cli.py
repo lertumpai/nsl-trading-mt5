@@ -7,6 +7,7 @@ macro-template    สร้างไฟล์ Macro ของวันนี้�
 cot               ดึง COT (cache 3 วัน)
 import-snapshot F แตกไฟล์ snapshot รวม (ดึงผ่านเบราว์เซอร์) เป็น fixture ใน runs/live-*
 scan              วิเคราะห์สินทรัพย์ตามกลยุทธ์ → runs/<id>/report.json + report.html + สรุปสั้น (JSON)
+analyze SYMBOL    วิเคราะห์รายตัวพร้อม report.html (แผนอย่างเดียว เช่น analyze XAUUSD)
 render --run ID   รวม narrative.json แล้วสร้าง report.html ใหม่
 prepare-actions   ตรวจซ้ำและสร้างรายการคำสั่งให้โมเดลเรียกเครื่องมือ MCP เอง
 record-result     บันทึกผลตอบกลับของเครื่องมือ trade_* ทีละ Action
@@ -201,16 +202,19 @@ def cmd_import_snapshot(args, root):
 
 
 def cmd_scan(args, root):
-    from .engine import compact_summary, run_scan
+    from .engine import compact_summary, load_strategy, run_scan, select_symbol
     from .render import render
     import time
+    symbol = getattr(args, "symbol", None)
+    if symbol is not None:
+        symbol = select_symbol(symbol, load_strategy())
     src = _source(args)
     now = _now(args) or time.time()
     slot = args.slot if args.slot != "auto" else _auto_slot(now)
     from .ledger import Ledger
     led = Ledger(root)
     with led.lock("scan"):
-        run_dir, report = run_scan(root, src, args.mode, slot, now)
+        run_dir, report = run_scan(root, src, args.mode, slot, now, symbol=symbol)
     html, issues = render(run_dir)
     out = compact_summary(report, run_dir)
     out["render_issues"] = issues
@@ -265,7 +269,13 @@ def main(argv=None) -> int:
     sub.add_parser("cot")
     p = sub.add_parser("import-snapshot"); p.add_argument("file")
     p = sub.add_parser("scan")
+    p.add_argument("--symbol", help="เลือกสินทรัพย์เดียว เช่น XAUUSD หรือ EURUSD (ไม่ใส่ = ทั้งหมด)")
     p.add_argument("--mode", choices=["plan_only", "analyze_and_place"], default="plan_only")
+    p.add_argument("--slot", choices=["auto", "london", "newyork", "manage"], default="auto")
+    p.add_argument("--fixtures"); p.add_argument("--now")
+    p = sub.add_parser("analyze", help="วิเคราะห์รายตัวและสร้างรายงาน โดยไม่ส่งคำสั่งซื้อขาย")
+    p.add_argument("symbol", help="เช่น XAUUSD, EURUSD หรือ GOLD")
+    p.set_defaults(mode="plan_only")
     p.add_argument("--slot", choices=["auto", "london", "newyork", "manage"], default="auto")
     p.add_argument("--fixtures"); p.add_argument("--now")
     p = sub.add_parser("render"); p.add_argument("--run", required=True)
@@ -280,7 +290,7 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     root = find_project_root()
     fn = {"status": cmd_status, "probe": cmd_probe, "record": cmd_record, "macro-template": cmd_macro_template, "cot": cmd_cot,
-          "scan": cmd_scan, "import-snapshot": cmd_import_snapshot, "render": cmd_render, "prepare-actions": cmd_prepare, "record-result": cmd_record_result,
+          "scan": cmd_scan, "analyze": cmd_scan, "import-snapshot": cmd_import_snapshot, "render": cmd_render, "prepare-actions": cmd_prepare, "record-result": cmd_record_result,
           "reconcile": cmd_reconcile}[args.cmd]
     try:
         return fn(args, root)

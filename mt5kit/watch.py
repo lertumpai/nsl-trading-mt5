@@ -55,6 +55,9 @@ def watch_for(ctx: Context, now: float, cfg: dict, events: list, macro_pair: dic
         "atr_h1": atr_h1, "zones": [], "levels": [], "steps": [], "wait": [], "scenario": [], "invalidation": None,
         "trigger": None, "target": None, "progress": 0, "candidate": None, "dist_atr": 99.0,
     }
+    nxt = newsmod.next_tier1_start(now, events, ctx.ccys, cfg["news"])
+    if nxt:
+        out["news_note"] = f"ข่าว Tier 1 ถัดไป: {nxt[1].currency} {nxt[1].name} {fmt_local(nxt[1].t, tz)} น. (งด Pending ตั้งแต่ {fmt_local(nxt[0], tz)} น.)"
     sw_h = st.confirmed(ctx.h4_sw, h4i, "high")[-2:]
     sw_l = st.confirmed(ctx.h4_sw, h4i, "low")[-2:]
     if h4b == "neutral":
@@ -187,9 +190,6 @@ def watch_for(ctx: Context, now: float, cfg: dict, events: list, macro_pair: dic
     out["wait"].append({"label": "ขั้นถัดไป", "text": trig_txt})
     if out["invalidation"]:
         out["wait"].append({"label": "ไอเดียผิดเมื่อ", "text": out["invalidation"]["text"]})
-    nxt = newsmod.next_tier1_start(now, events, ctx.ccys, cfg["news"])
-    if nxt:
-        out["news_note"] = f"ข่าว Tier 1 ถัดไป: {nxt[1].currency} {nxt[1].name} {fmt_local(nxt[1].t, tz)} น. (งด Pending ตั้งแต่ {fmt_local(nxt[0], tz)} น.)"
     macro = (macro_pair or {}).get(side, "neutral")
     out["macro"] = macro
     if macro == "conflict":
